@@ -1,0 +1,34 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "xyz.nucleoid.stimuli.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "block.BlockItemMixin",
+    "block.BlockMixin",
+    "block.FarmlandBlockMixin",
+    "entity.LivingEntityMixin",
+    "player.BowItemMixin",
+    "player.CraftingResultInventoryMixin",
+    "player.HungerManagerMixin",
+    "player.ItemEntityMixin",
+    "player.PlayerEntityMixin",
+    "player.PlayerManagerMixin",
+    "player.ScreenHandlerMixin",
+    "player.ServerPlayerEntityMixin",
+    "player.ServerPlayerInteractionManagerMixin",
+    "player.ServerPlayNetworkHandlerMixin",
+    "projectile.ProjectileEntityMixin",
+    "world.AreaHelperMixin",
+    "world.ExplosionMixin",
+    "world.FireBlockMixin",
+    "world.FlowableFluidMixin",
+    "world.FrostedIceBlockMixin",
+    "world.IceBlockMixin",
+    "world.TntBlockMixin",
+    "world.WitherSkullBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
