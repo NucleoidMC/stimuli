@@ -21,7 +21,7 @@ public class FarmlandBlockMixin {
     private void breakFarmland(World world, BlockPos pos, Entity entity, float distance, CallbackInfo ci) {
         if (world instanceof ServerWorld) {
             try (EventInvokers invokers = Stimuli.select().at(world, pos)) {
-                ActionResult result = invokers.get(BlockEvents.BREAK).onBreak((ServerPlayerEntity) entity, pos);
+                ActionResult result = invokers.get(BlockEvents.BREAK).onBreak((ServerPlayerEntity) entity, (ServerWorld) world, pos);
                 if (result == ActionResult.FAIL) {
                     ci.cancel();
                 }

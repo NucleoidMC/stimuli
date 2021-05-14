@@ -2,6 +2,7 @@ package xyz.nucleoid.stimuli;
 
 import com.google.common.base.Throwables;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 import xyz.nucleoid.stimuli.event.EventInvokerContext;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
@@ -14,6 +15,7 @@ import java.util.Map;
 final class SelectorEventInvokers extends PooledObject<SelectorEventInvokers> implements EventInvokers {
     private static final ObjectPool<SelectorEventInvokers> POOL = ObjectPool.create(1, SelectorEventInvokers::new);
 
+    MinecraftServer server;
     StimuliSelector parent;
     EventSource source;
 
@@ -23,13 +25,14 @@ final class SelectorEventInvokers extends PooledObject<SelectorEventInvokers> im
         super(owner);
     }
 
-    static SelectorEventInvokers acquire(StimuliSelector parent, EventSource source) {
+    static SelectorEventInvokers acquire(MinecraftServer server, StimuliSelector parent, EventSource source) {
         SelectorEventInvokers invokers = POOL.acquire();
-        invokers.setup(parent, source);
+        invokers.setup(server, parent, source);
         return invokers;
     }
 
-    void setup(StimuliSelector parent, EventSource source) {
+    void setup(MinecraftServer server, StimuliSelector parent, EventSource source) {
+        this.server = server;
         this.parent = parent;
         this.source = source;
     }
@@ -51,6 +54,7 @@ final class SelectorEventInvokers extends PooledObject<SelectorEventInvokers> im
     protected void release() {
         this.source.close();
         this.source = null;
+        this.server = null;
         this.parent = null;
     }
 
@@ -70,7 +74,10 @@ final class SelectorEventInvokers extends PooledObject<SelectorEventInvokers> im
 
         @Override
         public Iterator<T> iterator() {
-            return SelectorEventInvokers.this.parent.selectListeners(this.event, SelectorEventInvokers.this.source);
+            MinecraftServer server = SelectorEventInvokers.this.server;
+            StimuliSelector parent = SelectorEventInvokers.this.parent;
+            EventSource source = SelectorEventInvokers.this.source;
+            return parent.selectListeners(server, this.event, source);
         }
 
         @Override

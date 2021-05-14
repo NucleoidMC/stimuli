@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public final class EventListenerMap implements EventRegistrar {
     private final Reference2ObjectMap<StimulusEvent<?>, List<Object>> listeners = new Reference2ObjectOpenHashMap<>();
@@ -29,5 +30,9 @@ public final class EventListenerMap implements EventRegistrar {
     @SuppressWarnings("unchecked")
     public <T> Collection<T> get(StimulusEvent<T> event) {
         return (Collection<T>) this.listeners.getOrDefault(event, Collections.emptyList());
+    }
+
+    public Set<StimulusEvent<?>> getEvents() {
+        return this.listeners.keySet();
     }
 }

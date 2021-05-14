@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 import xyz.nucleoid.stimuli.event.BlockEvents;
@@ -51,7 +52,7 @@ public final class StimuliInitializer implements ModInitializer {
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
             if (player instanceof ServerPlayerEntity) {
                 try (EventInvokers invokers = Stimuli.select().forEntityAt(player, pos)) {
-                    return invokers.get(BlockEvents.BREAK).onBreak((ServerPlayerEntity) player, pos) != ActionResult.FAIL;
+                    return invokers.get(BlockEvents.BREAK).onBreak((ServerPlayerEntity) player, (ServerWorld) world, pos) != ActionResult.FAIL;
                 }
             }
             return true;

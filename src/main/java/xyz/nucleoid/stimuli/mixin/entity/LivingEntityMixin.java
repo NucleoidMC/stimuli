@@ -30,7 +30,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
     private void callDeathListener(DamageSource source, CallbackInfo ci) {
-        if (!this.world.isClient) {
+        if (this.world.isClient) {
             return;
         }
 
@@ -48,7 +48,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Redirect(method = "dropLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootTable;generateLoot(Lnet/minecraft/loot/context/LootContext;Ljava/util/function/Consumer;)V"))
     private void modifyDroppedLoot(LootTable lootTable, LootContext context, Consumer<ItemStack> lootConsumer) {
-        if (!this.world.isClient) {
+        if (this.world.isClient) {
             lootTable.generateLoot(context, lootConsumer);
             return;
         }

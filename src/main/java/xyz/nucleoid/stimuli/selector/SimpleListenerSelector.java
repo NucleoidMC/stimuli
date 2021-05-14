@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli.selector;
 
+import net.minecraft.server.MinecraftServer;
 import xyz.nucleoid.stimuli.EventSource;
 import xyz.nucleoid.stimuli.event.EventListenerMap;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
@@ -18,7 +19,7 @@ public final class SimpleListenerSelector implements EventListenerSelector {
     }
 
     @Override
-    public <T> Iterator<T> selectListeners(StimulusEvent<T> event, EventSource source) {
+    public <T> Iterator<T> selectListeners(MinecraftServer server, StimulusEvent<T> event, EventSource source) {
         if (this.filter.accepts(source)) {
             return this.listeners.get(event).iterator();
         } else {

@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
@@ -24,10 +25,10 @@ public final class BlockEvents {
      * <p>
      * If all listeners return {@link ActionResult#PASS}, the break succeeds.
      */
-    public static final StimulusEvent<Break> BREAK = StimulusEvent.create(Break.class, ctx -> (player, pos) -> {
+    public static final StimulusEvent<Break> BREAK = StimulusEvent.create(Break.class, ctx -> (player, world, pos) -> {
         try {
             for (Break listener : ctx.getListeners()) {
-                ActionResult result = listener.onBreak(player, pos);
+                ActionResult result = listener.onBreak(player, world, pos);
                 if (result != ActionResult.PASS) {
                     return result;
                 }
@@ -49,10 +50,10 @@ public final class BlockEvents {
      * <p>
      * If all listeners return {@link ActionResult#PASS}, the place succeeds.
      */
-    public static final StimulusEvent<Place> PLACE = StimulusEvent.create(Place.class, ctx -> (player, pos, state, context) -> {
+    public static final StimulusEvent<Place> PLACE = StimulusEvent.create(Place.class, ctx -> (player, world, pos, state, context) -> {
         try {
             for (Place listener : ctx.getListeners()) {
-                ActionResult result = listener.onPlace(player, pos, state, context);
+                ActionResult result = listener.onPlace(player, world, pos, state, context);
                 if (result != ActionResult.PASS) {
                     return result;
                 }
@@ -63,10 +64,20 @@ public final class BlockEvents {
         return ActionResult.PASS;
     });
 
-    public static final StimulusEvent<DropItems> DROP_ITEMS = StimulusEvent.create(DropItems.class, ctx -> (player, pos, state, dropStacks) -> {
+    public static final StimulusEvent<AfterPlace> AFTER_PLACE = StimulusEvent.create(AfterPlace.class, ctx -> (player, world, pos, state) -> {
+        try {
+            for (AfterPlace listener : ctx.getListeners()) {
+                listener.onPlace(player, world, pos, state);
+            }
+        } catch (Throwable t) {
+            ctx.handleException(t);
+        }
+    });
+
+    public static final StimulusEvent<DropItems> DROP_ITEMS = StimulusEvent.create(DropItems.class, ctx -> (breaker, world, pos, state, dropStacks) -> {
         try {
             for (DropItems listener : ctx.getListeners()) {
-                TypedActionResult<List<ItemStack>> result = listener.onDropItems(player, pos, state, dropStacks);
+                TypedActionResult<List<ItemStack>> result = listener.onDropItems(breaker, world, pos, state, dropStacks);
                 dropStacks = result.getValue();
                 if (result.getResult() != ActionResult.PASS) {
                     return result;
@@ -79,14 +90,18 @@ public final class BlockEvents {
     });
 
     public interface Break {
-        ActionResult onBreak(ServerPlayerEntity player, BlockPos pos);
+        ActionResult onBreak(ServerPlayerEntity player, ServerWorld world, BlockPos pos);
     }
 
     public interface Place {
-        ActionResult onPlace(ServerPlayerEntity player, BlockPos pos, BlockState state, ItemUsageContext context);
+        ActionResult onPlace(ServerPlayerEntity player, ServerWorld world, BlockPos pos, BlockState state, ItemUsageContext context);
+    }
+
+    public interface AfterPlace {
+        void onPlace(ServerPlayerEntity player, ServerWorld world, BlockPos pos, BlockState state);
     }
 
     public interface DropItems {
-        TypedActionResult<List<ItemStack>> onDropItems(@Nullable Entity breaker, BlockPos pos, BlockState state, List<ItemStack> dropStacks);
+        TypedActionResult<List<ItemStack>> onDropItems(@Nullable Entity breaker, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> dropStacks);
     }
 }

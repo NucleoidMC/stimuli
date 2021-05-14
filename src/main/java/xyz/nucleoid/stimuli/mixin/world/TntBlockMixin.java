@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli.mixin.world;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.block.TntBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -22,6 +23,7 @@ public class TntBlockMixin {
             try (EventInvokers invokers = Stimuli.select().at(world, pos)) {
                 ActionResult result = invokers.get(WorldEvents.IGNITE_TNT).onIgniteTnt((ServerWorld) world, pos, igniter);
                 if (result == ActionResult.FAIL) {
+                    world.setBlockState(pos, Blocks.TNT.getDefaultState());
                     ci.cancel();
                 }
             }

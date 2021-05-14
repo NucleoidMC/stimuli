@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli;
 
+import net.minecraft.server.MinecraftServer;
 import xyz.nucleoid.stimuli.event.EventListenerMap;
 import xyz.nucleoid.stimuli.event.EventRegistrar;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
@@ -60,7 +61,7 @@ public final class Stimuli {
             }
 
             @Override
-            public <T> Iterator<T> selectListeners(StimulusEvent<T> event, EventSource source) {
+            public <T> Iterator<T> selectListeners(MinecraftServer server, StimulusEvent<T> event, EventSource source) {
                 return this.listeners.get(event).iterator();
             }
         }

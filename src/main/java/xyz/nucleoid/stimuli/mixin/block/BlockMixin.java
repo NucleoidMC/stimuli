@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import xyz.nucleoid.stimuli.EventInvokers;
-import xyz.nucleoid.stimuli.StimuliSelector;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.StimuliSelector;
 import xyz.nucleoid.stimuli.event.BlockEvents;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public class BlockMixin {
 
         try (EventInvokers invokers = entity != null ? events.forEntityAt(entity, pos) : events.at(world, pos)) {
             TypedActionResult<List<ItemStack>> result = invokers.get(BlockEvents.DROP_ITEMS)
-                    .onDropItems(entity, pos, state, stacks);
+                    .onDropItems(entity, (ServerWorld) world, pos, state, stacks);
 
             if (result.getResult() != ActionResult.FAIL) {
                 List<ItemStack> newStacks = result.getValue();
