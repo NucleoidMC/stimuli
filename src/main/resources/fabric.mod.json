@@ -3,7 +3,7 @@
   "id": "stimuli",
   "version": "${version}",
   "name": "Stimuli",
-  "description": "Library for working server-side events with the ability to filter by event source",
+  "description": "Library to work with server-side events with the ability to filter by event source",
   "authors": ["Nucleoid Contributors"],
   "license": "LGPLv3",
   "environment": "*",

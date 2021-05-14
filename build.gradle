@@ -52,8 +52,6 @@ jar {
   from "LICENSE"
 }
 
-def env = System.getenv()
-
 publishing {
   publications {
     mavenJava(MavenPublication) {
@@ -67,6 +65,7 @@ publishing {
   }
 
   repositories {
+    def env = System.getenv()
     if (env.MAVEN_URL) {
       maven {
         credentials {
