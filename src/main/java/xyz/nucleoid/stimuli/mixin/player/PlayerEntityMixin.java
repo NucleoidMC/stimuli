@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.PlayerEvents;
+import xyz.nucleoid.stimuli.event.ItemEvents;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
@@ -33,7 +33,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         ItemStack stack = player.inventory.getStack(slot);
 
         try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-            ActionResult result = invokers.get(PlayerEvents.THROW_ITEM).onThrowItem(player, slot, stack);
+            ActionResult result = invokers.get(ItemEvents.THROW).onThrowItem(player, slot, stack);
             if (result == ActionResult.FAIL) {
                 player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(-2, slot, stack));
                 ci.setReturnValue(false);

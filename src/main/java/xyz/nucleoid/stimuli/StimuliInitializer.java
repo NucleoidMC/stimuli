@@ -12,6 +12,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 import xyz.nucleoid.stimuli.event.BlockEvents;
+import xyz.nucleoid.stimuli.event.EntityEvents;
+import xyz.nucleoid.stimuli.event.ItemEvents;
 import xyz.nucleoid.stimuli.event.PlayerEvents;
 
 public final class StimuliInitializer implements ModInitializer {
@@ -20,8 +22,8 @@ public final class StimuliInitializer implements ModInitializer {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hit) -> {
             if (player instanceof ServerPlayerEntity) {
                 try (EventInvokers invokers = Stimuli.select().forEntityAt(player, entity.getBlockPos())) {
-                    ActionResult result = invokers.get(PlayerEvents.USE_ENTITY)
-                            .onUseEntity((ServerPlayerEntity) player, entity, hand, hit);
+                    ActionResult result = invokers.get(EntityEvents.USE)
+                            .onUse((ServerPlayerEntity) player, entity, hand, hit);
                     if (result != ActionResult.PASS) {
                         return result;
                     }
@@ -34,7 +36,7 @@ public final class StimuliInitializer implements ModInitializer {
         UseItemCallback.EVENT.register((player, world, hand) -> {
             if (player instanceof ServerPlayerEntity) {
                 try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-                    return invokers.get(PlayerEvents.USE_ITEM).onUseItem((ServerPlayerEntity) player, hand);
+                    return invokers.get(ItemEvents.USE).onUse((ServerPlayerEntity) player, hand);
                 }
             }
             return TypedActionResult.pass(ItemStack.EMPTY);
@@ -43,7 +45,7 @@ public final class StimuliInitializer implements ModInitializer {
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player instanceof ServerPlayerEntity) {
                 try (EventInvokers invokers = Stimuli.select().forEntityAt(player, hitResult.getBlockPos())) {
-                    return invokers.get(PlayerEvents.USE_BLOCK).onUseBlock((ServerPlayerEntity) player, hand, hitResult);
+                    return invokers.get(BlockEvents.USE).onUse((ServerPlayerEntity) player, hand, hitResult);
                 }
             }
             return ActionResult.PASS;

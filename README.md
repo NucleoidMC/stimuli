@@ -36,6 +36,7 @@ further processing of the chat event.
 Standard Stimuli events are contained within a few event category classes:
  - [`BlockEvents`](https://github.com/NucleoidMC/stimuli/blob/main/src/main/java/xyz/nucleoid/stimuli/event/BlockEvents.java)
  - [`EntityEvents`](https://github.com/NucleoidMC/stimuli/blob/main/src/main/java/xyz/nucleoid/stimuli/event/EntityEvents.java)
+ - [`ItemEvents`](https://github.com/NucleoidMC/stimuli/blob/main/src/main/java/xyz/nucleoid/stimuli/event/ItemEvents.java)
  - [`PlayerEvents`](https://github.com/NucleoidMC/stimuli/blob/main/src/main/java/xyz/nucleoid/stimuli/event/PlayerEvents.java)
  - [`ProjectileEvents`](https://github.com/NucleoidMC/stimuli/blob/main/src/main/java/xyz/nucleoid/stimuli/event/ProjectileEvents.java)
  - [`WorldEvents`](https://github.com/NucleoidMC/stimuli/blob/main/src/main/java/xyz/nucleoid/stimuli/event/WorldEvents.java)

@@ -1,10 +1,14 @@
 package xyz.nucleoid.stimuli.event;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.hit.EntityHitResult;
 
 import java.util.List;
 
@@ -65,11 +69,31 @@ public final class EntityEvents {
         return TypedActionResult.pass(items);
     });
 
+    public static final StimulusEvent<Use> USE = StimulusEvent.create(Use.class, ctx -> {
+        return (player, entity, hand, hitResult) -> {
+            try {
+                for (Use listener : ctx.getListeners()) {
+                    ActionResult result = listener.onUse(player, entity, hand, hitResult);
+                    if (result != ActionResult.PASS) {
+                        return result;
+                    }
+                }
+            } catch (Throwable t) {
+                ctx.handleException(t);
+            }
+            return ActionResult.PASS;
+        };
+    });
+
     public interface Death {
         ActionResult onDeath(LivingEntity entity, DamageSource source);
     }
 
     public interface DropItems {
         TypedActionResult<List<ItemStack>> onDropItems(LivingEntity dropper, List<ItemStack> items);
+    }
+
+    public interface Use {
+        ActionResult onUse(ServerPlayerEntity player, Entity entity, Hand hand, EntityHitResult hitResult);
     }
 }
