@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.WorldEvents;
+import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
 
 @Mixin(Explosion.class)
 public class ExplosionMixin {
@@ -26,7 +26,7 @@ public class ExplosionMixin {
             BlockPos pos = new BlockPos(this.x, this.y, this.z);
 
             try (EventInvokers invokers = Stimuli.select().at(this.world, pos)) {
-                invokers.get(WorldEvents.EXPLOSION_DETONATED).onExplosionDetonated((Explosion) (Object) this, particles);
+                invokers.get(ExplosionDetonatedEvent.EVENT).onExplosionDetonated((Explosion) (Object) this, particles);
             }
         }
     }

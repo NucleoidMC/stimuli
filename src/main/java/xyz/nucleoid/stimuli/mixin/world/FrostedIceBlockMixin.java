@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.WorldEvents;
+import xyz.nucleoid.stimuli.event.world.IceMeltEvent;
 
 @Mixin(FrostedIceBlock.class)
 public class FrostedIceBlockMixin {
@@ -20,7 +20,7 @@ public class FrostedIceBlockMixin {
     private void applyIceMeltEvent(BlockState state, World world, BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
         if (!world.isClient) {
             try (EventInvokers invokers = Stimuli.select().at(world, pos)) {
-                ActionResult result = invokers.get(WorldEvents.MELT_ICE).onIceMelt((ServerWorld) world, pos);
+                ActionResult result = invokers.get(IceMeltEvent.EVENT).onIceMelt((ServerWorld) world, pos);
                 if (result == ActionResult.FAIL) {
                     ci.cancel();
                 }

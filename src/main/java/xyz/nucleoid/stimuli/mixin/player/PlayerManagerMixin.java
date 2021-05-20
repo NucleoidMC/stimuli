@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.PlayerEvents;
+import xyz.nucleoid.stimuli.event.player.PlayerChatEvent;
 
 import java.util.UUID;
 
@@ -36,7 +36,7 @@ public abstract class PlayerManagerMixin {
         }
 
         try (EventInvokers invokers = Stimuli.select().forEntity(sender)) {
-            ActionResult result = invokers.get(PlayerEvents.CHAT).onSendChatMessage(sender, message);
+            ActionResult result = invokers.get(PlayerChatEvent.EVENT).onSendChatMessage(sender, message);
             if (result == ActionResult.FAIL) {
                 ci.cancel();
             }

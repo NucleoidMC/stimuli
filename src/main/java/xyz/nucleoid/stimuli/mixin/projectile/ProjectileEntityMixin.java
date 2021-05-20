@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.ProjectileEvents;
+import xyz.nucleoid.stimuli.event.projectile.ProjectileHitEvent;
 
 @Mixin(ProjectileEntity.class)
 public abstract class ProjectileEntityMixin extends Entity {
@@ -31,12 +31,12 @@ public abstract class ProjectileEntityMixin extends Entity {
         try (EventInvokers invokers = Stimuli.select().forEntity(this)) {
             ProjectileEntity self = (ProjectileEntity) (Object) this;
             if (hitResult.getType() == HitResult.Type.ENTITY) {
-                ActionResult result = invokers.get(ProjectileEvents.HIT_ENTITY).onHitEntity(self, (EntityHitResult) hitResult);
+                ActionResult result = invokers.get(ProjectileHitEvent.ENTITY).onHitEntity(self, (EntityHitResult) hitResult);
                 if (result == ActionResult.FAIL) {
                     ci.cancel();
                 }
             } else if (hitResult.getType() == HitResult.Type.BLOCK) {
-                ActionResult result = invokers.get(ProjectileEvents.HIT_BLOCK).onHitBlock(self, (BlockHitResult) hitResult);
+                ActionResult result = invokers.get(ProjectileHitEvent.BLOCK).onHitBlock(self, (BlockHitResult) hitResult);
                 if (result == ActionResult.FAIL) {
                     ci.cancel();
                 }

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.WorldEvents;
+import xyz.nucleoid.stimuli.event.world.FireTickEvent;
 
 import java.util.Random;
 
@@ -20,7 +20,7 @@ public class FireBlockMixin {
     @Redirect(method = "scheduledTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
     private boolean test(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule, BlockState state, ServerWorld world, BlockPos pos, Random random) {
         try (EventInvokers invokers = Stimuli.select().at(world, pos)) {
-            ActionResult result = invokers.get(WorldEvents.FIRE_TICK).onFireTick(world, pos);
+            ActionResult result = invokers.get(FireTickEvent.EVENT).onFireTick(world, pos);
             if (result == ActionResult.SUCCESS) {
                 return true;
             } else if (result == ActionResult.FAIL) {

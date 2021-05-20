@@ -10,14 +10,14 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.ItemEvents;
+import xyz.nucleoid.stimuli.event.item.ItemCraftEvent;
 
 @Mixin(CraftingResultInventory.class)
 public abstract class CraftingResultInventoryMixin implements RecipeUnlocker {
     @Override
     public boolean shouldCraftRecipe(World world, ServerPlayerEntity player, Recipe<?> recipe) {
         try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-            ActionResult result = invokers.get(ItemEvents.CRAFT).onCraft(player, recipe);
+            ActionResult result = invokers.get(ItemCraftEvent.EVENT).onCraft(player, recipe);
             if (result == ActionResult.FAIL) {
                 return false;
             }

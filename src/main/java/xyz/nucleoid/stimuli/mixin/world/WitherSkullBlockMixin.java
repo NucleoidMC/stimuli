@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.WorldEvents;
+import xyz.nucleoid.stimuli.event.world.WitherSummonEvent;
 
 @Mixin(WitherSkullBlock.class)
 public class WitherSkullBlockMixin {
@@ -20,7 +20,7 @@ public class WitherSkullBlockMixin {
     private static void onPlaced(World world, BlockPos pos, SkullBlockEntity blockEntity, CallbackInfo ci) {
         if (!world.isClient) {
             try (EventInvokers invokers = Stimuli.select().at(world, pos)) {
-                ActionResult result = invokers.get(WorldEvents.SUMMON_WITHER).onSummonWither((ServerWorld) world, pos);
+                ActionResult result = invokers.get(WitherSummonEvent.EVENT).onSummonWither((ServerWorld) world, pos);
                 if (result == ActionResult.FAIL) {
                     ci.cancel();
                 }

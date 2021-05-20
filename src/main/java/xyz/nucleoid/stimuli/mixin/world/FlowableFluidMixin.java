@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.WorldEvents;
+import xyz.nucleoid.stimuli.event.world.FluidFlowEvent;
 
 @Mixin(FlowableFluid.class)
 public class FlowableFluidMixin {
@@ -28,7 +28,7 @@ public class FlowableFluidMixin {
         ServerWorld world = (ServerWorld) blockView;
 
         try (EventInvokers invokers = Stimuli.select().at(world, flowTo)) {
-            ActionResult result = invokers.get(WorldEvents.FLUID_FLOW)
+            ActionResult result = invokers.get(FluidFlowEvent.EVENT)
                     .onFluidFlow(world, fluidPos, fluidBlockState, flowDirection, flowTo, flowToBlockState);
             if (result == ActionResult.FAIL) {
                 ci.setReturnValue(false);

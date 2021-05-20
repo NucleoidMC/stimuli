@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.EntityEvents;
+import xyz.nucleoid.stimuli.event.entity.EntityDeathEvent;
+import xyz.nucleoid.stimuli.event.entity.EntityDropItemsEvent;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -37,7 +38,7 @@ public abstract class LivingEntityMixin extends Entity {
         LivingEntity entity = (LivingEntity) (Object) this;
 
         try (EventInvokers invokers = Stimuli.select().forEntity(entity)) {
-            ActionResult result = invokers.get(EntityEvents.DEATH).onDeath(entity, source);
+            ActionResult result = invokers.get(EntityDeathEvent.EVENT).onDeath(entity, source);
 
             // cancel death if FAIL was returned from any listener
             if (result == ActionResult.FAIL) {
@@ -56,7 +57,7 @@ public abstract class LivingEntityMixin extends Entity {
         try (EventInvokers invokers = Stimuli.select().forEntity(this)) {
             List<ItemStack> droppedStacks = lootTable.generateLoot(context);
 
-            TypedActionResult<List<ItemStack>> result = invokers.get(EntityEvents.DROP_ITEMS)
+            TypedActionResult<List<ItemStack>> result = invokers.get(EntityDropItemsEvent.EVENT)
                     .onDropItems((LivingEntity) (Object) this, droppedStacks);
 
             if (result.getResult() != ActionResult.FAIL) {

@@ -11,10 +11,11 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
-import xyz.nucleoid.stimuli.event.BlockEvents;
-import xyz.nucleoid.stimuli.event.EntityEvents;
-import xyz.nucleoid.stimuli.event.ItemEvents;
-import xyz.nucleoid.stimuli.event.PlayerEvents;
+import xyz.nucleoid.stimuli.event.block.BlockBreakEvent;
+import xyz.nucleoid.stimuli.event.block.BlockUseEvent;
+import xyz.nucleoid.stimuli.event.entity.EntityUseEvent;
+import xyz.nucleoid.stimuli.event.item.ItemUseEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent;
 
 public final class StimuliInitializer implements ModInitializer {
     @Override
@@ -22,7 +23,7 @@ public final class StimuliInitializer implements ModInitializer {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hit) -> {
             if (player instanceof ServerPlayerEntity) {
                 try (EventInvokers invokers = Stimuli.select().forEntityAt(player, entity.getBlockPos())) {
-                    ActionResult result = invokers.get(EntityEvents.USE)
+                    ActionResult result = invokers.get(EntityUseEvent.EVENT)
                             .onUse((ServerPlayerEntity) player, entity, hand, hit);
                     if (result != ActionResult.PASS) {
                         return result;
@@ -36,7 +37,7 @@ public final class StimuliInitializer implements ModInitializer {
         UseItemCallback.EVENT.register((player, world, hand) -> {
             if (player instanceof ServerPlayerEntity) {
                 try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-                    return invokers.get(ItemEvents.USE).onUse((ServerPlayerEntity) player, hand);
+                    return invokers.get(ItemUseEvent.EVENT).onUse((ServerPlayerEntity) player, hand);
                 }
             }
             return TypedActionResult.pass(ItemStack.EMPTY);
@@ -45,7 +46,7 @@ public final class StimuliInitializer implements ModInitializer {
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player instanceof ServerPlayerEntity) {
                 try (EventInvokers invokers = Stimuli.select().forEntityAt(player, hitResult.getBlockPos())) {
-                    return invokers.get(BlockEvents.USE).onUse((ServerPlayerEntity) player, hand, hitResult);
+                    return invokers.get(BlockUseEvent.EVENT).onUse((ServerPlayerEntity) player, hand, hitResult);
                 }
             }
             return ActionResult.PASS;
@@ -54,7 +55,7 @@ public final class StimuliInitializer implements ModInitializer {
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
             if (player instanceof ServerPlayerEntity) {
                 try (EventInvokers invokers = Stimuli.select().forEntityAt(player, pos)) {
-                    return invokers.get(BlockEvents.BREAK).onBreak((ServerPlayerEntity) player, (ServerWorld) world, pos) != ActionResult.FAIL;
+                    return invokers.get(BlockBreakEvent.EVENT).onBreak((ServerPlayerEntity) player, (ServerWorld) world, pos) != ActionResult.FAIL;
                 }
             }
             return true;
@@ -63,7 +64,7 @@ public final class StimuliInitializer implements ModInitializer {
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (player instanceof ServerPlayerEntity) {
                 try (EventInvokers invokers = Stimuli.select().forEntityAt(player, entity.getBlockPos())) {
-                    return invokers.get(PlayerEvents.ATTACK_ENTITY).onAttackEntity((ServerPlayerEntity) player, hand, entity, hitResult);
+                    return invokers.get(PlayerAttackEntityEvent.EVENT).onAttackEntity((ServerPlayerEntity) player, hand, entity, hitResult);
                 }
             }
             return ActionResult.PASS;

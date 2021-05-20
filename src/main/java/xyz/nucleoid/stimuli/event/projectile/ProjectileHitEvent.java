@@ -1,11 +1,12 @@
-package xyz.nucleoid.stimuli.event;
+package xyz.nucleoid.stimuli.event.projectile;
 
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import xyz.nucleoid.stimuli.event.StimulusEvent;
 
-public final class ProjectileEvents {
+public final class ProjectileHitEvent {
     /**
      * Called when a {@link net.minecraft.block.Block} is hit by a {@link ProjectileEntity}.
      *
@@ -15,9 +16,9 @@ public final class ProjectileEvents {
      * <li>{@link ActionResult#FAIL} cancels further handlers and does not execute vanilla behavior.
      * <li>{@link ActionResult#PASS} moves on to the next listener.</ul>
      */
-    public static final StimulusEvent<HitBlock> HIT_BLOCK = StimulusEvent.create(HitBlock.class, ctx -> (entity, hitResult) -> {
+    public static final StimulusEvent<Block> BLOCK = StimulusEvent.create(Block.class, ctx -> (entity, hitResult) -> {
         try {
-            for (HitBlock listener : ctx.getListeners()) {
+            for (Block listener : ctx.getListeners()) {
                 ActionResult result = listener.onHitBlock(entity, hitResult);
                 if (result != ActionResult.PASS) {
                     return result;
@@ -38,9 +39,9 @@ public final class ProjectileEvents {
      * <li>{@link ActionResult#FAIL} cancels further handlers and does not execute vanilla behavior.
      * <li>{@link ActionResult#PASS} moves on to the next listener.</ul>
      */
-    public static final StimulusEvent<HitEntity> HIT_ENTITY = StimulusEvent.create(HitEntity.class, ctx -> (entity, hitResult) -> {
+    public static final StimulusEvent<Entity> ENTITY = StimulusEvent.create(Entity.class, ctx -> (entity, hitResult) -> {
         try {
-            for (HitEntity listener : ctx.getListeners()) {
+            for (Entity listener : ctx.getListeners()) {
                 ActionResult result = listener.onHitEntity(entity, hitResult);
                 if (result != ActionResult.PASS) {
                     return result;
@@ -52,11 +53,11 @@ public final class ProjectileEvents {
         return ActionResult.PASS;
     });
 
-    public interface HitBlock {
+    public interface Block {
         ActionResult onHitBlock(ProjectileEntity entity, BlockHitResult hitResult);
     }
 
-    public interface HitEntity {
+    public interface Entity {
         ActionResult onHitEntity(ProjectileEntity entity, EntityHitResult hitResult);
     }
 }

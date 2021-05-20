@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.ItemEvents;
+import xyz.nucleoid.stimuli.event.item.ItemThrowEvent;
 
 import java.util.List;
 
@@ -63,7 +63,7 @@ public class ScreenHandlerMixin {
     private boolean shouldBlockThrowingItems(PlayerEntity player, int slot, ItemStack stack) {
         if (player instanceof ServerPlayerEntity) {
             try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-                return invokers.get(ItemEvents.THROW)
+                return invokers.get(ItemThrowEvent.EVENT)
                         .onThrowItem((ServerPlayerEntity) player, slot, stack) == ActionResult.FAIL;
             }
         }

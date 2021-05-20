@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.ItemEvents;
+import xyz.nucleoid.stimuli.event.item.ItemPickupEvent;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin extends Entity {
@@ -37,7 +37,7 @@ public abstract class ItemEntityMixin extends Entity {
 
         try (EventInvokers invokers = Stimuli.select().forEntityAt(player, this.getBlockPos())) {
             ItemEntity itemEntity = (ItemEntity) (Object) this;
-            ActionResult result = invokers.get(ItemEvents.PICKUP)
+            ActionResult result = invokers.get(ItemPickupEvent.EVENT)
                     .onPickupItem((ServerPlayerEntity) player, itemEntity, itemEntity.getStack());
 
             if (result == ActionResult.FAIL) {

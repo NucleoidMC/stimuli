@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.BlockEvents;
+import xyz.nucleoid.stimuli.event.block.BlockPlaceEvent;
 
 @Mixin(BlockItem.class)
 public class BlockItemMixin {
@@ -36,7 +36,7 @@ public class BlockItemMixin {
 
         try (EventInvokers invokers = Stimuli.select().forEntityAt(player, blockPos)) {
             BlockState state = context.getWorld().getBlockState(blockPos);
-            invokers.get(BlockEvents.AFTER_PLACE).onPlace(player, player.getServerWorld(), blockPos, state);
+            invokers.get(BlockPlaceEvent.AFTER).onPlace(player, player.getServerWorld(), blockPos, state);
         }
     }
 
@@ -50,7 +50,7 @@ public class BlockItemMixin {
         BlockPos blockPos = context.getBlockPos();
 
         try (EventInvokers invokers = Stimuli.select().forEntityAt(player, blockPos)) {
-            ActionResult result = invokers.get(BlockEvents.PLACE).onPlace(player, player.getServerWorld(), blockPos, state, context);
+            ActionResult result = invokers.get(BlockPlaceEvent.BEFORE).onPlace(player, player.getServerWorld(), blockPos, state, context);
 
             if (result == ActionResult.FAIL) {
                 // notify the client that this action did not go through

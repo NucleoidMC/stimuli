@@ -10,7 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.PlayerEvents;
+import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerEntityMixin {
@@ -19,7 +20,7 @@ public class ServerPlayerEntityMixin {
         ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
 
         try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-            ActionResult result = invokers.get(PlayerEvents.DEATH).onDeath(player, source);
+            ActionResult result = invokers.get(PlayerDeathEvent.EVENT).onDeath(player, source);
             if (result == ActionResult.FAIL) {
                 if (player.getHealth() <= 0.0F) {
                     player.setHealth(player.getMaxHealth());
@@ -34,7 +35,7 @@ public class ServerPlayerEntityMixin {
         ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
 
         try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-            ActionResult result = invokers.get(PlayerEvents.DAMAGE).onDamage(player, source, amount);
+            ActionResult result = invokers.get(PlayerDamageEvent.EVENT).onDamage(player, source, amount);
             if (result == ActionResult.FAIL) {
                 ci.cancel();
             }

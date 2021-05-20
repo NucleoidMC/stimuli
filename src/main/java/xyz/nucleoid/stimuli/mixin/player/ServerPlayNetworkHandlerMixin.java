@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.PlayerEvents;
+import xyz.nucleoid.stimuli.event.player.PlayerSwingHandEvent;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public class ServerPlayNetworkHandlerMixin {
@@ -23,7 +23,7 @@ public class ServerPlayNetworkHandlerMixin {
         Hand hand = packet.getHand();
 
         try (EventInvokers invokers = Stimuli.select().forEntity(this.player)) {
-            invokers.get(PlayerEvents.SWING_HAND).onSwingHand(this.player, hand);
+            invokers.get(PlayerSwingHandEvent.EVENT).onSwingHand(this.player, hand);
         }
     }
 }

@@ -1,4 +1,4 @@
-package xyz.nucleoid.stimuli.mixin.player;
+package xyz.nucleoid.stimuli.mixin.projectile;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.PlayerEvents;
+import xyz.nucleoid.stimuli.event.projectile.ArrowFireEvent;
 
 @Mixin(BowItem.class)
 public class BowItemMixin {
@@ -47,7 +47,7 @@ public class BowItemMixin {
         }
 
         try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-            ActionResult result = invokers.get(PlayerEvents.FIRE_ARROW)
+            ActionResult result = invokers.get(ArrowFireEvent.EVENT)
                     .onFireArrow((ServerPlayerEntity) player, tool, item, remainingUseTicks, projectile);
 
             if (result == ActionResult.FAIL) {

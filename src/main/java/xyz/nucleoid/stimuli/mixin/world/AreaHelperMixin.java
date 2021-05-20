@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.WorldEvents;
+import xyz.nucleoid.stimuli.event.world.NetherPortalOpenEvent;
 
 @Mixin(AreaHelper.class)
 public class AreaHelperMixin {
@@ -31,7 +31,7 @@ public class AreaHelperMixin {
         ServerWorld world = ((ServerWorldAccess) this.world).toServerWorld();
 
         try (EventInvokers invokers = Stimuli.select().at(world, this.lowerCorner)) {
-            ActionResult result = invokers.get(WorldEvents.OPEN_NETHER_PORTAL).onOpenNetherPortal(world, this.lowerCorner);
+            ActionResult result = invokers.get(NetherPortalOpenEvent.EVENT).onOpenNetherPortal(world, this.lowerCorner);
 
             if (result == ActionResult.FAIL) {
                 ci.setReturnValue(false);
