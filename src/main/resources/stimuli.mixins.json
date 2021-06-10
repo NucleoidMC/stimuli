@@ -6,6 +6,7 @@
   "mixins": [
     "block.BlockItemMixin",
     "block.BlockMixin",
+    "block.FallingBlockMixin",
     "block.FarmlandBlockMixin",
     "entity.LivingEntityMixin",
     "player.CraftingResultInventoryMixin",
