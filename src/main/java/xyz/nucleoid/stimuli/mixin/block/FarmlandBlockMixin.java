@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli.mixin.block;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.FarmlandBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -18,7 +19,7 @@ import xyz.nucleoid.stimuli.event.block.BlockBreakEvent;
 @Mixin(FarmlandBlock.class)
 public class FarmlandBlockMixin {
     @Inject(method = "onLandedUpon", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/FarmlandBlock;setToDirt(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V", shift = At.Shift.BEFORE), cancellable = true)
-    private void breakFarmland(World world, BlockPos pos, Entity entity, float distance, CallbackInfo ci) {
+    private void breakFarmland(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci) {
         if (world instanceof ServerWorld) {
             try (EventInvokers invokers = Stimuli.select().at(world, pos)) {
                 ActionResult result = invokers.get(BlockBreakEvent.EVENT).onBreak((ServerPlayerEntity) entity, (ServerWorld) world, pos);
