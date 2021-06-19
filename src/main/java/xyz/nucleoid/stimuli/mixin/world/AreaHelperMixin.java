@@ -1,6 +1,5 @@
 package xyz.nucleoid.stimuli.mixin.world;
 
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ServerWorldAccess;
@@ -13,7 +12,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.world.NetherPortalOpenEvent;
 
@@ -28,10 +26,10 @@ public class AreaHelperMixin {
             return;
         }
 
-        ServerWorld world = ((ServerWorldAccess) this.world).toServerWorld();
+        var world = ((ServerWorldAccess) this.world).toServerWorld();
 
-        try (EventInvokers invokers = Stimuli.select().at(world, this.lowerCorner)) {
-            ActionResult result = invokers.get(NetherPortalOpenEvent.EVENT).onOpenNetherPortal(world, this.lowerCorner);
+        try (var invokers = Stimuli.select().at(world, this.lowerCorner)) {
+            var result = invokers.get(NetherPortalOpenEvent.EVENT).onOpenNetherPortal(world, this.lowerCorner);
 
             if (result == ActionResult.FAIL) {
                 ci.setReturnValue(false);

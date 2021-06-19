@@ -18,8 +18,8 @@ public final class ProjectileHitEvent {
      */
     public static final StimulusEvent<Block> BLOCK = StimulusEvent.create(Block.class, ctx -> (entity, hitResult) -> {
         try {
-            for (Block listener : ctx.getListeners()) {
-                ActionResult result = listener.onHitBlock(entity, hitResult);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onHitBlock(entity, hitResult);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

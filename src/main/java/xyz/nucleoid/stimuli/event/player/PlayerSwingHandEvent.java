@@ -10,7 +10,7 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface PlayerSwingHandEvent {
     StimulusEvent<PlayerSwingHandEvent> EVENT = StimulusEvent.create(PlayerSwingHandEvent.class, ctx -> (player, hand) -> {
         try {
-            for (PlayerSwingHandEvent listener : ctx.getListeners()) {
+            for (var listener : ctx.getListeners()) {
                 listener.onSwingHand(player, hand);
             }
         } catch (Throwable t) {

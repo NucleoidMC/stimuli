@@ -26,7 +26,7 @@ final class SelectorEventInvokers extends PooledObject<SelectorEventInvokers> im
     }
 
     static SelectorEventInvokers acquire(MinecraftServer server, StimuliSelector parent, EventSource source) {
-        SelectorEventInvokers invokers = POOL.acquire();
+        var invokers = POOL.acquire();
         invokers.setup(server, parent, source);
         return invokers;
     }
@@ -41,7 +41,7 @@ final class SelectorEventInvokers extends PooledObject<SelectorEventInvokers> im
     @NotNull
     @SuppressWarnings("unchecked")
     public <T> T get(StimulusEvent<T> event) {
-        Invoker<T> invoker = (Invoker<T>) this.invokers.get(event);
+        var invoker = (Invoker<T>) this.invokers.get(event);
         if (invoker == null) {
             invoker = new Invoker<>(event);
             this.invokers.put(event, invoker);
@@ -74,9 +74,9 @@ final class SelectorEventInvokers extends PooledObject<SelectorEventInvokers> im
 
         @Override
         public Iterator<T> iterator() {
-            MinecraftServer server = SelectorEventInvokers.this.server;
-            StimuliSelector parent = SelectorEventInvokers.this.parent;
-            EventSource source = SelectorEventInvokers.this.source;
+            var server = SelectorEventInvokers.this.server;
+            var parent = SelectorEventInvokers.this.parent;
+            var source = SelectorEventInvokers.this.source;
             return parent.selectListeners(server, this.event, source);
         }
 

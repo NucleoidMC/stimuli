@@ -20,8 +20,8 @@ public interface FluidFlowEvent {
     StimulusEvent<FluidFlowEvent> EVENT = StimulusEvent.create(FluidFlowEvent.class, ctx -> {
         return (world, fluidPos, fluidBlock, flowDirection, flowTo, flowToBlock) -> {
             try {
-                for (FluidFlowEvent listener : ctx.getListeners()) {
-                    ActionResult result = listener.onFluidFlow(world, fluidPos, fluidBlock, flowDirection, flowTo, flowToBlock);
+                for (var listener : ctx.getListeners()) {
+                    var result = listener.onFluidFlow(world, fluidPos, fluidBlock, flowDirection, flowTo, flowToBlock);
                     if (result != ActionResult.PASS) {
                         return result;
                     }

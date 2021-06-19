@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.player.PlayerChatEvent;
 
@@ -30,13 +29,13 @@ public abstract class PlayerManagerMixin {
             return;
         }
 
-        ServerPlayerEntity sender = this.getPlayer(senderUuid);
+        var sender = this.getPlayer(senderUuid);
         if (sender == null) {
             return;
         }
 
-        try (EventInvokers invokers = Stimuli.select().forEntity(sender)) {
-            ActionResult result = invokers.get(PlayerChatEvent.EVENT).onSendChatMessage(sender, message);
+        try (var invokers = Stimuli.select().forEntity(sender)) {
+            var result = invokers.get(PlayerChatEvent.EVENT).onSendChatMessage(sender, message);
             if (result == ActionResult.FAIL) {
                 ci.cancel();
             }

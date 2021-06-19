@@ -19,8 +19,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface PlayerDamageEvent {
     StimulusEvent<PlayerDamageEvent> EVENT = StimulusEvent.create(PlayerDamageEvent.class, ctx -> (player, source, amount) -> {
         try {
-            for (PlayerDamageEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onDamage(player, source, amount);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onDamage(player, source, amount);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

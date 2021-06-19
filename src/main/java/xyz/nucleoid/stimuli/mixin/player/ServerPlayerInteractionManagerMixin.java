@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.block.BlockPunchEvent;
 
@@ -33,8 +32,8 @@ public class ServerPlayerInteractionManagerMixin {
             cancellable = true
     )
     public void processBlockBreakingAction(BlockPos pos, PlayerActionC2SPacket.Action action, Direction direction, int worldHeight, CallbackInfo ci) {
-        try (EventInvokers invokers = Stimuli.select().forEntityAt(this.player, pos)) {
-            ActionResult result = invokers.get(BlockPunchEvent.EVENT).onPunchBlock(this.player, direction, pos);
+        try (var invokers = Stimuli.select().forEntityAt(this.player, pos)) {
+            var result = invokers.get(BlockPunchEvent.EVENT).onPunchBlock(this.player, direction, pos);
             if (result == ActionResult.FAIL) {
                 this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(pos, this.world.getBlockState(pos), action, false, ""));
                 ci.cancel();

@@ -4,16 +4,10 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import xyz.nucleoid.stimuli.EventSource;
 
-final class DimensionFilter implements EventFilter {
-    private final RegistryKey<World> dimension;
-
-    DimensionFilter(RegistryKey<World> dimension) {
-        this.dimension = dimension;
-    }
-
+record DimensionFilter(RegistryKey<World> dimension) implements EventFilter {
     @Override
     public boolean accepts(EventSource source) {
-        RegistryKey<World> dimension = source.getDimension();
+        var dimension = source.getDimension();
         return dimension == null || dimension == this.dimension;
     }
 }

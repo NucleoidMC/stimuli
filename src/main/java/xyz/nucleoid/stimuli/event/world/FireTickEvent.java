@@ -17,8 +17,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface FireTickEvent {
     StimulusEvent<FireTickEvent> EVENT = StimulusEvent.create(FireTickEvent.class, ctx -> (world, pos) -> {
         try {
-            for (FireTickEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onFireTick(world, pos);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onFireTick(world, pos);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

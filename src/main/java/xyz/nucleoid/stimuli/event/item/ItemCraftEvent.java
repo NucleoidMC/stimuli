@@ -20,8 +20,8 @@ public interface ItemCraftEvent {
     StimulusEvent<ItemCraftEvent> EVENT = StimulusEvent.create(ItemCraftEvent.class, ctx -> {
         return (player, recipe) -> {
             try {
-                for (ItemCraftEvent listener : ctx.getListeners()) {
-                    ActionResult result = listener.onCraft(player, recipe);
+                for (var listener : ctx.getListeners()) {
+                    var result = listener.onCraft(player, recipe);
                     if (result != ActionResult.PASS) {
                         return result;
                     }

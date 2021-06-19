@@ -8,19 +8,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.entity.EntityDeathEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityDropItemsEvent;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 @Mixin(LivingEntity.class)
@@ -35,10 +32,10 @@ public abstract class LivingEntityMixin extends Entity {
             return;
         }
 
-        LivingEntity entity = (LivingEntity) (Object) this;
+        var entity = (LivingEntity) (Object) this;
 
-        try (EventInvokers invokers = Stimuli.select().forEntity(entity)) {
-            ActionResult result = invokers.get(EntityDeathEvent.EVENT).onDeath(entity, source);
+        try (var invokers = Stimuli.select().forEntity(entity)) {
+            var result = invokers.get(EntityDeathEvent.EVENT).onDeath(entity, source);
 
             // cancel death if FAIL was returned from any listener
             if (result == ActionResult.FAIL) {
@@ -54,10 +51,10 @@ public abstract class LivingEntityMixin extends Entity {
             return;
         }
 
-        try (EventInvokers invokers = Stimuli.select().forEntity(this)) {
-            List<ItemStack> droppedStacks = lootTable.generateLoot(context);
+        try (var invokers = Stimuli.select().forEntity(this)) {
+            var droppedStacks = lootTable.generateLoot(context);
 
-            TypedActionResult<List<ItemStack>> result = invokers.get(EntityDropItemsEvent.EVENT)
+            var result = invokers.get(EntityDropItemsEvent.EVENT)
                     .onDropItems((LivingEntity) (Object) this, droppedStacks);
 
             if (result.getResult() != ActionResult.FAIL) {

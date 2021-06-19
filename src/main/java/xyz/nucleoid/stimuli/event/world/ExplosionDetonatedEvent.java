@@ -12,7 +12,7 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface ExplosionDetonatedEvent {
     StimulusEvent<ExplosionDetonatedEvent> EVENT = StimulusEvent.create(ExplosionDetonatedEvent.class, ctx -> (explosion, particles) -> {
         try {
-            for (ExplosionDetonatedEvent listener : ctx.getListeners()) {
+            for (var listener : ctx.getListeners()) {
                 listener.onExplosionDetonated(explosion, particles);
             }
         } catch (Throwable t) {

@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.player.PlayerConsumeHungerEvent;
 
@@ -26,8 +25,8 @@ public class HungerManagerMixin {
         }
 
         if (this.exhaustion > 4.0F) {
-            try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-                ActionResult result = invokers.get(PlayerConsumeHungerEvent.EVENT)
+            try (var invokers = Stimuli.select().forEntity(player)) {
+                var result = invokers.get(PlayerConsumeHungerEvent.EVENT)
                         .onConsumeHunger((ServerPlayerEntity) player, this.foodLevel, this.foodSaturationLevel, this.exhaustion);
 
                 if (result == ActionResult.FAIL) {

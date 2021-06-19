@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
 
@@ -23,9 +22,9 @@ public class ExplosionMixin {
     @Inject(method = "affectWorld", at = @At("HEAD"))
     private void affectWorld(boolean particles, CallbackInfo ci) {
         if (!this.world.isClient) {
-            BlockPos pos = new BlockPos(this.x, this.y, this.z);
+            var pos = new BlockPos(this.x, this.y, this.z);
 
-            try (EventInvokers invokers = Stimuli.select().at(this.world, pos)) {
+            try (var invokers = Stimuli.select().at(this.world, pos)) {
                 invokers.get(ExplosionDetonatedEvent.EVENT).onExplosionDetonated((Explosion) (Object) this, particles);
             }
         }

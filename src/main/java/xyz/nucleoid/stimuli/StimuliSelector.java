@@ -58,8 +58,8 @@ public final class StimuliSelector {
 
         @Override
         protected T computeNext() {
-            EventListenerSelector[] selectors = this.selectors;
-            Iterator<T> currentIterator = this.currentIterator;
+            var selectors = this.selectors;
+            var currentIterator = this.currentIterator;
 
             while (currentIterator == null || !currentIterator.hasNext()) {
                 int index = this.selectorIndex++;
@@ -67,7 +67,7 @@ public final class StimuliSelector {
                     return this.endOfData();
                 }
 
-                EventListenerSelector selector = selectors[index];
+                var selector = selectors[index];
                 this.currentIterator = currentIterator = selector.selectListeners(this.server, this.event, this.source);
             }
 

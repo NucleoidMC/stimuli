@@ -19,8 +19,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface TntIgniteEvent {
     StimulusEvent<TntIgniteEvent> EVENT = StimulusEvent.create(TntIgniteEvent.class, ctx -> (world, pos, igniter) -> {
         try {
-            for (TntIgniteEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onIgniteTnt(world, pos, igniter);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onIgniteTnt(world, pos, igniter);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

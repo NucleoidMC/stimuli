@@ -17,8 +17,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface NetherPortalOpenEvent {
     StimulusEvent<NetherPortalOpenEvent> EVENT = StimulusEvent.create(NetherPortalOpenEvent.class, ctx -> (world, lowerCorner) -> {
         try {
-            for (NetherPortalOpenEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onOpenNetherPortal(world, lowerCorner);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onOpenNetherPortal(world, lowerCorner);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

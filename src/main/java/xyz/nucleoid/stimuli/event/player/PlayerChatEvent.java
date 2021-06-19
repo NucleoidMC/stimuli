@@ -18,8 +18,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface PlayerChatEvent {
     StimulusEvent<PlayerChatEvent> EVENT = StimulusEvent.create(PlayerChatEvent.class, ctx -> (sender, message) -> {
         try {
-            for (PlayerChatEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onSendChatMessage(sender, message);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onSendChatMessage(sender, message);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

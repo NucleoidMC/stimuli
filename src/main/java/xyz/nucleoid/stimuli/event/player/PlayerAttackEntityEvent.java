@@ -21,8 +21,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface PlayerAttackEntityEvent {
     StimulusEvent<PlayerAttackEntityEvent> EVENT = StimulusEvent.create(PlayerAttackEntityEvent.class, ctx -> (attacker, hand, attacked, hitResult) -> {
         try {
-            for (PlayerAttackEntityEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onAttackEntity(attacker, hand, attacked, hitResult);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onAttackEntity(attacker, hand, attacked, hitResult);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

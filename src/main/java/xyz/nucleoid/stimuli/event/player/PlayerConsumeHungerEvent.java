@@ -16,8 +16,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface PlayerConsumeHungerEvent {
     StimulusEvent<PlayerConsumeHungerEvent> EVENT = StimulusEvent.create(PlayerConsumeHungerEvent.class, ctx -> (player, foodLevel, saturation, exhaustion) -> {
         try {
-            for (PlayerConsumeHungerEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onConsumeHunger(player, foodLevel, saturation, exhaustion);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onConsumeHunger(player, foodLevel, saturation, exhaustion);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

@@ -22,8 +22,8 @@ public interface EntityUseEvent {
     StimulusEvent<EntityUseEvent> EVENT = StimulusEvent.create(EntityUseEvent.class, ctx -> {
         return (player, entity, hand, hitResult) -> {
             try {
-                for (EntityUseEvent listener : ctx.getListeners()) {
-                    ActionResult result = listener.onUse(player, entity, hand, hitResult);
+                for (var listener : ctx.getListeners()) {
+                    var result = listener.onUse(player, entity, hand, hitResult);
                     if (result != ActionResult.PASS) {
                         return result;
                     }

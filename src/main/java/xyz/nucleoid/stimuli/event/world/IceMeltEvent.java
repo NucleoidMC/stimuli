@@ -17,8 +17,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface IceMeltEvent {
     StimulusEvent<IceMeltEvent> EVENT = StimulusEvent.create(IceMeltEvent.class, ctx -> (world, pos) -> {
         try {
-            for (IceMeltEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onIceMelt(world, pos);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onIceMelt(world, pos);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

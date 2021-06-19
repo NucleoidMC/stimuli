@@ -14,12 +14,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.item.ItemThrowEvent;
-
-import java.util.List;
 
 @Mixin(ScreenHandler.class)
 public class ScreenHandlerMixin {
@@ -50,7 +46,7 @@ public class ScreenHandlerMixin {
 
     @Inject(method = "close", at = @At("HEAD"))
     private void close(PlayerEntity player, CallbackInfo ci) {
-        ItemStack cursor = player.currentScreenHandler.getCursorStack();
+        var cursor = player.currentScreenHandler.getCursorStack();
         if (cursor.isEmpty()) {
             return;
         }
@@ -63,10 +59,10 @@ public class ScreenHandlerMixin {
     }
 
     private boolean shouldBlockThrowingItems(PlayerEntity player, int slot, ItemStack stack) {
-        if (player instanceof ServerPlayerEntity) {
-            try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            try (var invokers = Stimuli.select().forEntity(player)) {
                 return invokers.get(ItemThrowEvent.EVENT)
-                        .onThrowItem((ServerPlayerEntity) player, slot, stack) == ActionResult.FAIL;
+                        .onThrowItem(serverPlayer, slot, stack) == ActionResult.FAIL;
             }
         }
 

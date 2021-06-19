@@ -19,7 +19,7 @@ public final class EventListenerMap implements EventRegistrar {
 
     @Override
     public <T> void unlisten(StimulusEvent<T> event, T listener) {
-        List<Object> listeners = this.listeners.get(event);
+        var listeners = this.listeners.get(event);
         if (listeners != null && listeners.remove(listener)) {
             if (listeners.isEmpty()) {
                 this.listeners.remove(event);

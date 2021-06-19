@@ -20,8 +20,8 @@ public interface ArrowFireEvent {
      */
     StimulusEvent<ArrowFireEvent> EVENT = StimulusEvent.create(ArrowFireEvent.class, ctx -> (user, tool, arrows, remaining, projectile) -> {
         try {
-            for (ArrowFireEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onFireArrow(user, tool, arrows, remaining, projectile);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onFireArrow(user, tool, arrows, remaining, projectile);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

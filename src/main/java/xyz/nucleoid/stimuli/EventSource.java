@@ -66,7 +66,7 @@ public final class EventSource extends PooledObject<EventSource> {
     }
 
     static EventSource acquire(RegistryKey<World> dimension, BlockPos pos, @Nullable Entity entity) {
-        EventSource source = POOL.acquire();
+        var source = POOL.acquire();
         source.set(dimension, pos, entity);
         return source;
     }

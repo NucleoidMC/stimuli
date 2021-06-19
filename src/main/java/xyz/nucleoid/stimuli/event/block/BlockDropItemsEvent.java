@@ -21,8 +21,8 @@ import java.util.List;
 public interface BlockDropItemsEvent {
     StimulusEvent<BlockDropItemsEvent> EVENT = StimulusEvent.create(BlockDropItemsEvent.class, ctx -> (breaker, world, pos, state, dropStacks) -> {
         try {
-            for (BlockDropItemsEvent listener : ctx.getListeners()) {
-                TypedActionResult<List<ItemStack>> result = listener.onDropItems(breaker, world, pos, state, dropStacks);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onDropItems(breaker, world, pos, state, dropStacks);
                 dropStacks = result.getValue();
                 if (result.getResult() != ActionResult.PASS) {
                     return result;

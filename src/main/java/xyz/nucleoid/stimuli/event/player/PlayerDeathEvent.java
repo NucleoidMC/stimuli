@@ -19,8 +19,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface PlayerDeathEvent {
     StimulusEvent<PlayerDeathEvent> EVENT = StimulusEvent.create(PlayerDeathEvent.class, ctx -> (player, source) -> {
         try {
-            for (PlayerDeathEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onDeath(player, source);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onDeath(player, source);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

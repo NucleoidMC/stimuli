@@ -20,8 +20,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface BlockPunchEvent {
     StimulusEvent<BlockPunchEvent> EVENT = StimulusEvent.create(BlockPunchEvent.class, ctx -> (puncher, direction, pos) -> {
         try {
-            for (BlockPunchEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onPunchBlock(puncher, direction, pos);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onPunchBlock(puncher, direction, pos);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

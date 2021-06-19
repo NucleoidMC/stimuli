@@ -21,10 +21,10 @@ public final class StimuliInitializer implements ModInitializer {
     @Override
     public void onInitialize() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hit) -> {
-            if (player instanceof ServerPlayerEntity) {
-                try (EventInvokers invokers = Stimuli.select().forEntityAt(player, entity.getBlockPos())) {
-                    ActionResult result = invokers.get(EntityUseEvent.EVENT)
-                            .onUse((ServerPlayerEntity) player, entity, hand, hit);
+            if (player instanceof ServerPlayerEntity serverPlayer) {
+                try (var invokers = Stimuli.select().forEntityAt(player, entity.getBlockPos())) {
+                    var result = invokers.get(EntityUseEvent.EVENT)
+                            .onUse(serverPlayer, entity, hand, hit);
                     if (result != ActionResult.PASS) {
                         return result;
                     }
@@ -35,36 +35,36 @@ public final class StimuliInitializer implements ModInitializer {
         });
 
         UseItemCallback.EVENT.register((player, world, hand) -> {
-            if (player instanceof ServerPlayerEntity) {
-                try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-                    return invokers.get(ItemUseEvent.EVENT).onUse((ServerPlayerEntity) player, hand);
+            if (player instanceof ServerPlayerEntity serverPlayer) {
+                try (var invokers = Stimuli.select().forEntity(player)) {
+                    return invokers.get(ItemUseEvent.EVENT).onUse(serverPlayer, hand);
                 }
             }
             return TypedActionResult.pass(ItemStack.EMPTY);
         });
 
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            if (player instanceof ServerPlayerEntity) {
-                try (EventInvokers invokers = Stimuli.select().forEntityAt(player, hitResult.getBlockPos())) {
-                    return invokers.get(BlockUseEvent.EVENT).onUse((ServerPlayerEntity) player, hand, hitResult);
+            if (player instanceof ServerPlayerEntity serverPlayer) {
+                try (var invokers = Stimuli.select().forEntityAt(player, hitResult.getBlockPos())) {
+                    return invokers.get(BlockUseEvent.EVENT).onUse(serverPlayer, hand, hitResult);
                 }
             }
             return ActionResult.PASS;
         });
 
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
-            if (player instanceof ServerPlayerEntity) {
-                try (EventInvokers invokers = Stimuli.select().forEntityAt(player, pos)) {
-                    return invokers.get(BlockBreakEvent.EVENT).onBreak((ServerPlayerEntity) player, (ServerWorld) world, pos) != ActionResult.FAIL;
+            if (player instanceof ServerPlayerEntity serverPlayer) {
+                try (var invokers = Stimuli.select().forEntityAt(player, pos)) {
+                    return invokers.get(BlockBreakEvent.EVENT).onBreak(serverPlayer, (ServerWorld) world, pos) != ActionResult.FAIL;
                 }
             }
             return true;
         });
 
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if (player instanceof ServerPlayerEntity) {
-                try (EventInvokers invokers = Stimuli.select().forEntityAt(player, entity.getBlockPos())) {
-                    return invokers.get(PlayerAttackEntityEvent.EVENT).onAttackEntity((ServerPlayerEntity) player, hand, entity, hitResult);
+            if (player instanceof ServerPlayerEntity serverPlayer) {
+                try (var invokers = Stimuli.select().forEntityAt(player, entity.getBlockPos())) {
+                    return invokers.get(PlayerAttackEntityEvent.EVENT).onAttackEntity(serverPlayer, hand, entity, hitResult);
                 }
             }
             return ActionResult.PASS;

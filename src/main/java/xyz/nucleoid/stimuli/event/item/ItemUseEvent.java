@@ -21,8 +21,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface ItemUseEvent {
     StimulusEvent<ItemUseEvent> EVENT = StimulusEvent.create(ItemUseEvent.class, ctx -> (player, hand) -> {
         try {
-            for (ItemUseEvent listener : ctx.getListeners()) {
-                TypedActionResult<ItemStack> result = listener.onUse(player, hand);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onUse(player, hand);
                 if (result.getResult() != ActionResult.PASS) {
                     return result;
                 }

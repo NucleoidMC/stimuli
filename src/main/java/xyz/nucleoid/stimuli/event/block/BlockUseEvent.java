@@ -20,8 +20,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface BlockUseEvent {
     StimulusEvent<BlockUseEvent> EVENT = StimulusEvent.create(BlockUseEvent.class, ctx -> (player, hand, hitResult) -> {
         try {
-            for (BlockUseEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onUse(player, hand, hitResult);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onUse(player, hand, hitResult);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

@@ -18,8 +18,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface ItemThrowEvent {
     StimulusEvent<ItemThrowEvent> EVENT = StimulusEvent.create(ItemThrowEvent.class, ctx -> (player, slot, stack) -> {
         try {
-            for (ItemThrowEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onThrowItem(player, slot, stack);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onThrowItem(player, slot, stack);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

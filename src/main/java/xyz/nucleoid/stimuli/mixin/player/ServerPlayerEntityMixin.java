@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
@@ -17,10 +16,10 @@ import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 public class ServerPlayerEntityMixin {
     @Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
     private void onDeath(DamageSource source, CallbackInfo ci) {
-        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
+        var player = (ServerPlayerEntity) (Object) this;
 
-        try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-            ActionResult result = invokers.get(PlayerDeathEvent.EVENT).onDeath(player, source);
+        try (var invokers = Stimuli.select().forEntity(player)) {
+            var result = invokers.get(PlayerDeathEvent.EVENT).onDeath(player, source);
             if (result == ActionResult.FAIL) {
                 if (player.getHealth() <= 0.0F) {
                     player.setHealth(player.getMaxHealth());
@@ -32,10 +31,10 @@ public class ServerPlayerEntityMixin {
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
-        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
+        var player = (ServerPlayerEntity) (Object) this;
 
-        try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-            ActionResult result = invokers.get(PlayerDamageEvent.EVENT).onDamage(player, source, amount);
+        try (var invokers = Stimuli.select().forEntity(player)) {
+            var result = invokers.get(PlayerDamageEvent.EVENT).onDamage(player, source, amount);
             if (result == ActionResult.FAIL) {
                 ci.cancel();
             }

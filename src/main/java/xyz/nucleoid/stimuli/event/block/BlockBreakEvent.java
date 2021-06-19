@@ -20,8 +20,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface BlockBreakEvent {
     StimulusEvent<BlockBreakEvent> EVENT = StimulusEvent.create(BlockBreakEvent.class, ctx -> (player, world, pos) -> {
         try {
-            for (BlockBreakEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onBreak(player, world, pos);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onBreak(player, world, pos);
                 if (result != ActionResult.PASS) {
                     return result;
                 }

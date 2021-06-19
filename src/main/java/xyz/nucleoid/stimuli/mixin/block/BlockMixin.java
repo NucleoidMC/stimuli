@@ -7,15 +7,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.StimuliSelector;
 import xyz.nucleoid.stimuli.event.block.BlockDropItemsEvent;
 
 import java.util.List;
@@ -37,14 +34,14 @@ public class BlockMixin {
             return;
         }
 
-        StimuliSelector events = Stimuli.select();
+        var events = Stimuli.select();
 
-        try (EventInvokers invokers = entity != null ? events.forEntityAt(entity, pos) : events.at(world, pos)) {
-            TypedActionResult<List<ItemStack>> result = invokers.get(BlockDropItemsEvent.EVENT)
+        try (var invokers = entity != null ? events.forEntityAt(entity, pos) : events.at(world, pos)) {
+            var result = invokers.get(BlockDropItemsEvent.EVENT)
                     .onDropItems(entity, (ServerWorld) world, pos, state, stacks);
 
             if (result.getResult() != ActionResult.FAIL) {
-                List<ItemStack> newStacks = result.getValue();
+                var newStacks = result.getValue();
                 newStacks.forEach(action);
             }
         }

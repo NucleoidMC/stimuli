@@ -27,7 +27,7 @@ public interface ObjectPool<T extends PooledObject<T>> {
 
         @Override
         public T acquire() {
-            T object = this.object.getAndSet(null);
+            var object = this.object.getAndSet(null);
             if (object == null) {
                 object = this.factory.create(this);
             }
@@ -66,7 +66,7 @@ public interface ObjectPool<T extends PooledObject<T>> {
                 }
 
                 if (this.pointer.compareAndSet(pointer, pointer - 1)) {
-                    T object = this.array.getAndSet(pointer, null);
+                    var object = this.array.getAndSet(pointer, null);
                     if (object == null) {
                         // this value hasn't been set yet: try again
                         continue;

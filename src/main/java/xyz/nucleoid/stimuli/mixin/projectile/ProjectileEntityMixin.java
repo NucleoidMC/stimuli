@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.projectile.ProjectileHitEvent;
 
@@ -28,15 +27,15 @@ public abstract class ProjectileEntityMixin extends Entity {
             return;
         }
 
-        try (EventInvokers invokers = Stimuli.select().forEntity(this)) {
-            ProjectileEntity self = (ProjectileEntity) (Object) this;
+        try (var invokers = Stimuli.select().forEntity(this)) {
+            var self = (ProjectileEntity) (Object) this;
             if (hitResult.getType() == HitResult.Type.ENTITY) {
-                ActionResult result = invokers.get(ProjectileHitEvent.ENTITY).onHitEntity(self, (EntityHitResult) hitResult);
+                var result = invokers.get(ProjectileHitEvent.ENTITY).onHitEntity(self, (EntityHitResult) hitResult);
                 if (result == ActionResult.FAIL) {
                     ci.cancel();
                 }
             } else if (hitResult.getType() == HitResult.Type.BLOCK) {
-                ActionResult result = invokers.get(ProjectileHitEvent.BLOCK).onHitBlock(self, (BlockHitResult) hitResult);
+                var result = invokers.get(ProjectileHitEvent.BLOCK).onHitBlock(self, (BlockHitResult) hitResult);
                 if (result == ActionResult.FAIL) {
                     ci.cancel();
                 }

@@ -21,8 +21,8 @@ public interface ItemPickupEvent {
     StimulusEvent<ItemPickupEvent> EVENT = StimulusEvent.create(ItemPickupEvent.class, ctx -> {
         return (player, entity, stack) -> {
             try {
-                for (ItemPickupEvent listener : ctx.getListeners()) {
-                    ActionResult result = listener.onPickupItem(player, entity, stack);
+                for (var listener : ctx.getListeners()) {
+                    var result = listener.onPickupItem(player, entity, stack);
                     if (result != ActionResult.PASS) {
                         return result;
                     }

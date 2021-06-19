@@ -22,8 +22,8 @@ public final class BlockPlaceEvent {
      */
     public static final StimulusEvent<Before> BEFORE = StimulusEvent.create(Before.class, ctx -> (player, world, pos, state, context) -> {
         try {
-            for (Before listener : ctx.getListeners()) {
-                ActionResult result = listener.onPlace(player, world, pos, state, context);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onPlace(player, world, pos, state, context);
                 if (result != ActionResult.PASS) {
                     return result;
                 }
@@ -39,7 +39,7 @@ public final class BlockPlaceEvent {
      */
     public static final StimulusEvent<After> AFTER = StimulusEvent.create(After.class, ctx -> (player, world, pos, state) -> {
         try {
-            for (After listener : ctx.getListeners()) {
+            for (var listener : ctx.getListeners()) {
                 listener.onPlace(player, world, pos, state);
             }
         } catch (Throwable t) {

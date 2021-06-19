@@ -8,7 +8,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.item.ItemCraftEvent;
 
@@ -16,8 +15,8 @@ import xyz.nucleoid.stimuli.event.item.ItemCraftEvent;
 public abstract class CraftingResultInventoryMixin implements RecipeUnlocker {
     @Override
     public boolean shouldCraftRecipe(World world, ServerPlayerEntity player, Recipe<?> recipe) {
-        try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-            ActionResult result = invokers.get(ItemCraftEvent.EVENT).onCraft(player, recipe);
+        try (var invokers = Stimuli.select().forEntity(player)) {
+            var result = invokers.get(ItemCraftEvent.EVENT).onCraft(player, recipe);
             if (result == ActionResult.FAIL) {
                 return false;
             }

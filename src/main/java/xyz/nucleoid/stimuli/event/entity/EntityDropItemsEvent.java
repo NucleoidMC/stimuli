@@ -23,8 +23,8 @@ import java.util.List;
 public interface EntityDropItemsEvent {
     StimulusEvent<EntityDropItemsEvent> EVENT = StimulusEvent.create(EntityDropItemsEvent.class, ctx -> (dropper, items) -> {
         try {
-            for (EntityDropItemsEvent listener : ctx.getListeners()) {
-                TypedActionResult<List<ItemStack>> result = listener.onDropItems(dropper, items);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onDropItems(dropper, items);
 
                 // modify items from listener (some may want to pass while still modifying items)
                 items = result.getValue();

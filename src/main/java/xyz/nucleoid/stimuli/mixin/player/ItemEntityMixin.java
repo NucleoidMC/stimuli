@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.item.ItemPickupEvent;
 
@@ -35,9 +34,9 @@ public abstract class ItemEntityMixin extends Entity {
             return;
         }
 
-        try (EventInvokers invokers = Stimuli.select().forEntityAt(player, this.getBlockPos())) {
-            ItemEntity itemEntity = (ItemEntity) (Object) this;
-            ActionResult result = invokers.get(ItemPickupEvent.EVENT)
+        try (var invokers = Stimuli.select().forEntityAt(player, this.getBlockPos())) {
+            var itemEntity = (ItemEntity) (Object) this;
+            var result = invokers.get(ItemPickupEvent.EVENT)
                     .onPickupItem((ServerPlayerEntity) player, itemEntity, itemEntity.getStack());
 
             if (result == ActionResult.FAIL) {

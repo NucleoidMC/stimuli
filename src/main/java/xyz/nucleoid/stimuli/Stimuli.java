@@ -53,13 +53,7 @@ public final class Stimuli {
             this.listeners.unlisten(event, listener);
         }
 
-        static final class Selector implements EventListenerSelector {
-            private final EventListenerMap listeners;
-
-            Selector(EventListenerMap listeners) {
-                this.listeners = listeners;
-            }
-
+        record Selector(EventListenerMap listeners) implements EventListenerSelector {
             @Override
             public <T> Iterator<T> selectListeners(MinecraftServer server, StimulusEvent<T> event, EventSource source) {
                 return this.listeners.get(event).iterator();

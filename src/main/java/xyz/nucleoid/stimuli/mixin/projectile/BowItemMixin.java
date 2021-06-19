@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import xyz.nucleoid.stimuli.EventInvokers;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.projectile.ArrowFireEvent;
 
@@ -46,8 +45,8 @@ public class BowItemMixin {
             return;
         }
 
-        try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
-            ActionResult result = invokers.get(ArrowFireEvent.EVENT)
+        try (var invokers = Stimuli.select().forEntity(player)) {
+            var result = invokers.get(ArrowFireEvent.EVENT)
                     .onFireArrow((ServerPlayerEntity) player, tool, item, remainingUseTicks, projectile);
 
             if (result == ActionResult.FAIL) {

@@ -28,9 +28,9 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             return;
         }
 
-        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
+        var player = (ServerPlayerEntity) (Object) this;
         int slot = player.getInventory().selectedSlot;
-        ItemStack stack = player.getInventory().getStack(slot);
+        var stack = player.getInventory().getStack(slot);
 
         try (EventInvokers invokers = Stimuli.select().forEntity(player)) {
             ActionResult result = invokers.get(ItemThrowEvent.EVENT).onThrowItem(player, slot, stack);

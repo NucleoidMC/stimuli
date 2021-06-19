@@ -17,8 +17,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 public interface WitherSummonEvent {
     StimulusEvent<WitherSummonEvent> EVENT = StimulusEvent.create(WitherSummonEvent.class, ctx -> (world, pos) -> {
         try {
-            for (WitherSummonEvent listener : ctx.getListeners()) {
-                ActionResult result = listener.onSummonWither(world, pos);
+            for (var listener : ctx.getListeners()) {
+                var result = listener.onSummonWither(world, pos);
                 if (result != ActionResult.PASS) {
                     return result;
                 }
