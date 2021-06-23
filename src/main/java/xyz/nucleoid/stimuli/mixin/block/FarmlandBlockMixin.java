@@ -19,9 +19,9 @@ import xyz.nucleoid.stimuli.event.block.BlockBreakEvent;
 public class FarmlandBlockMixin {
     @Inject(method = "onLandedUpon", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/FarmlandBlock;setToDirt(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V", shift = At.Shift.BEFORE), cancellable = true)
     private void breakFarmland(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci) {
-        if (world instanceof ServerWorld serverWorld) {
+        if (world instanceof ServerWorld serverWorld && entity instanceof ServerPlayerEntity player) {
             try (var invokers = Stimuli.select().at(world, pos)) {
-                var result = invokers.get(BlockBreakEvent.EVENT).onBreak((ServerPlayerEntity) entity, serverWorld, pos);
+                var result = invokers.get(BlockBreakEvent.EVENT).onBreak(player, serverWorld, pos);
                 if (result == ActionResult.FAIL) {
                     ci.cancel();
                 }
