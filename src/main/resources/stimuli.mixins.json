@@ -25,7 +25,8 @@
     "world.FrostedIceBlockMixin",
     "world.IceBlockMixin",
     "world.TntBlockMixin",
-    "world.WitherSkullBlockMixin"
+    "world.WitherSkullBlockMixin",
+    "world.ServerWorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1
