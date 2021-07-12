@@ -8,6 +8,7 @@
     "block.BlockMixin",
     "block.FarmlandBlockMixin",
     "entity.LivingEntityMixin",
+    "player.ClientConnectionMixin",
     "player.CraftingResultInventoryMixin",
     "player.HungerManagerMixin",
     "player.ItemEntityMixin",
@@ -24,9 +25,9 @@
     "world.FlowableFluidMixin",
     "world.FrostedIceBlockMixin",
     "world.IceBlockMixin",
+    "world.ServerWorldMixin",
     "world.TntBlockMixin",
-    "world.WitherSkullBlockMixin",
-    "world.ServerWorldMixin"
+    "world.WitherSkullBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1
