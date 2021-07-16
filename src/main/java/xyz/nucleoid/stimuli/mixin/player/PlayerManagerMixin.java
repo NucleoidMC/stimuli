@@ -16,6 +16,7 @@ import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.player.PlayerChatEvent;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
@@ -24,21 +25,32 @@ public abstract class PlayerManagerMixin {
     public abstract ServerPlayerEntity getPlayer(UUID uuid);
 
     @Inject(method = "broadcastChatMessage", at = @At("HEAD"), cancellable = true)
-    public void broadcastChatMessage(Text message, MessageType type, UUID senderUuid, CallbackInfo ci) {
-        if (type != MessageType.CHAT || senderUuid == Util.NIL_UUID) {
-            return;
+    public void broadcastChatMessage(Text message, MessageType type, UUID senderId, CallbackInfo ci) {
+        if (this.handleChatMessage(message, type, senderId)) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "broadcast", at = @At("HEAD"), cancellable = true)
+    public void broadcast(Text message, Function<ServerPlayerEntity, Text> messageFactory, MessageType type, UUID senderId, CallbackInfo ci) {
+        if (this.handleChatMessage(message, type, senderId)) {
+            ci.cancel();
+        }
+    }
+
+    private boolean handleChatMessage(Text message, MessageType type, UUID senderId) {
+        if (type != MessageType.CHAT || senderId == Util.NIL_UUID) {
+            return false;
         }
 
-        var sender = this.getPlayer(senderUuid);
+        var sender = this.getPlayer(senderId);
         if (sender == null) {
-            return;
+            return false;
         }
 
         try (var invokers = Stimuli.select().forEntity(sender)) {
             var result = invokers.get(PlayerChatEvent.EVENT).onSendChatMessage(sender, message);
-            if (result == ActionResult.FAIL) {
-                ci.cancel();
-            }
+            return result == ActionResult.FAIL;
         }
     }
 }
