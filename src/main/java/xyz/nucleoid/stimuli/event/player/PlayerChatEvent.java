@@ -6,7 +6,7 @@ import net.minecraft.util.ActionResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} sends a message in chat.
+ * Called when a {@link ServerPlayerEntity} sends a message in chat. Message uses it's final formatting
  *
  * <p>Upon return:
  * <ul>
