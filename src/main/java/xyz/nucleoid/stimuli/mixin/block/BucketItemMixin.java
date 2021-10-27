@@ -32,8 +32,9 @@ public class BucketItemMixin {
     private void onPlace(PlayerEntity player, World world, BlockPos pos, BlockHitResult hitResult, CallbackInfoReturnable<Boolean> cir, BlockState state) {
         if (world instanceof ServerWorld serverWorld) {
             var serverPlayer = player instanceof ServerPlayerEntity sp ? sp : null;
+            var events = Stimuli.select();
 
-            try (var invokers = Stimuli.select().forEntityAt(player, pos)) {
+            try (var invokers = player != null ? events.forEntityAt(player, pos) : events.at(world, pos)) {
                 var result = invokers.get(FluidPlaceEvent.EVENT).onFluidPlace(serverWorld, pos, serverPlayer, hitResult);
                 if (result == ActionResult.FAIL) {
                     if (serverPlayer != null) {
