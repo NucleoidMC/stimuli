@@ -24,14 +24,14 @@ public abstract class PlayerManagerMixin {
     @Nullable
     public abstract ServerPlayerEntity getPlayer(UUID uuid);
 
-    @Inject(method = "broadcast", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "broadcast(Lnet/minecraft/text/Text;Lnet/minecraft/network/MessageType;Ljava/util/UUID;)V", at = @At("HEAD"), cancellable = true)
     public void broadcastChatMessage(Text message, MessageType type, UUID senderId, CallbackInfo ci) {
         if (this.handleChatMessage(message, type, senderId)) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "broadcast", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "broadcast(Lnet/minecraft/text/Text;Ljava/util/function/Function;Lnet/minecraft/network/MessageType;Ljava/util/UUID;)V", at = @At("HEAD"), cancellable = true)
     public void broadcast(Text message, Function<ServerPlayerEntity, Text> messageFactory, MessageType type, UUID senderId, CallbackInfo ci) {
         if (this.handleChatMessage(message, type, senderId)) {
             ci.cancel();
