@@ -22,6 +22,7 @@
     "projectile.BowItemMixin",
     "projectile.ProjectileEntityMixin",
     "world.AreaHelperMixin",
+    "world.EnderEyeItemMixin",
     "world.ExplosionMixin",
     "world.FireBlockMixin",
     "world.FlowableFluidMixin",
