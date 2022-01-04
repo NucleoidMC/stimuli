@@ -10,7 +10,7 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 public interface ArrowFireEvent {
     /**
-     * Called when a {@link ServerPlayerEntity} fires an {@link ArrowEntity} from a bow.
+     * Called when a {@link ServerPlayerEntity} fires an {@link ArrowEntity} from a bow or crossbow.
      *
      * <p>Upon return:
      * <ul>
