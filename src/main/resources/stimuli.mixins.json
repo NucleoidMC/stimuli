@@ -20,6 +20,7 @@
     "player.ServerPlayerInteractionManagerMixin",
     "player.ServerPlayNetworkHandlerMixin",
     "projectile.BowItemMixin",
+    "projectile.CrossbowItemMixin",
     "projectile.ProjectileEntityMixin",
     "world.AreaHelperMixin",
     "world.EnderEyeItemMixin",
