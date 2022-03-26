@@ -8,6 +8,7 @@
     "block.BlockMixin",
     "block.BucketItemMixin",
     "block.FarmlandBlockMixin",
+    "block.TurtleEggBlockMixin",
     "entity.LivingEntityMixin",
     "player.ClientConnectionMixin",
     "player.CraftingResultInventoryMixin",
