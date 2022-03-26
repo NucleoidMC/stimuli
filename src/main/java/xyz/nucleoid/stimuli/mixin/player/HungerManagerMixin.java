@@ -18,7 +18,7 @@ import xyz.nucleoid.stimuli.event.player.PlayerRegenerateEvent;
 @Mixin(HungerManager.class)
 public class HungerManagerMixin {
     @Shadow private int foodLevel;
-    @Shadow private float foodSaturationLevel;
+    @Shadow private float saturationLevel;
     @Shadow private float exhaustion;
 
     @Inject(method = "update", at = @At("HEAD"))
@@ -30,7 +30,7 @@ public class HungerManagerMixin {
         if (this.exhaustion > 4.0F) {
             try (var invokers = Stimuli.select().forEntity(player)) {
                 var result = invokers.get(PlayerConsumeHungerEvent.EVENT)
-                        .onConsumeHunger((ServerPlayerEntity) player, this.foodLevel, this.foodSaturationLevel, this.exhaustion);
+                        .onConsumeHunger((ServerPlayerEntity) player, this.foodLevel, this.saturationLevel, this.exhaustion);
 
                 if (result == ActionResult.FAIL) {
                     this.exhaustion = 0.0F;
