@@ -5,6 +5,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.server.filter.TextStream;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -44,6 +45,16 @@ public class ServerPlayNetworkHandlerMixin {
     private void onInventoryAction(ClickSlotC2SPacket packet, CallbackInfo ci) {
         try (var invokers = Stimuli.select().forEntity(this.player)) {
             var result = invokers.get(PlayerInventoryActionEvent.EVENT).onInventoryAction(this.player, packet.getSlot(), packet.getActionType(), packet.getButton());
+            if (result == ActionResult.FAIL) {
+                ci.cancel();
+            }
+        }
+    }
+
+    @Inject(method = "onPlayerAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getStackInHand(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;", ordinal = 0), cancellable = true)
+    private void onSwapWithOffhand(PlayerActionC2SPacket packet, CallbackInfo ci) {
+        try (var invokers = Stimuli.select().forEntity(this.player)) {
+            var result = invokers.get(PlayerSwapWithOffhandEvent.EVENT).onSwapWithOffhand(this.player);
             if (result == ActionResult.FAIL) {
                 ci.cancel();
             }
