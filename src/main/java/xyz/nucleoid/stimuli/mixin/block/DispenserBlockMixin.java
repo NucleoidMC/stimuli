@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.block.DispenserUseEvent;
+import xyz.nucleoid.stimuli.event.block.DispenserActivateEvent;
 
 @Mixin(DispenserBlock.class)
 public class DispenserBlockMixin {
@@ -25,14 +25,14 @@ public class DispenserBlockMixin {
                     target = "Lnet/minecraft/block/DispenserBlock;getBehaviorForItem(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/block/dispenser/DispenserBehavior;",
                     shift = At.Shift.BEFORE
             ),
-            locals = LocalCapture.CAPTURE_FAILSOFT,
+            locals = LocalCapture.CAPTURE_FAILHARD,
             cancellable = true
     )
     private void useDispenser(ServerWorld world, BlockPos pos, CallbackInfo ci, BlockPointerImpl blockPointerImpl, DispenserBlockEntity dispenserBlockEntity, int slot, ItemStack itemStack) {
         var events = Stimuli.select();
 
         try (var invokers = events.at(world, pos)) {
-            var result = invokers.get(DispenserUseEvent.EVENT).onUse(world, pos, blockPointerImpl, dispenserBlockEntity, slot, itemStack);
+            var result = invokers.get(DispenserActivateEvent.EVENT).onActivate(world, pos, blockPointerImpl, dispenserBlockEntity, slot, itemStack);
             if (result == ActionResult.FAIL) {
                 ci.cancel();
             }
