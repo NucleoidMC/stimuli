@@ -4,6 +4,7 @@
   "package": "xyz.nucleoid.stimuli.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "block.BedItemMixin",
     "block.BlockItemMixin",
     "block.BlockMixin",
     "block.BucketItemMixin",
