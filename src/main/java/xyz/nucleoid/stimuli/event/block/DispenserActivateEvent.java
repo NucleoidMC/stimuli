@@ -20,10 +20,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * If all listeners return {@link ActionResult#PASS}, the use succeeds and proceeds with normal logic.
  */
 public interface DispenserActivateEvent {
-    StimulusEvent<DispenserActivateEvent> EVENT = StimulusEvent.create(DispenserActivateEvent.class, ctx -> (world, pos, blockPointer, dispenserBlockEntity, slot, stackToDispense) -> {
+    StimulusEvent<DispenserActivateEvent> EVENT = StimulusEvent.create(DispenserActivateEvent.class, ctx -> (world, pos, dispenserBlockEntity, slot, stackToDispense) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onActivate(world, pos, blockPointer, dispenserBlockEntity, slot, stackToDispense);
+                var result = listener.onActivate(world, pos, dispenserBlockEntity, slot, stackToDispense);
                 if (result != ActionResult.PASS) {
                     return result;
                 }
@@ -34,5 +34,5 @@ public interface DispenserActivateEvent {
         return ActionResult.PASS;
     });
 
-    ActionResult onActivate(ServerWorld world, BlockPos pos, BlockPointer blockPointer, DispenserBlockEntity dispenserBlockEntity, int slot, ItemStack stackToDispense);
+    ActionResult onActivate(ServerWorld world, BlockPos pos, DispenserBlockEntity dispenserBlockEntity, int slot, ItemStack stackToDispense);
 }

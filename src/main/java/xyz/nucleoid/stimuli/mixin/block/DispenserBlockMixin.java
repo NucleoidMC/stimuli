@@ -32,7 +32,7 @@ public class DispenserBlockMixin {
         var events = Stimuli.select();
 
         try (var invokers = events.at(world, pos)) {
-            var result = invokers.get(DispenserActivateEvent.EVENT).onActivate(world, pos, blockPointerImpl, dispenserBlockEntity, slot, itemStack);
+            var result = invokers.get(DispenserActivateEvent.EVENT).onActivate(world, pos, dispenserBlockEntity, slot, itemStack);
             if (result == ActionResult.FAIL) {
                 ci.cancel();
             }
