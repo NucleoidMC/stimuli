@@ -52,9 +52,10 @@ public class ExplosionMixin {
 
         var events = Stimuli.select();
 
-        try (var invokers = entity != null ? events.forEntityAt(entity, this.entity.getBlockPos()) : events.at(world, this.entity.getBlockPos())) {
+        var pos = this.entity != null ? this.entity.getBlockPos() : new BlockPos(this.x, this.y, this.z);
+        try (var invokers = this.entity != null ? events.forEntityAt(this.entity, pos) : events.at(world, pos)) {
             var result = invokers.get(BlockDropItemsEvent.EVENT)
-                    .onDropItems(entity, (ServerWorld) world, this.entity.getBlockPos(), state, stacks);
+                    .onDropItems(entity, (ServerWorld) world, pos, state, stacks);
 
             if (result.getResult() != ActionResult.FAIL) {
                 return result.getValue();

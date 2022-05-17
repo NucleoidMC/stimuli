@@ -51,31 +51,4 @@ public class ServerWorldMixin {
 
         return true;
     }
-
-    @Redirect(method = "tickChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;randomTick(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Ljava/util/Random;)V"))
-    private void applyBlockRandomTickEvent(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        try (var invokers = Stimuli.select().at(world, pos)) {
-            var result = invokers.get(BlockRandomTickEvent.EVENT).onBlockRandomTick(world, pos, state);
-            if (result == ActionResult.FAIL) {
-                return;
-            }
-        }
-
-        state.randomTick(world, pos, random);
-    }
-
-    @Redirect(method = "tickChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/FluidState;onRandomTick(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Ljava/util/Random;)V"))
-    private void applyFluidRandomTickEvent(FluidState state, World world, BlockPos pos, Random random) {
-        ServerWorld serverWorld = (ServerWorld) world;
-
-        try (var invokers = Stimuli.select().at(world, pos)) {
-            var result = invokers.get(FluidRandomTickEvent.EVENT).onFluidRandomTick(serverWorld, pos, state);
-            if (result == ActionResult.FAIL) {
-                return;
-            }
-        }
-
-        state.onRandomTick(world, pos, random);
-    }
-
 }
