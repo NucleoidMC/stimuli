@@ -4,9 +4,9 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
+import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.server.filter.TextStream;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
@@ -61,27 +61,10 @@ public class ServerPlayNetworkHandlerMixin {
         }
     }
 
-    @Inject(method = "handleMessage", at = @At("HEAD"), cancellable = true)
-    private void onChatMessage(TextStream.Message message, CallbackInfo ci) {
-        var raw = message.getRaw();
-        if (!raw.startsWith("/")) {
-            try (var invokers = Stimuli.select().forEntity(this.player)) {
-                var mutable = new PlayerChatContentEvent.MutableMessage(raw, message.getFiltered());
-                var result = invokers.get(PlayerChatContentEvent.EVENT).onSendChat(this.player, mutable);
-                if (result == ActionResult.FAIL) {
-                    ci.cancel();
-                } else {
-                    ((MessageAccessor) message).setRaw(mutable.getRaw());
-                    ((MessageAccessor) message).setFiltered(mutable.getFiltered());
-                }
-            }
-        }
-    }
-
-    @Inject(method = "executeCommand", at = @At("HEAD"), cancellable = true)
-    private void onCommandExecution(String input, CallbackInfo ci) {
+    @Inject(method = "onCommandExecution", at = @At("HEAD"), cancellable = true)
+    private void onCommandExecution(CommandExecutionC2SPacket packet, CallbackInfo ci) {
         try (var invokers = Stimuli.select().forEntity(this.player)) {
-            var result = invokers.get(PlayerCommandEvent.EVENT).onPlayerCommand(this.player, input);
+            var result = invokers.get(PlayerCommandEvent.EVENT).onPlayerCommand(this.player, packet.command());
             if (result == ActionResult.FAIL) {
                 ci.cancel();
             }

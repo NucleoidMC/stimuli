@@ -1,11 +1,14 @@
 package xyz.nucleoid.stimuli.mixin.player;
 
+import net.minecraft.network.MessageSender;
 import net.minecraft.network.MessageType;
+import net.minecraft.network.encryption.SignedChatMessage;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Util;
+import net.minecraft.util.registry.RegistryKey;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,31 +27,24 @@ public abstract class PlayerManagerMixin {
     @Nullable
     public abstract ServerPlayerEntity getPlayer(UUID uuid);
 
-    @Inject(method = "broadcast(Lnet/minecraft/text/Text;Lnet/minecraft/network/MessageType;Ljava/util/UUID;)V", at = @At("HEAD"), cancellable = true)
-    public void broadcastChatMessage(Text message, MessageType type, UUID senderId, CallbackInfo ci) {
-        if (this.handleChatMessage(message, type, senderId)) {
+    @Inject(method = "broadcast(Lnet/minecraft/network/encryption/SignedChatMessage;Ljava/util/function/Function;Lnet/minecraft/network/MessageSender;Lnet/minecraft/util/registry/RegistryKey;)V", at = @At("HEAD"), cancellable = true)
+    public void broadcast(SignedChatMessage message, Function<ServerPlayerEntity, SignedChatMessage> messageFactory, MessageSender sender, RegistryKey<MessageType> type, CallbackInfo ci) {
+        if (this.handleChatMessage(message, type, sender)) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "broadcast(Lnet/minecraft/text/Text;Ljava/util/function/Function;Lnet/minecraft/network/MessageType;Ljava/util/UUID;)V", at = @At("HEAD"), cancellable = true)
-    public void broadcast(Text message, Function<ServerPlayerEntity, Text> messageFactory, MessageType type, UUID senderId, CallbackInfo ci) {
-        if (this.handleChatMessage(message, type, senderId)) {
-            ci.cancel();
-        }
-    }
-
-    private boolean handleChatMessage(Text message, MessageType type, UUID senderId) {
-        if (type != MessageType.CHAT || senderId == Util.NIL_UUID) {
+    private boolean handleChatMessage(SignedChatMessage message, RegistryKey<MessageType> type, MessageSender sender) {
+        if (type != MessageType.CHAT || sender.uuid() == Util.NIL_UUID) {
             return false;
         }
 
-        var sender = this.getPlayer(senderId);
-        if (sender == null) {
+        var senderEntity = this.getPlayer(sender.uuid());
+        if (senderEntity == null) {
             return false;
         }
 
-        try (var invokers = Stimuli.select().forEntity(sender)) {
+        try (var invokers = Stimuli.select().forEntity(senderEntity)) {
             var result = invokers.get(PlayerChatEvent.EVENT).onSendChatMessage(sender, message);
             return result == ActionResult.FAIL;
         }
