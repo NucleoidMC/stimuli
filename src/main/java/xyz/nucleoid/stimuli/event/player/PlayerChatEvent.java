@@ -1,7 +1,7 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.network.MessageSender;
-import net.minecraft.network.encryption.SignedChatMessage;
+import net.minecraft.network.message.MessageSender;
+import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
@@ -31,5 +31,5 @@ public interface PlayerChatEvent {
         return ActionResult.PASS;
     });
 
-    ActionResult onSendChatMessage(MessageSender sender, SignedChatMessage message);
+    ActionResult onSendChatMessage(MessageSender sender, SignedMessage message);
 }

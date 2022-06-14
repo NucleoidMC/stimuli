@@ -1,8 +1,8 @@
 package xyz.nucleoid.stimuli.mixin.player;
 
-import net.minecraft.network.MessageSender;
-import net.minecraft.network.MessageType;
-import net.minecraft.network.encryption.SignedChatMessage;
+import net.minecraft.network.message.MessageSender;
+import net.minecraft.network.message.MessageType;
+import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
@@ -27,14 +27,15 @@ public abstract class PlayerManagerMixin {
     @Nullable
     public abstract ServerPlayerEntity getPlayer(UUID uuid);
 
-    @Inject(method = "broadcast(Lnet/minecraft/network/encryption/SignedChatMessage;Ljava/util/function/Function;Lnet/minecraft/network/MessageSender;Lnet/minecraft/util/registry/RegistryKey;)V", at = @At("HEAD"), cancellable = true)
-    public void broadcast(SignedChatMessage message, Function<ServerPlayerEntity, SignedChatMessage> messageFactory, MessageSender sender, RegistryKey<MessageType> type, CallbackInfo ci) {
+    @Inject(method = "broadcast(Lnet/minecraft/network/message/SignedMessage;Ljava/util/function/Function;Lnet/minecraft/network/message/MessageSender;Lnet/minecraft/util/registry/RegistryKey;)V", at = @At("HEAD"), cancellable = true)
+    public void broadcast(SignedMessage message, Function<ServerPlayerEntity, SignedMessage> playerMessageFactory, MessageSender sender, RegistryKey<MessageType> type, CallbackInfo ci) {
         if (this.handleChatMessage(message, type, sender)) {
             ci.cancel();
         }
     }
 
-    private boolean handleChatMessage(SignedChatMessage message, RegistryKey<MessageType> type, MessageSender sender) {
+
+    private boolean handleChatMessage(SignedMessage message, RegistryKey<MessageType> type, MessageSender sender) {
         if (type != MessageType.CHAT || sender.uuid() == Util.NIL_UUID) {
             return false;
         }
