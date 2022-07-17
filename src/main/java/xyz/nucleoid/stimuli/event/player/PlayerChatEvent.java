@@ -17,10 +17,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * </ul>
  */
 public interface PlayerChatEvent {
-    StimulusEvent<PlayerChatEvent> EVENT = StimulusEvent.create(PlayerChatEvent.class, ctx -> (sender, message) -> {
+    StimulusEvent<PlayerChatEvent> EVENT = StimulusEvent.create(PlayerChatEvent.class, ctx -> (player, sender, message) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onSendChatMessage(sender, message);
+                var result = listener.onSendChatMessage(player, sender, message);
                 if (result != ActionResult.PASS) {
                     return result;
                 }
@@ -31,5 +31,5 @@ public interface PlayerChatEvent {
         return ActionResult.PASS;
     });
 
-    ActionResult onSendChatMessage(MessageSender sender, SignedMessage message);
+    ActionResult onSendChatMessage(ServerPlayerEntity player, MessageSender sender, SignedMessage message);
 }

@@ -46,7 +46,7 @@ public abstract class PlayerManagerMixin {
         }
 
         try (var invokers = Stimuli.select().forEntity(senderEntity)) {
-            var result = invokers.get(PlayerChatEvent.EVENT).onSendChatMessage(sender, message);
+            var result = invokers.get(PlayerChatEvent.EVENT).onSendChatMessage(senderEntity, sender, message);
             return result == ActionResult.FAIL;
         }
     }
