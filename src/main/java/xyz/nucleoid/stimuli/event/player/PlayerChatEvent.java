@@ -15,6 +15,8 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * <li>{@link ActionResult#FAIL} cancels further processing and the message being sent.
  * <li>{@link ActionResult#PASS} moves on to the next listener.
  * </ul>
+ *
+ * @see ReplacePlayerChatEvent to cancel and modify a chat message
  */
 public interface PlayerChatEvent {
     StimulusEvent<PlayerChatEvent> EVENT = StimulusEvent.create(PlayerChatEvent.class, ctx -> (player, message, messageType) -> {
