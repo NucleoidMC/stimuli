@@ -1,6 +1,5 @@
 package xyz.nucleoid.stimuli.mixin.player;
 
-import net.minecraft.network.message.MessageSourceProfile;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.PlayerManager;
@@ -18,11 +17,11 @@ import java.util.function.Predicate;
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
     @Inject(
-        method = "broadcast(Lnet/minecraft/network/message/SignedMessage;Ljava/util/function/Predicate;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/network/message/MessageSourceProfile;Lnet/minecraft/network/message/MessageType$Parameters;)V",
+        method = "broadcast(Lnet/minecraft/network/message/SignedMessage;Ljava/util/function/Predicate;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/network/message/MessageType$Parameters;)V",
         at = @At("HEAD"),
         cancellable = true
     )
-    private void broadcastChatMessage(final SignedMessage message, final Predicate<ServerPlayerEntity> shouldSendFiltered, final @Nullable ServerPlayerEntity senderPlayer, final MessageSourceProfile messageSourceProfile, final MessageType.Parameters messageType, final CallbackInfo ci) {
+    private void broadcastChatMessage(final SignedMessage message, final Predicate<ServerPlayerEntity> shouldSendFiltered, final @Nullable ServerPlayerEntity senderPlayer, final MessageType.Parameters messageType, final CallbackInfo ci) {
         if (senderPlayer != null) {
             try (var invokers = Stimuli.select().forEntity(senderPlayer)) {
                 if (invokers.get(ReplacePlayerChatEvent.EVENT).shouldConsumeChatMessage(senderPlayer, message, messageType)) {

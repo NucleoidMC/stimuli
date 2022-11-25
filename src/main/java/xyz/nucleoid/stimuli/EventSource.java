@@ -1,8 +1,8 @@
 package xyz.nucleoid.stimuli;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.stimuli.filter.EventFilter;

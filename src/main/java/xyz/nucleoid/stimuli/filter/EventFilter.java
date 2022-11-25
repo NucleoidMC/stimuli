@@ -1,7 +1,7 @@
 package xyz.nucleoid.stimuli.filter;
 
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import xyz.nucleoid.stimuli.EventSource;
 
