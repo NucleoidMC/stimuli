@@ -9,6 +9,7 @@
     "block.BlockItemMixin",
     "block.BlockMixin",
     "block.BucketItemMixin",
+    "block.CoralBlockMixin",
     "block.DispenserBlockMixin",
     "block.DropperBlockMixin",
     "block.FarmlandBlockMixin",
