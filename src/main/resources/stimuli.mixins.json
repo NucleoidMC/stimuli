@@ -30,6 +30,7 @@
     "world.EnderEyeItemMixin",
     "world.ExplosionMixin",
     "world.FireBlockMixin",
+    "world.FireworkRocketEntityMixin",
     "world.FlowableFluidMixin",
     "world.FluidStateMixin",
     "world.FrostedIceBlockMixin",
