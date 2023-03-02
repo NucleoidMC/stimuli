@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli.mixin.player;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -13,6 +14,7 @@ import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.item.ItemThrowEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerSpectateEntityEvent;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerEntityMixin {
@@ -54,6 +56,17 @@ public class ServerPlayerEntityMixin {
             if (result == ActionResult.FAIL) {
                 player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(ScreenHandlerSlotUpdateS2CPacket.UPDATE_PLAYER_INVENTORY_SYNC_ID, 0, slot, stack));
                 ci.setReturnValue(false);
+            }
+        }
+    }
+
+    @Inject(method = "attack", at = @At(value = "INVOKE", target = "net/minecraft/server/network/ServerPlayerEntity.setCameraEntity (Lnet/minecraft/entity/Entity;)V", shift = At.Shift.BEFORE))
+    private void onSpectateEntity(Entity target, CallbackInfo ci){
+        var player = (ServerPlayerEntity) (Object) this;
+        try (var invokers = Stimuli.select().forEntity(player)) {
+            var result = invokers.get(PlayerSpectateEntityEvent.EVENT).onSpectateEntity(player, target);
+            if (result == ActionResult.FAIL) {
+                ci.cancel();
             }
         }
     }
