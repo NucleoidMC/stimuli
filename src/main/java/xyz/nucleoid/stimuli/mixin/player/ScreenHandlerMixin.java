@@ -44,8 +44,8 @@ public class ScreenHandlerMixin {
         }
     }
 
-    @Inject(method = "close", at = @At("HEAD"))
-    private void close(PlayerEntity player, CallbackInfo ci) {
+    @Inject(method = "onClosed", at = @At("HEAD"))
+    private void onClosed(PlayerEntity player, CallbackInfo ci) {
         var cursor = player.currentScreenHandler.getCursorStack();
         if (cursor.isEmpty()) {
             return;

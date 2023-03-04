@@ -38,7 +38,7 @@ public class ExplosionMixin {
     @Inject(method = "affectWorld", at = @At("HEAD"))
     private void affectWorld(boolean particles, CallbackInfo ci) {
         if (!this.world.isClient) {
-            var pos = new BlockPos(this.x, this.y, this.z);
+            var pos = BlockPos.ofFloored(this.x, this.y, this.z);
 
             try (var invokers = Stimuli.select().at(this.world, pos)) {
                 invokers.get(ExplosionDetonatedEvent.EVENT).onExplosionDetonated((Explosion) (Object) this, particles);
@@ -52,7 +52,7 @@ public class ExplosionMixin {
 
         var events = Stimuli.select();
 
-        var pos = this.entity != null ? this.entity.getBlockPos() : new BlockPos(this.x, this.y, this.z);
+        var pos = this.entity != null ? this.entity.getBlockPos() : BlockPos.ofFloored(this.x, this.y, this.z);
         try (var invokers = this.entity != null ? events.forEntityAt(this.entity, pos) : events.at(world, pos)) {
             var result = invokers.get(BlockDropItemsEvent.EVENT)
                     .onDropItems(entity, (ServerWorld) world, pos, state, stacks);

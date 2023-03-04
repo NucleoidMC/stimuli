@@ -1,7 +1,7 @@
 package xyz.nucleoid.stimuli.mixin.player;
 
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketCallbacks;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
@@ -30,7 +30,7 @@ public class ServerPlayNetworkHandlerMixin {
         }
     }
 
-    @Inject(method = "sendPacket(Lnet/minecraft/network/Packet;Lnet/minecraft/network/PacketCallbacks;)V", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "sendPacket(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;)V", at = @At("HEAD"), cancellable = true)
     private void onPacket(Packet<?> packet, PacketCallbacks listener, CallbackInfo ci) {
         try (var invokers = Stimuli.select().forEntity(this.player)) {
             var result = invokers.get(PlayerS2CPacketEvent.EVENT).onPacket(this.player, packet);

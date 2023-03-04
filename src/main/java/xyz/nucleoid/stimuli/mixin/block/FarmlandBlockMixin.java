@@ -20,7 +20,7 @@ import xyz.nucleoid.stimuli.event.block.BlockTrampleEvent;
 
 @Mixin(FarmlandBlock.class)
 public class FarmlandBlockMixin {
-    @Inject(method = "onLandedUpon", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/FarmlandBlock;setToDirt(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V", shift = At.Shift.BEFORE), cancellable = true)
+    @Inject(method = "onLandedUpon", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/FarmlandBlock;setToDirt(Lnet/minecraft/entity/Entity;Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V", shift = At.Shift.BEFORE), cancellable = true)
     private void breakFarmland(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci) {
         if (world instanceof ServerWorld serverWorld && entity instanceof LivingEntity livingEntity) {
             try (var invokers = Stimuli.select().forEntityAt(entity, pos)) {
