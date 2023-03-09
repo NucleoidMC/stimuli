@@ -1,5 +1,7 @@
 package xyz.nucleoid.stimuli.mixin.player;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
@@ -11,10 +13,10 @@ import xyz.nucleoid.stimuli.event.player.PlayerRegenerateEvent;
 
 @Mixin(PlayerEntity.class)
 public class PlayerEntityMixin {
-    @Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;heal(F)V"))
-    private void attemptPeacefulRegeneration(PlayerEntity player, float amount) {
+    @WrapOperation(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;heal(F)V"))
+    private void attemptPeacefulRegeneration(PlayerEntity player, float amount, Operation<Boolean> original) {
         if (!(player instanceof ServerPlayerEntity)) {
-            player.heal(amount);
+            original.call(player, amount);
             return;
         }
 
@@ -23,7 +25,7 @@ public class PlayerEntityMixin {
                     .onRegenerate((ServerPlayerEntity) player, amount);
 
             if (result != ActionResult.FAIL) {
-                player.heal(amount);
+                original.call(player, amount);
             }
         }
     }

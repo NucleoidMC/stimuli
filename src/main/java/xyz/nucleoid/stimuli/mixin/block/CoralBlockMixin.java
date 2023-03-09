@@ -1,8 +1,9 @@
 package xyz.nucleoid.stimuli.mixin.block;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CoralBlock;
@@ -22,14 +23,14 @@ import xyz.nucleoid.stimuli.event.block.CoralDeathEvent;
     CoralWallFanBlock.class,
 })
 public class CoralBlockMixin {
-    @Redirect(
+    @WrapOperation(
             method = "scheduledTick",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/server/world/ServerWorld;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z"
             )
     )
-    public boolean onScheduledTickSetBlockState(ServerWorld world, BlockPos pos, BlockState to, int flags, BlockState from) {
+    public boolean onScheduledTickSetBlockState(ServerWorld world, BlockPos pos, BlockState to, int flags, Operation<Boolean> original, BlockState from) {
         var events = Stimuli.select();
 
         try (var invokers = events.at(world, pos)) {
@@ -39,6 +40,6 @@ public class CoralBlockMixin {
             }
         }
 
-        return world.setBlockState(pos, to, flags);
+        return original.call(world, pos, to, flags);
     }
 }

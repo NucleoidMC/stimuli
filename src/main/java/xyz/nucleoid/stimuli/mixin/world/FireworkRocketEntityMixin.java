@@ -48,8 +48,12 @@ public class FireworkRocketEntityMixin {
                     ServerWorld world = (ServerWorld) firework.getWorld();
                     ThreadedAnvilChunkStorage storage = world.getChunkManager().threadedAnvilChunkStorage;
 
-                    Packet<?> packet = new EntityTrackerUpdateS2CPacket(firework.getId(), firework.getDataTracker().getChangedEntries());
-                    storage.sendToOtherNearbyPlayers(firework, packet);
+                    var dirty = firework.getDataTracker().getDirtyEntries();
+
+                    if (dirty != null) {
+                        Packet<?> packet = new EntityTrackerUpdateS2CPacket(firework.getId(), dirty);
+                        storage.sendToOtherNearbyPlayers(firework, packet);
+                    }
                 }
             }
         }

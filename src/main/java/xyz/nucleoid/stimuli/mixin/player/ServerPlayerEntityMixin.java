@@ -60,7 +60,7 @@ public class ServerPlayerEntityMixin {
         }
     }
 
-    @Inject(method = "attack", at = @At(value = "INVOKE", target = "net/minecraft/server/network/ServerPlayerEntity.setCameraEntity (Lnet/minecraft/entity/Entity;)V", shift = At.Shift.BEFORE))
+    @Inject(method = "attack", at = @At(value = "INVOKE", target = "net/minecraft/server/network/ServerPlayerEntity.setCameraEntity(Lnet/minecraft/entity/Entity;)V", shift = At.Shift.BEFORE), cancellable = true)
     private void onSpectateEntity(Entity target, CallbackInfo ci){
         var player = (ServerPlayerEntity) (Object) this;
         try (var invokers = Stimuli.select().forEntity(player)) {

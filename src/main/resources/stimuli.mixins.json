@@ -21,6 +21,7 @@
     "player.CraftingResultInventoryMixin",
     "player.HungerManagerMixin",
     "player.ItemEntityMixin",
+    "player.PlayerEntityMixin",
     "player.PlayerManagerMixin",
     "player.ScreenHandlerMixin",
     "player.ServerPlayerEntityMixin",
