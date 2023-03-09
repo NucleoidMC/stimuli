@@ -11,6 +11,7 @@ To add Stimuli to your Gradle project, add the Nucleoid Maven repository and Sti
 ```gradle
 repositories {
   maven { url = 'https://maven.nucleoid.xyz/' }
+  maven { url = "https://jitpack.io" }
 }
 
 dependencies {
