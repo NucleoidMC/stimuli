@@ -35,8 +35,8 @@ public class ScreenHandlerMixin {
                 stack = this.slots.get(slot).getStack();
             }
 
-            if (this.shouldBlockThrowingItems(player, slot, stack)) {
-                if (stack != null) {
+            if (stack != null) {
+                if (this.shouldBlockThrowingItems(player, slot, stack)) {
                     player.currentScreenHandler.setCursorStack(stack);
                     ci.cancel();
                 }
