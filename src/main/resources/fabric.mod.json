@@ -8,8 +8,7 @@
   "license": "LGPLv3",
   "environment": "*",
   "entrypoints": {
-    "main": ["xyz.nucleoid.stimuli.StimuliInitializer"],
-    "preLaunch": ["xyz.nucleoid.stimuli.StimuliPreLaunchInitializer"]
+    "main": ["xyz.nucleoid.stimuli.StimuliInitializer"]
   },
   "mixins": ["stimuli.mixins.json"],
   "custom": {
@@ -22,7 +21,7 @@
   "depends": {
     "fabricloader": ">=0.9.1",
     "fabric": "*",
-    "minecraft": "1.19.x",
+    "minecraft": "1.19.4",
     "java": ">=17"
   }
 }
