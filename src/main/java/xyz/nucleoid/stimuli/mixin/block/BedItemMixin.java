@@ -26,7 +26,7 @@ public class BedItemMixin {
         var blockPos = context.getBlockPos();
 
         try (var invokers = Stimuli.select().forEntityAt(player, blockPos)) {
-            var result = invokers.get(BlockPlaceEvent.BEFORE).onPlace(player, player.getWorld(), blockPos, state, context);
+            var result = invokers.get(BlockPlaceEvent.BEFORE).onPlace(player, player.getServerWorld(), blockPos, state, context);
 
             if (result == ActionResult.FAIL) {
                 // notify the client that this action did not go through

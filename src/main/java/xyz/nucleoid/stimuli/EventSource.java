@@ -58,11 +58,11 @@ public final class EventSource extends PooledObject<EventSource> {
     }
 
     public static EventSource forEntity(Entity entity) {
-        return acquire(entity.world.getRegistryKey(), entity.getBlockPos(), entity);
+        return acquire(entity.getWorld().getRegistryKey(), entity.getBlockPos(), entity);
     }
 
     public static EventSource forEntityAt(Entity entity, BlockPos pos) {
-        return acquire(entity.world.getRegistryKey(), pos, entity);
+        return acquire(entity.getWorld().getRegistryKey(), pos, entity);
     }
 
     static EventSource acquire(RegistryKey<World> dimension, BlockPos pos, @Nullable Entity entity) {

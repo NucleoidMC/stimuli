@@ -4,7 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
@@ -46,8 +46,8 @@ public class ExplosionMixin {
         }
     }
 
-    @Redirect(method = "affectWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;getDroppedStacks(Lnet/minecraft/loot/context/LootContext$Builder;)Ljava/util/List;"))
-    private List<ItemStack> stimuli_dropBlock(BlockState state, LootContext.Builder builder) {
+    @Redirect(method = "affectWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;getDroppedStacks(Lnet/minecraft/loot/context/LootContextParameterSet$Builder;)Ljava/util/List;"))
+    private List<ItemStack> stimuli_dropBlock(BlockState state, LootContextParameterSet.Builder builder) {
         var stacks = state.getDroppedStacks(builder);
 
         var events = Stimuli.select();
