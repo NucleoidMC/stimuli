@@ -28,7 +28,7 @@ public class FireworkRocketEntityMixin {
     private void explodeAndRemove(CallbackInfo ci) {
         var firework = (FireworkRocketEntity) (Object) this;
 
-        if (!firework.world.isClient) {
+        if (!firework.getWorld().isClient) {
             try (var invokers = Stimuli.select().forEntity(firework)) {
                 var result = invokers.get(FireworkExplodeEvent.EVENT).onFireworkExplode(firework);
                 if (result == ActionResult.FAIL) {

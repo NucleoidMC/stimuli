@@ -6,7 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
-import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,7 +30,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
-        if (this.world.isClient) {
+        if (this.getWorld().isClient) {
             return;
         }
 
@@ -46,7 +46,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
     private void callDeathListener(DamageSource source, CallbackInfo ci) {
-        if (this.world.isClient) {
+        if (this.getWorld().isClient) {
             return;
         }
 
@@ -62,15 +62,15 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @Redirect(method = "dropLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootTable;generateLoot(Lnet/minecraft/loot/context/LootContext;Ljava/util/function/Consumer;)V"))
-    private void modifyDroppedLoot(LootTable lootTable, LootContext context, Consumer<ItemStack> lootConsumer) {
-        if (this.world.isClient) {
-            lootTable.generateLoot(context, lootConsumer);
+    @Redirect(method = "dropLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootTable;generateLoot(Lnet/minecraft/loot/context/LootContextParameterSet;JLjava/util/function/Consumer;)V"))
+    private void modifyDroppedLoot(LootTable lootTable, LootContextParameterSet parameters, long seed, Consumer<ItemStack> lootConsumer) {
+        if (this.getWorld().isClient) {
+            lootTable.generateLoot(parameters, lootConsumer);
             return;
         }
 
         try (var invokers = Stimuli.select().forEntity(this)) {
-            var droppedStacks = lootTable.generateLoot(context);
+            var droppedStacks = lootTable.generateLoot(parameters, seed);
 
             var result = invokers.get(EntityDropItemsEvent.EVENT)
                     .onDropItems((LivingEntity) (Object) this, droppedStacks);
