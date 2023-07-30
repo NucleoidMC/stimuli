@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 import xyz.nucleoid.stimuli.selector.EventListenerSelector;
 import xyz.nucleoid.stimuli.selector.ListenerSelectorSet;
@@ -31,8 +32,10 @@ public final class StimuliSelector {
         return this.acquireInvokers(entity.getServer(), EventSource.forEntityAt(entity, pos));
     }
 
-    EventInvokers acquireInvokers(MinecraftServer server, EventSource source) {
-        Preconditions.checkNotNull(server, "missing server for event invokers");
+    EventInvokers acquireInvokers(@Nullable MinecraftServer server, EventSource source) {
+        if (server == null) {
+            return NoOPSelectorEventInvokers.INSTANCE;
+        }
         return SelectorEventInvokers.acquire(server, this, source);
     }
 
