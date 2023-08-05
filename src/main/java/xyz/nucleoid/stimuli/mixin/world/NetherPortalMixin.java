@@ -1,7 +1,9 @@
 package xyz.nucleoid.stimuli.mixin.world;
 
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.dimension.NetherPortal;
@@ -22,7 +24,7 @@ public class NetherPortalMixin {
 
     @Inject(method = "isValid", at = @At("HEAD"), cancellable = true)
     private void isValid(CallbackInfoReturnable<Boolean> ci) {
-        if (!(this.world instanceof ServerWorldAccess) || this.lowerCorner == null) {
+        if (!(this.world instanceof ServerWorld || this.world instanceof ChunkRegion) || this.lowerCorner == null) {
             return;
         }
 
