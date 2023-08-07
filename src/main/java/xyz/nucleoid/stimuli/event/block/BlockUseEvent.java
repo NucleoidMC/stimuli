@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
-public class BlockUseEvent {
+public final class BlockUseEvent {
     /**
      * Called when a {@link ServerPlayerEntity} attempts to interact with a block.
      *
