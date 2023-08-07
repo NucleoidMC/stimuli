@@ -57,7 +57,7 @@ public final class StimuliInitializer implements ModInitializer {
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, entity) -> {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 try (var invokers = Stimuli.select().forEntityAt(player, pos)) {
-                    return invokers.get(BlockBreakEvent.EVENT).onBreak(serverPlayer, (ServerWorld) world, pos) != ActionResult.FAIL;
+                    return invokers.get(BlockBreakEvent.PLAYER).onBreak(serverPlayer, (ServerWorld) world, pos) != ActionResult.FAIL;
                 }
             }
             return true;
