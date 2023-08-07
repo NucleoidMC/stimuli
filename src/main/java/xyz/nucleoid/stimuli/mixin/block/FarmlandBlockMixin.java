@@ -31,7 +31,7 @@ public class FarmlandBlockMixin {
                 }
 
                 if (livingEntity instanceof ServerPlayerEntity player) {
-                    var breakResult = invokers.get(BlockBreakEvent.EVENT).onBreak(player, serverWorld, pos);
+                    var breakResult = invokers.get(BlockBreakEvent.PLAYER).onBreak(player, serverWorld, pos);
                     if (breakResult == ActionResult.FAIL) {
                         ci.cancel();
                     }
