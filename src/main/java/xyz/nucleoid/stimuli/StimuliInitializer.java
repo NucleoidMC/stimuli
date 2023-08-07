@@ -48,7 +48,7 @@ public final class StimuliInitializer implements ModInitializer {
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 try (var invokers = Stimuli.select().forEntityAt(player, hitResult.getBlockPos())) {
-                    return invokers.get(BlockUseEvent.EVENT).onUse(serverPlayer, hand, hitResult);
+                    return invokers.get(BlockUseEvent.INTERACT).onBlockInteraction(serverPlayer, hand, hitResult);
                 }
             }
             return ActionResult.PASS;
