@@ -34,7 +34,7 @@ public class ServerWorldMixin {
         }
     }
 
-    @Redirect(method = "tickChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/Biome;canSetSnow(Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Z"))
+    @Redirect(method = "tickIceAndSnow", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/Biome;canSetSnow(Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Z"))
     private boolean applySnowFallEvent(Biome biome, WorldView world, BlockPos pos) {
         if (!biome.canSetSnow(world, pos)) {
             return false;

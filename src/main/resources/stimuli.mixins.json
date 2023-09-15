@@ -24,6 +24,7 @@
     "player.PlayerEntityMixin",
     "player.PlayerManagerMixin",
     "player.ScreenHandlerMixin",
+    "player.ServerCommonNetworkHandlerMixin",
     "player.ServerPlayerEntityMixin",
     "player.ServerPlayerInteractionManagerMixin",
     "player.ServerPlayNetworkHandlerMixin",
