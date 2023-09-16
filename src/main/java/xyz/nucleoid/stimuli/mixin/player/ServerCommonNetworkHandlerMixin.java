@@ -15,8 +15,8 @@ import xyz.nucleoid.stimuli.event.player.PlayerS2CPacketEvent;
 
 @Mixin(ServerCommonNetworkHandler.class)
 public class ServerCommonNetworkHandlerMixin {
-    @Inject(method = "send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;Z)V", at = @At("HEAD"), cancellable = true)
-    private void onPacket(Packet<?> packet, PacketCallbacks listener, boolean flush, CallbackInfo ci) {
+    @Inject(method = "send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;)V", at = @At("HEAD"), cancellable = true)
+    private void onPacket(Packet<?> packet, PacketCallbacks listener, CallbackInfo ci) {
         if ((Object) this instanceof ServerPlayNetworkHandler networkHandler) {
             var player = networkHandler.getPlayer();
 
