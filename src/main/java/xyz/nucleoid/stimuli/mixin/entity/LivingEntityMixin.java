@@ -1,5 +1,7 @@
 package xyz.nucleoid.stimuli.mixin.entity;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -62,21 +64,21 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @Redirect(method = "dropLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootTable;generateLoot(Lnet/minecraft/loot/context/LootContextParameterSet;JLjava/util/function/Consumer;)V"))
-    private void modifyDroppedLoot(LootTable lootTable, LootContextParameterSet parameters, long seed, Consumer<ItemStack> lootConsumer) {
+    @WrapOperation(method = "dropLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootTable;generateLoot(Lnet/minecraft/loot/context/LootContextParameterSet;JLjava/util/function/Consumer;)V"))
+    private void modifyDroppedLoot(LootTable instance, LootContextParameterSet parameters, long seed, Consumer<ItemStack> lootConsumer, Operation<Void> original) {
         if (this.getWorld().isClient) {
-            lootTable.generateLoot(parameters, lootConsumer);
+            original.call(instance, parameters, seed, lootConsumer);
             return;
         }
 
         try (var invokers = Stimuli.select().forEntity(this)) {
-            var droppedStacks = lootTable.generateLoot(parameters, seed);
+            var droppedStacks = instance.generateLoot(parameters, seed);
 
             var result = invokers.get(EntityDropItemsEvent.EVENT)
                     .onDropItems((LivingEntity) (Object) this, droppedStacks);
 
             if (result.getResult() != ActionResult.FAIL) {
-                result.getValue().forEach(this::dropStack);
+                result.getValue().forEach(lootConsumer);
             }
         }
     }

@@ -45,23 +45,4 @@ public class ExplosionMixin {
             }
         }
     }
-
-    @Redirect(method = "affectWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;getDroppedStacks(Lnet/minecraft/loot/context/LootContextParameterSet$Builder;)Ljava/util/List;"))
-    private List<ItemStack> stimuli_dropBlock(BlockState state, LootContextParameterSet.Builder builder) {
-        var stacks = state.getDroppedStacks(builder);
-
-        var events = Stimuli.select();
-
-        var pos = this.entity != null ? this.entity.getBlockPos() : BlockPos.ofFloored(this.x, this.y, this.z);
-        try (var invokers = this.entity != null ? events.forEntityAt(this.entity, pos) : events.at(world, pos)) {
-            var result = invokers.get(BlockDropItemsEvent.EVENT)
-                    .onDropItems(entity, (ServerWorld) world, pos, state, stacks);
-
-            if (result.getResult() != ActionResult.FAIL) {
-                return result.getValue();
-            } else {
-                return Collections.emptyList();
-            }
-        }
-    }
 }

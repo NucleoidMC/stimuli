@@ -1,5 +1,5 @@
 plugins {
-  id 'fabric-loom' version '1.1.+'
+  id 'fabric-loom' version '1.4.+'
   id 'maven-publish'
 }
 
@@ -22,8 +22,6 @@ dependencies {
   modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
   modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-  implementation(include(annotationProcessor("com.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}")))
 }
 
 processResources {
@@ -37,12 +35,9 @@ processResources {
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
 }
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-  classifier = "sources"
-  from sourceSets.main.allSource
+java {
+  withSourcesJar()
 }
-
 jar {
   from "LICENSE"
 }

@@ -1,5 +1,7 @@
 package xyz.nucleoid.stimuli.mixin.world;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.FluidState;
@@ -34,9 +36,9 @@ public class ServerWorldMixin {
         }
     }
 
-    @Redirect(method = "tickIceAndSnow", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/Biome;canSetSnow(Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Z"))
-    private boolean applySnowFallEvent(Biome biome, WorldView world, BlockPos pos) {
-        if (!biome.canSetSnow(world, pos)) {
+    @WrapOperation(method = "tickIceAndSnow", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/Biome;canSetSnow(Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Z"))
+    private boolean applySnowFallEvent(Biome instance, WorldView world, BlockPos pos, Operation<Boolean> original) {
+        if (!original.call(instance, world, pos)) {
             return false;
         }
 

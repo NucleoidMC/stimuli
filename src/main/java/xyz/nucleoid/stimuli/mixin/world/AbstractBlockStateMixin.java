@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli.mixin.world;
 
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -15,14 +16,15 @@ import xyz.nucleoid.stimuli.event.block.BlockRandomTickEvent;
 
 @Mixin(AbstractBlock.AbstractBlockState.class)
 public class AbstractBlockStateMixin {
-    @Redirect(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;randomTick(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/random/Random;)V"))
-    private void applyBlockRandomTickEvent(Block block, BlockState state, ServerWorld world, BlockPos pos, net.minecraft.util.math.random.Random random) {
+    @WrapWithCondition(method = "randomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;randomTick(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/random/Random;)V"))
+    private boolean applyBlockRandomTickEvent(Block block, BlockState state, ServerWorld world, BlockPos pos, net.minecraft.util.math.random.Random random) {
         try (var invokers = Stimuli.select().at(world, pos)) {
             var result = invokers.get(BlockRandomTickEvent.EVENT).onBlockRandomTick(world, pos, state);
             if (result == ActionResult.FAIL) {
-                return;
+                return false;
             }
         }
 
-        block.randomTick(state, world, pos, random);
-    }}
+        return true;
+    }
+}

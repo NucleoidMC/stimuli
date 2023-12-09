@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli.mixin.world;
 
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.server.world.ServerWorld;
@@ -16,17 +17,17 @@ import xyz.nucleoid.stimuli.mixin.FluidAccessor;
 
 @Mixin(FluidState.class)
 public class FluidStateMixin {
-    @Redirect(method = "onRandomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/Fluid;onRandomTick(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/fluid/FluidState;Lnet/minecraft/util/math/random/Random;)V"))
-    private void applyFluidRandomTickEvent(Fluid fluid, World world, BlockPos pos, FluidState state, Random random) {
+    @WrapWithCondition(method = "onRandomTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/fluid/Fluid;onRandomTick(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/fluid/FluidState;Lnet/minecraft/util/math/random/Random;)V"))
+    private boolean applyFluidRandomTickEvent(Fluid fluid, World world, BlockPos pos, FluidState state, Random random) {
         ServerWorld serverWorld = (ServerWorld) world;
 
         try (var invokers = Stimuli.select().at(world, pos)) {
             var result = invokers.get(FluidRandomTickEvent.EVENT).onFluidRandomTick(serverWorld, pos, state);
             if (result == ActionResult.FAIL) {
-                return;
+                return false;
             }
         }
 
-        ((FluidAccessor) fluid).callOnRandomTick(world, pos, state, random);
+        return true;
     }
 }

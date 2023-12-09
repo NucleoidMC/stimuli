@@ -32,6 +32,7 @@
     "projectile.CrossbowItemMixin",
     "projectile.ProjectileEntityMixin",
     "world.AbstractBlockStateMixin",
+    "world.AbstractBlockMixin",
     "world.EnderEyeItemMixin",
     "world.ExplosionMixin",
     "world.FireBlockMixin",

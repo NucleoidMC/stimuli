@@ -1,5 +1,8 @@
 package xyz.nucleoid.stimuli.mixin.entity;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -15,15 +18,15 @@ import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
 
 @Mixin(ShearsDispenserBehavior.class)
 public class ShearsDispenserBehaviorMixin {
-    @Redirect(
+    @WrapOperation(
             method = "tryShearEntity",
             at = @At(
                 value = "INVOKE",
                 target = "Lnet/minecraft/entity/Shearable;isShearable()Z"
             )
     )
-    private static boolean onEntityShear(Shearable shearable, ServerWorld world, BlockPos pos) {
-        if (!shearable.isShearable()) {
+    private static boolean onEntityShear(Shearable shearable, Operation<Boolean> original, @Local BlockPos pos) {
+        if (!original.call(shearable)) {
             return false;
         }
 

@@ -24,7 +24,7 @@ public class FireworkRocketEntityMixin {
     @Shadow
     private static TrackedData<ItemStack> ITEM;
 
-    @Inject(method = "explodeAndRemove", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "explodeAndRemove", at = @At("HEAD"))
     private void explodeAndRemove(CallbackInfo ci) {
         var firework = (FireworkRocketEntity) (Object) this;
 

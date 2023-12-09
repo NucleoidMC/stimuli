@@ -1,5 +1,8 @@
 package xyz.nucleoid.stimuli.mixin.world;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FireBlock;
 import net.minecraft.server.world.ServerWorld;
@@ -15,8 +18,8 @@ import xyz.nucleoid.stimuli.event.world.FireTickEvent;
 
 @Mixin(FireBlock.class)
 public class FireBlockMixin {
-    @Redirect(method = "scheduledTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
-    private boolean test(GameRules gameRules, GameRules.Key<GameRules.BooleanRule> rule, BlockState state, ServerWorld world, BlockPos pos, Random random) {
+    @WrapOperation(method = "scheduledTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
+    private boolean test(GameRules instance, GameRules.Key<GameRules.BooleanRule> rule, Operation<Boolean> original, @Local ServerWorld world, @Local BlockPos pos) {
         try (var invokers = Stimuli.select().at(world, pos)) {
             var result = invokers.get(FireTickEvent.EVENT).onFireTick(world, pos);
             if (result == ActionResult.SUCCESS) {
@@ -26,6 +29,6 @@ public class FireBlockMixin {
             }
         }
 
-        return gameRules.getBoolean(GameRules.DO_FIRE_TICK);
+        return original.call(instance, rule);
     }
 }
