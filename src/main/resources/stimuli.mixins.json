@@ -13,6 +13,7 @@
     "block.DispenserBlockMixin",
     "block.DropperBlockMixin",
     "block.FarmlandBlockMixin",
+    "block.FlowerPotBlockMixin",
     "block.TurtleEggBlockMixin",
     "entity.LivingEntityMixin",
     "entity.ShearableEntityMixin",
