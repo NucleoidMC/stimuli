@@ -86,13 +86,15 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "tryUseTotem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"), cancellable = true)
     private void tryUseTotem(DamageSource source, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 1) ItemStack itemStack) {
+        if (!this.getWorld().isClient) {
+            return;
+        }
+
         var entity = (LivingEntity) (Object) this;
-        if (!this.getWorld().isClient()) {
-            try (var invokers = Stimuli.select().forEntity(entity)) {
-                var result = invokers.get(EntityActivateTotemEvent.EVENT).onTotemActivate(entity, source, itemStack);
-                if (result == ActionResult.FAIL) {
-                    cir.setReturnValue(false);
-                }
+        try (var invokers = Stimuli.select().forEntity(entity)) {
+            var result = invokers.get(EntityActivateTotemEvent.EVENT).onTotemActivate(entity, source, itemStack);
+            if (result == ActionResult.FAIL) {
+                cir.setReturnValue(false);
             }
         }
     }
