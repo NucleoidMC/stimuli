@@ -14,10 +14,10 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.entity.EntityTotemActivateEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityDamageEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityDeathEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityDropItemsEvent;
@@ -79,6 +79,29 @@ public abstract class LivingEntityMixin extends Entity {
 
             if (result.getResult() != ActionResult.FAIL) {
                 result.getValue().forEach(lootConsumer);
+            }
+        }
+    }
+
+    @WrapOperation(method = "tryUseTotem", at = @At(value = "CONSTANT", args = "classValue=net/minecraft/server/network/ServerPlayerEntity", ordinal = 0))
+    private boolean tryUseTotem(Object object, Operation<Boolean> original, DamageSource source) {
+        var entity = (LivingEntity) (Object) this;
+        try (var invokers = Stimuli.select().forEntity(entity)) {
+            var result = invokers.get(EntityTotemActivateEvent.EVENT).onTotem(entity, source);
+            if (result == ActionResult.FAIL) {
+                return false;
+            }
+        }
+        return original.call(object);
+    }
+
+    @Inject(method = "tryUseTotem", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setHealth(F)V"), cancellable = true)
+    private void tryUseTotem(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
+        var entity = (LivingEntity) (Object) this;
+        try (var invokers = Stimuli.select().forEntity(entity)) {
+            var result = invokers.get(EntityTotemActivateEvent.EVENT).onTotem(entity, source);
+            if (result == ActionResult.FAIL) {
+                cir.setReturnValue(false);
             }
         }
     }
