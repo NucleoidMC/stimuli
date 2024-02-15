@@ -2,13 +2,14 @@ package xyz.nucleoid.stimuli.event.entity;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link LivingEntity} activates a totem of undying
+ * Called when a {@link LivingEntity} activates a totem of undying.
  *
- * <p>Upon return;
+ * <p>Upon return:
  * <ul>
  * <li>{@link ActionResult#SUCCESS} cancels further processing and activates the totem.
  * <li>{@link ActionResult#FAIL} cancels further processing and does not activate the totem.
@@ -16,12 +17,12 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * </ul>
  * </p>
  */
-public interface EntityTotemActivateEvent {
+public interface EntityActivateTotemEvent {
 
-    StimulusEvent<EntityTotemActivateEvent> EVENT = StimulusEvent.create(EntityTotemActivateEvent.class, ctx -> (entity, source) -> {
+    StimulusEvent<EntityActivateTotemEvent> EVENT = StimulusEvent.create(EntityActivateTotemEvent.class, ctx -> (entity, source, itemStack) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onTotem(entity, source);
+                var result = listener.onTotemActivate(entity, source, itemStack);
                 if (result != ActionResult.PASS) {
                     return result;
                 }
@@ -32,5 +33,5 @@ public interface EntityTotemActivateEvent {
         return ActionResult.PASS;
     });
 
-    ActionResult onTotem(LivingEntity entity, DamageSource source);
+    ActionResult onTotemActivate(LivingEntity entity, DamageSource source, ItemStack itemStack);
 }
