@@ -1,6 +1,8 @@
 package xyz.nucleoid.stimuli.mixin.entity;
 
-import net.minecraft.entity.passive.*;
+import net.minecraft.entity.passive.MooshroomEntity;
+import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.entity.passive.SnowGolemEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
