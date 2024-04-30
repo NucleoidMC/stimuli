@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli.mixin.entity;
 
+import net.minecraft.entity.passive.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
@@ -9,9 +10,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Shearable;
-import net.minecraft.entity.passive.MooshroomEntity;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.entity.passive.SnowGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;

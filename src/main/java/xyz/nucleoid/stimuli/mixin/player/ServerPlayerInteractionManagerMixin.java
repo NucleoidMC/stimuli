@@ -8,6 +8,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,8 +20,8 @@ import xyz.nucleoid.stimuli.event.block.BlockPunchEvent;
 
 @Mixin(ServerPlayerInteractionManager.class)
 public class ServerPlayerInteractionManagerMixin {
-    @Shadow public ServerWorld world;
-    @Shadow public ServerPlayerEntity player;
+    @Shadow protected ServerWorld world;
+    @Final @Shadow protected ServerPlayerEntity player;
 
     @Inject(
             method = "processBlockBreakingAction",

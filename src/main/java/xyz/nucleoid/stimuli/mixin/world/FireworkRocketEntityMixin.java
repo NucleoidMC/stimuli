@@ -1,5 +1,8 @@
 package xyz.nucleoid.stimuli.mixin.world;
 
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.FireworksComponent;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -8,9 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
-import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.server.world.ServerWorld;
@@ -19,10 +20,11 @@ import net.minecraft.util.ActionResult;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.world.FireworkExplodeEvent;
 
+import java.util.Collections;
+
 @Mixin(FireworkRocketEntity.class)
 public class FireworkRocketEntityMixin {
-    @Shadow
-    private static TrackedData<ItemStack> ITEM;
+    @Final @Shadow private static TrackedData<ItemStack> ITEM;
 
     @Inject(method = "explodeAndRemove", at = @At("HEAD"))
     private void explodeAndRemove(CallbackInfo ci) {
@@ -36,9 +38,9 @@ public class FireworkRocketEntityMixin {
                     ItemStack stack = firework.getDataTracker().get(ITEM).copy();
 
                     // Remove explosion data from new stack
-                    NbtCompound fireworksNbt = stack.getSubNbt(FireworkRocketItem.FIREWORKS_KEY);
-                    if (fireworksNbt != null) {
-                        fireworksNbt.remove(FireworkRocketItem.EXPLOSIONS_KEY);
+                    FireworksComponent fireworksComponent = stack.get(DataComponentTypes.FIREWORKS);
+                    if (fireworksComponent != null) {
+                        stack.set(DataComponentTypes.FIREWORKS, new FireworksComponent(fireworksComponent.flightDuration(), Collections.emptyList()));
                     }
 
                     // Update data tracker with new stack
