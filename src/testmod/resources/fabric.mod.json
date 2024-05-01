@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "stimuli-test",
+  "version": "${version}",
+  "name": "Stimuli TestMod",
+  "description": "Library to work with server-side events with the ability to filter by event source",
+  "authors": ["Nucleoid Contributors"],
+  "license": "LGPLv3",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "xyz.nucleoid.stimuli.test.StimuliInitializer"
+    ]
+  }
+}

@@ -18,12 +18,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.duck.PassBowUseTicks;
 import xyz.nucleoid.stimuli.event.projectile.ArrowFireEvent;
 
 import java.util.List;
 
 @Mixin(RangedWeaponItem.class)
-public class RangedWeaponItemMixin {
+public abstract class RangedWeaponItemMixin implements PassBowUseTicks {
     @Inject(
       method = "shootAll",
       at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"),
@@ -61,7 +62,7 @@ public class RangedWeaponItemMixin {
 
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(ArrowFireEvent.EVENT)
-              .onFireArrow(player, tool, item, -1, persistentProjectile);
+              .onFireArrow(player, tool, item, this.stimuli$getLastRemainingUseTicks(), persistentProjectile);
 
             if (result == ActionResult.FAIL) {
                 ci.cancel();

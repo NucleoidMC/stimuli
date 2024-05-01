@@ -49,6 +49,7 @@ public class FlowerPotBlockMixin {
 
         try (var invokers = Stimuli.select().forEntityAt(serverPlayer, pos)) {
             var result = invokers.get(FlowerPotModifyEvent.EVENT).onModifyFlowerPot(serverPlayer, Hand.MAIN_HAND, hitResult);
+            //Maybe try to update the slot the item shows at and update it to fix desync
             if (result == ActionResult.FAIL) {
                 ci.setReturnValue(ActionResult.CONSUME);
             }

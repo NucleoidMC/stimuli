@@ -29,6 +29,7 @@
         "player.ServerPlayerEntityMixin",
         "player.ServerPlayerInteractionManagerMixin",
         "player.ServerPlayNetworkHandlerMixin",
+        "projectile.BowItemMixin",
         "projectile.ProjectileEntityMixin",
         "projectile.RangedWeaponItemMixin",
         "world.AbstractBlockMixin",

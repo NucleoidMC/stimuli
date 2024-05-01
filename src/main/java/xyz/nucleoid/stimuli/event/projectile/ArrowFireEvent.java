@@ -32,8 +32,5 @@ public interface ArrowFireEvent {
         return ActionResult.PASS;
     });
 
-    /**
-     * @deprecated remainUseTicks is deprecated and is always -1, it is being kept for backwards compatibility
-     */
-    ActionResult onFireArrow(ServerPlayerEntity user, ItemStack tool, ArrowItem arrowItem, @Deprecated int remainingUseTicks, PersistentProjectileEntity projectile);
+    ActionResult onFireArrow(ServerPlayerEntity user, ItemStack tool, ArrowItem arrowItem, int remainingUseTicks, PersistentProjectileEntity projectile);
 }
