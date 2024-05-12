@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli.mixin.projectile;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -28,7 +29,6 @@ public abstract class RangedWeaponItemMixin implements PassBowUseTicks {
     @Inject(
       method = "shootAll",
       at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"),
-      locals = LocalCapture.CAPTURE_FAILHARD,
       cancellable = true
     )
     private void onFireArrow(
@@ -42,14 +42,8 @@ public abstract class RangedWeaponItemMixin implements PassBowUseTicks {
       boolean critical,
       @Nullable LivingEntity target,
       CallbackInfo ci,
-      float f,
-      float g,
-      float h,
-      float i,
-      int j,
-      ItemStack projectileStack,
-      float k,
-      ProjectileEntity projectile
+      @Local(ordinal = 1) ItemStack projectileStack,
+      @Local ProjectileEntity projectile
     ) {
         if (!(shooter instanceof ServerPlayerEntity player)) {
             return;
