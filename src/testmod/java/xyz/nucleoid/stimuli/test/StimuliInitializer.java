@@ -8,6 +8,7 @@ import net.minecraft.util.ActionResult;
 import org.slf4j.Logger;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.block.FlowerPotModifyEvent;
+import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
 import xyz.nucleoid.stimuli.event.projectile.ArrowFireEvent;
 
 import static net.minecraft.server.command.CommandManager.literal;
@@ -36,6 +37,14 @@ public final class StimuliInitializer implements ModInitializer {
         });
         Stimuli.global().listen(ArrowFireEvent.EVENT, (player, tool, arrowItem, remainingUseTicks, projectile) -> {
             player.sendMessage(Text.literal("ArrowFireEvent: " + remainingUseTicks));
+            return result;
+        });
+        Stimuli.global().listen(EntityShearEvent.EVENT, (entity, player, hand, pos) -> {
+            if (player == null) {
+                LOGGER.info("EntityShearEvent: {}", entity.getName().toString());
+            } else {
+                player.sendMessage(Text.literal("EntityShearEvent: " + entity.getName().getString()));
+            }
             return result;
         });
     }
