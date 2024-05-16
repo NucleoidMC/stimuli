@@ -2,9 +2,6 @@ package xyz.nucleoid.stimuli.mixin.block;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CoralBlock;
 import net.minecraft.block.CoralBlockBlock;
@@ -13,6 +10,8 @@ import net.minecraft.block.CoralWallFanBlock;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.block.CoralDeathEvent;
 

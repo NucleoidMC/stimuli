@@ -8,18 +8,16 @@ import net.minecraft.item.EnderEyeItem;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.world.EndPortalOpenEvent;
 
 @Mixin(EnderEyeItem.class)
 public class EnderEyeItemMixin {
     @WrapOperation(method = "useOnBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/pattern/BlockPattern;searchAround(Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/pattern/BlockPattern$Result;"))
-    private BlockPattern.Result searchAround(BlockPattern instance, WorldView worldView, BlockPos pos, Operation<BlockPattern.Result> original, @Local ItemUsageContext context) {
+    private BlockPattern.Result searchAround(BlockPattern instance, WorldView worldView, BlockPos pos, Operation<BlockPattern.Result> original, @Local(argsOnly = true) ItemUsageContext context) {
         var patternResult = original.call(instance, worldView, pos);
 
         var world = context.getWorld();

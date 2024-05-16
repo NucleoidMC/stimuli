@@ -1,30 +1,16 @@
 package xyz.nucleoid.stimuli.mixin.world;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContextParameterSet;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.block.BlockDropItemsEvent;
 import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
 
 @Mixin(Explosion.class)
 public class ExplosionMixin {
@@ -32,8 +18,6 @@ public class ExplosionMixin {
     @Shadow @Final private double x;
     @Shadow @Final private double y;
     @Shadow @Final private double z;
-
-    @Shadow @Final private @Nullable Entity entity;
 
     @Inject(method = "affectWorld", at = @At("HEAD"))
     private void affectWorld(boolean particles, CallbackInfo ci) {

@@ -13,7 +13,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.Stimuli;
-import xyz.nucleoid.stimuli.event.player.*;
+import xyz.nucleoid.stimuli.event.player.PlayerCommandEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerInventoryActionEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerSwapWithOffhandEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerSwingHandEvent;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public class ServerPlayNetworkHandlerMixin {

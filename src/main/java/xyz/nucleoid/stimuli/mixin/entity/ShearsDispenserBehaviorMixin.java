@@ -3,16 +3,13 @@ package xyz.nucleoid.stimuli.mixin.entity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
-
 import net.minecraft.block.dispenser.ShearsDispenserBehavior;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Shearable;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
 
@@ -25,7 +22,7 @@ public class ShearsDispenserBehaviorMixin {
                 target = "Lnet/minecraft/entity/Shearable;isShearable()Z"
             )
     )
-    private static boolean onEntityShear(Shearable shearable, Operation<Boolean> original, @Local BlockPos pos) {
+    private static boolean onEntityShear(Shearable shearable, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
         if (!original.call(shearable)) {
             return false;
         }

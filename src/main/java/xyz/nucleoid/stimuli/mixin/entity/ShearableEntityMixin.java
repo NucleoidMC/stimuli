@@ -1,28 +1,28 @@
 package xyz.nucleoid.stimuli.mixin.entity;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Shearable;
+import net.minecraft.entity.mob.BoggedEntity;
 import net.minecraft.entity.passive.MooshroomEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.passive.SnowGolemEntity;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Coerce;
-
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Shearable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
 
 @Mixin(value = {
     MooshroomEntity.class,
     SheepEntity.class,
-    SnowGolemEntity.class
+    SnowGolemEntity.class,
+    BoggedEntity.class
 })
 public class ShearableEntityMixin {
     @WrapOperation(
@@ -39,6 +39,10 @@ public class ShearableEntityMixin {
                     @At(
                             value = "INVOKE",
                             target = "Lnet/minecraft/entity/passive/SnowGolemEntity;isShearable()Z"
+                    ),
+                    @At(
+                            value = "INVOKE",
+                            target = "Lnet/minecraft/entity/mob/BoggedEntity;isShearable()Z"
                     )
             }
     )
