@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli.mixin.block;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FlowableFluid;
@@ -15,7 +16,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.block.FluidPlaceEvent;
 
@@ -27,10 +27,9 @@ public class BucketItemMixin {
                     value = "INVOKE",
                     target = "Lnet/minecraft/block/BlockState;getBlock()Lnet/minecraft/block/Block;"
             ),
-            cancellable = true,
-            locals = LocalCapture.CAPTURE_FAILSOFT
+            cancellable = true
     )
-    private void onPlace(PlayerEntity player, World world, BlockPos pos, BlockHitResult hitResult, CallbackInfoReturnable<Boolean> cir, FlowableFluid fluid, BlockState state) {
+    private void onPlace(PlayerEntity player, World world, BlockPos pos, BlockHitResult hitResult, CallbackInfoReturnable<Boolean> cir, @Local FlowableFluid fluid, @Local BlockState state) {
         if (world instanceof ServerWorld serverWorld) {
             var serverPlayer = player instanceof ServerPlayerEntity sp ? sp : null;
             var events = Stimuli.select();

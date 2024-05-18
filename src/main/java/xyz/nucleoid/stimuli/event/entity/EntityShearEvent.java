@@ -1,12 +1,11 @@
 package xyz.nucleoid.stimuli.event.entity;
 
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
@@ -19,7 +18,7 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * <li>{@link ActionResult#PASS} moves on to the next listener.</ul>
  * <p>
  * If all listeners return {@link ActionResult#PASS}, the entity is sheared.
- * 
+ *
  * <p>If the entity is being sheared by a player, then {@code player} and {@code hand} will be provided.
  * If the entity is being sheared by a dispenser, then {@code pos} will be provided.
  */

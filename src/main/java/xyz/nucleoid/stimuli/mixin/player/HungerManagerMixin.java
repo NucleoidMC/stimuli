@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli.mixin.player;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -10,7 +11,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.player.PlayerConsumeHungerEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerRegenerateEvent;
@@ -39,8 +39,8 @@ public class HungerManagerMixin {
         }
     }
 
-    @Inject(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;heal(F)V", shift = At.Shift.BEFORE, ordinal = 0), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-    private void attemptRegeneration(PlayerEntity player, CallbackInfo ci, Difficulty difficulty, boolean naturalRegeneration, float amount) {
+    @Inject(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;heal(F)V", shift = At.Shift.BEFORE, ordinal = 0), cancellable = true)
+    private void attemptRegeneration(PlayerEntity player, CallbackInfo ci, @Local Difficulty difficulty, @Local boolean naturalRegeneration, @Local float amount) {
         if (!(player instanceof ServerPlayerEntity)) {
             return;
         }

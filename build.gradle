@@ -1,14 +1,36 @@
 plugins {
-  id 'fabric-loom' version '1.4.+'
+  id 'fabric-loom' version '1.6.+'
   id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version + "+" + project.minecraft_version
 group = project.maven_group
+
+sourceSets {
+  testmod {
+    compileClasspath += main.compileClasspath
+    runtimeClasspath += main.runtimeClasspath
+  }
+}
+
+loom {
+  runs {
+    testmodClient {
+      client()
+      name = "Testmod Client"
+      source sourceSets.testmod
+    }
+    testmodServer {
+      server()
+      name = "Testmod Server"
+      source sourceSets.testmod
+    }
+  }
+}
 
 repositories {
   maven { url = "https://maven.gegy.dev/" }
@@ -22,6 +44,8 @@ dependencies {
   modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
   modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+  testmodImplementation sourceSets.main.output
 }
 
 processResources {
@@ -35,9 +59,11 @@ processResources {
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
 }
+
 java {
   withSourcesJar()
 }
+
 jar {
   from "LICENSE"
 }

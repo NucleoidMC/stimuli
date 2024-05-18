@@ -2,7 +2,6 @@ package xyz.nucleoid.stimuli.event.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.ActionResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
