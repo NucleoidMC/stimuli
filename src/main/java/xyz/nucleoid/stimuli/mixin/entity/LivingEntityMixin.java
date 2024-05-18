@@ -2,6 +2,7 @@ package xyz.nucleoid.stimuli.mixin.entity;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -17,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.entity.EntityActivateTotemEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityDamageEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityDeathEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityDropItemsEvent;
@@ -78,6 +80,21 @@ public abstract class LivingEntityMixin extends Entity {
 
             if (result.getResult() != ActionResult.FAIL) {
                 result.getValue().forEach(lootConsumer);
+            }
+        }
+    }
+
+    @Inject(method = "tryUseTotem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"), cancellable = true)
+    private void tryUseTotem(DamageSource source, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 1) ItemStack itemStack) {
+        if (this.getWorld().isClient) {
+            return;
+        }
+
+        var entity = (LivingEntity) (Object) this;
+        try (var invokers = Stimuli.select().forEntity(entity)) {
+            var result = invokers.get(EntityActivateTotemEvent.EVENT).onTotemActivate(entity, source, itemStack);
+            if (result == ActionResult.FAIL) {
+                cir.setReturnValue(false);
             }
         }
     }
