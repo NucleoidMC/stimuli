@@ -31,16 +31,18 @@ public abstract class RangedWeaponItemMixin implements PassBowUseTicks {
       cancellable = true
     )
     private void onFireArrow(
-            ServerWorld world,
-            LivingEntity shooter,
-            Hand hand, ItemStack tool,
-            List<ItemStack> projectiles,
-            float speed, float divergence,
-            boolean critical,
-            @Nullable LivingEntity target,
-            CallbackInfo ci,
-            @Local(ordinal = 1) ItemStack projectileStack,
-            @Local ProjectileEntity projectile
+      ServerWorld world,
+      LivingEntity shooter,
+      Hand hand,
+      ItemStack tool,
+      List<ItemStack> projectiles,
+      float speed,
+      float divergence,
+      boolean critical,
+      @Nullable LivingEntity target,
+      CallbackInfo ci,
+      @Local(ordinal = 1) ItemStack projectileStack,
+      @Local ProjectileEntity projectile
     ) {
         if (!(shooter instanceof ServerPlayerEntity player)) {
             return;

@@ -4,12 +4,15 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Shearable;
+import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.mob.BoggedEntity;
 import net.minecraft.entity.passive.MooshroomEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.passive.SnowGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,6 +20,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
+import xyz.nucleoid.stimuli.mixin.BoggedEntityAccessor;
+
+import java.util.List;
 
 @Mixin(value = {
     MooshroomEntity.class,
@@ -61,6 +67,12 @@ public class ShearableEntityMixin {
             try (var invokers = events.forEntity(entity)) {
                 var result = invokers.get(EntityShearEvent.EVENT).onShearEntity(entity, serverPlayer, hand, null);
                 if (result == ActionResult.FAIL) {
+                    if ((Object) this instanceof BoggedEntity) {
+                        DataTracker.SerializedEntry<Boolean> shearedEntry = DataTracker.SerializedEntry.of(BoggedEntityAccessor.getSHEARED(), false);
+                        var packet = new EntityTrackerUpdateS2CPacket(entity.getId(), List.of(shearedEntry));
+                        serverPlayer.networkHandler.sendPacket(packet);
+                    }
+
                     return false;
                 }
             }
