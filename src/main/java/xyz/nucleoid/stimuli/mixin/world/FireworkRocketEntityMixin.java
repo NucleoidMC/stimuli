@@ -7,8 +7,8 @@ import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
+import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.util.ActionResult;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,13 +47,13 @@ public class FireworkRocketEntityMixin {
 
                     // Send data tracker update to observing players
                     ServerWorld world = (ServerWorld) firework.getWorld();
-                    ThreadedAnvilChunkStorage storage = world.getChunkManager().threadedAnvilChunkStorage;
 
                     var dirty = firework.getDataTracker().getDirtyEntries();
 
                     if (dirty != null) {
                         Packet<?> packet = new EntityTrackerUpdateS2CPacket(firework.getId(), dirty);
-                        storage.sendToOtherNearbyPlayers(firework, packet);
+                        ServerChunkManager chunkManager = world.getChunkManager();
+                        chunkManager.sendToOtherNearbyPlayers(firework, packet);
                     }
                 }
             }

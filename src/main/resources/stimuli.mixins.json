@@ -4,6 +4,7 @@
     "package": "xyz.nucleoid.stimuli.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
+        "BoggedEntityAccessor",
         "FluidAccessor",
         "block.BedItemMixin",
         "block.BlockItemMixin",
