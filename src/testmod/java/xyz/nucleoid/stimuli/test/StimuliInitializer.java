@@ -10,6 +10,7 @@ import net.minecraft.util.ActionResult;
 import org.slf4j.Logger;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.block.FlowerPotModifyEvent;
+import xyz.nucleoid.stimuli.event.entity.EntityLeashEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
 import xyz.nucleoid.stimuli.event.projectile.ArrowFireEvent;
 import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
@@ -57,6 +58,32 @@ public final class StimuliInitializer implements ModInitializer {
         });
         Stimuli.global().listen(ExplosionDetonatedEvent.EVENT, (explosion, particles) -> {
             server.sendMessage(Text.literal("ExplosionDetonatedEvent: " + explosion.getDestructionType().name()));
+        });
+        Stimuli.global().listen(EntityLeashEvent.ATTACH, (entity, leashHolder, leashPos, player, hand) -> {
+            var message = Text.literal("EntityLeashEvent.Attach: ")
+                    .append(entity.getName());
+
+            if (leashHolder != null) {
+                message
+                        .append(" to ")
+                        .append(leashHolder.getName());
+            }
+
+            if (hand != null) {
+                message.append(" with " + hand);
+            }
+
+            if (leashPos != null) {
+                message.append(" at " + leashPos);
+            }
+
+            if (player == null) {
+                server.sendMessage(message);
+            } else {
+                player.sendMessage(message);
+            }
+
+            return result;
         });
     }
 }
