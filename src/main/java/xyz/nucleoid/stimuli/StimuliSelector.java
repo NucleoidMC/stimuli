@@ -3,6 +3,7 @@ package xyz.nucleoid.stimuli;
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +30,10 @@ public final class StimuliSelector {
 
     public EventInvokers forEntityAt(Entity entity, BlockPos pos) {
         return this.acquireInvokers(entity.getServer(), EventSource.forEntityAt(entity, pos));
+    }
+
+    public EventInvokers forCommandSource(ServerCommandSource source) {
+        return this.acquireInvokers(source.getServer(), EventSource.forCommandSource(source));
     }
 
     EventInvokers acquireInvokers(@Nullable MinecraftServer server, EventSource source) {

@@ -2,6 +2,7 @@ package xyz.nucleoid.stimuli;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -63,6 +64,10 @@ public final class EventSource extends PooledObject<EventSource> {
 
     public static EventSource forEntityAt(Entity entity, BlockPos pos) {
         return acquire(entity.getWorld().getRegistryKey(), pos, entity);
+    }
+
+    public static EventSource forCommandSource(ServerCommandSource source) {
+        return acquire(source.getWorld().getRegistryKey(), BlockPos.ofFloored(source.getPosition()), source.getEntity());
     }
 
     static EventSource acquire(RegistryKey<World> dimension, BlockPos pos, @Nullable Entity entity) {

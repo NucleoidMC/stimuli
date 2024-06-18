@@ -78,5 +78,16 @@ public final class StimuliInitializer implements ModInitializer {
                 return result != ActionResult.FAIL;
             }
         });
+
+        ServerMessageEvents.ALLOW_COMMAND_MESSAGE.register((message, source, params) -> {
+            var player = source.getPlayer();
+            if (player == null) {
+                return true;
+            }
+            try (var invokers = Stimuli.select().forCommandSource(source)) {
+                var result = invokers.get(PlayerChatEvent.EVENT).onSendChatMessage(player, message, params);
+                return result != ActionResult.FAIL;
+            }
+        });
     }
 }
