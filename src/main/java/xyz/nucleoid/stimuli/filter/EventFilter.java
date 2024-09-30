@@ -44,6 +44,19 @@ public interface EventFilter {
     }
 
     /**
+     * Returns an event filter that accepts only events from the given dimension and cylinder bounds.
+     *
+     * @param dimension the dimension to filter for
+     * @param center the center of the cylinder at bottom
+     * @param radius the radius of the cylinder
+     * @param height the height of the cylinder
+     * @return the result event filter
+     */
+    static EventFilter cylinder(RegistryKey<World> dimension, BlockPos center, int radius, int height) {
+        return new CylinderFilter(dimension, center, radius, height);
+    }
+
+    /**
      * Returns an event filter that accepts events from any of the given filters.
      *
      * @param filters the filters to test
