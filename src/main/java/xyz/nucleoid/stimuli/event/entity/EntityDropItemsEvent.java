@@ -3,7 +3,7 @@ package xyz.nucleoid.stimuli.event.entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.TypedActionResult;
+import xyz.nucleoid.stimuli.event.DroppedItemsResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 import java.util.List;
@@ -27,18 +27,18 @@ public interface EntityDropItemsEvent {
                 var result = listener.onDropItems(dropper, items);
 
                 // modify items from listener (some may want to pass while still modifying items)
-                items = result.getValue();
+                items = result.dropStacks();
 
                 // cancel early if success or fail was returned by the listener
-                if (result.getResult() != ActionResult.PASS) {
+                if (result.result() != ActionResult.PASS) {
                     return result;
                 }
             }
         } catch (Throwable t) {
             ctx.handleException(t);
         }
-        return TypedActionResult.pass(items);
+        return DroppedItemsResult.pass(items);
     });
 
-    TypedActionResult<List<ItemStack>> onDropItems(LivingEntity dropper, List<ItemStack> items);
+    DroppedItemsResult onDropItems(LivingEntity dropper, List<ItemStack> items);
 }

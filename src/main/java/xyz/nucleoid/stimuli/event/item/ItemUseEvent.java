@@ -1,10 +1,8 @@
 package xyz.nucleoid.stimuli.event.item;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
@@ -23,15 +21,15 @@ public interface ItemUseEvent {
         try {
             for (var listener : ctx.getListeners()) {
                 var result = listener.onUse(player, hand);
-                if (result.getResult() != ActionResult.PASS) {
+                if (result != ActionResult.PASS) {
                     return result;
                 }
             }
         } catch (Throwable t) {
             ctx.handleException(t);
         }
-        return TypedActionResult.pass(ItemStack.EMPTY);
+        return ActionResult.PASS;
     });
 
-    TypedActionResult<ItemStack> onUse(ServerPlayerEntity player, Hand hand);
+    ActionResult onUse(ServerPlayerEntity player, Hand hand);
 }

@@ -12,10 +12,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.duck.PassBowUseTicks;
@@ -25,9 +29,14 @@ import java.util.List;
 
 @Mixin(RangedWeaponItem.class)
 public abstract class RangedWeaponItemMixin implements PassBowUseTicks {
+    @Unique private ThreadLocal<ProjectileEntity> projectile = new ThreadLocal<>();
+
+    @Shadow
+    protected abstract ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical);
+
     @Inject(
       method = "shootAll",
-      at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/server/world/ServerWorld;spawnEntity(Lnet/minecraft/entity/Entity;)Z"),
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/ProjectileEntity;spawn(Lnet/minecraft/entity/projectile/ProjectileEntity;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/item/ItemStack;Ljava/util/function/Consumer;)Lnet/minecraft/entity/projectile/ProjectileEntity;"),
       cancellable = true
     )
     private void onFireArrow(
@@ -41,12 +50,14 @@ public abstract class RangedWeaponItemMixin implements PassBowUseTicks {
       boolean critical,
       @Nullable LivingEntity target,
       CallbackInfo ci,
-      @Local(ordinal = 1) ItemStack projectileStack,
-      @Local ProjectileEntity projectile
+      @Local(ordinal = 1) ItemStack projectileStack
     ) {
         if (!(shooter instanceof ServerPlayerEntity player)) {
             return;
         }
+
+        ProjectileEntity projectile = this.createArrowEntity(world, shooter, tool, projectileStack, critical);
+        this.projectile.set(projectile);
 
         Item projectileItem = projectileStack.getItem();
         if (!(projectileItem instanceof ArrowItem item) || !(projectile instanceof PersistentProjectileEntity persistentProjectile)) {
@@ -61,5 +72,15 @@ public abstract class RangedWeaponItemMixin implements PassBowUseTicks {
                 ci.cancel();
             }
         }
+    }
+
+    @ModifyArg(
+      method = "shootAll",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/ProjectileEntity;spawn(Lnet/minecraft/entity/projectile/ProjectileEntity;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/item/ItemStack;Ljava/util/function/Consumer;)Lnet/minecraft/entity/projectile/ProjectileEntity;")
+    )
+    private ProjectileEntity useStoredProjectile(ProjectileEntity original) {
+        ProjectileEntity stored = this.projectile.get();
+        this.projectile.set(null);
+        return stored != null ? stored : original;
     }
 }

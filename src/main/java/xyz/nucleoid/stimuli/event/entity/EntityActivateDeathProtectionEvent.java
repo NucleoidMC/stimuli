@@ -7,7 +7,8 @@ import net.minecraft.util.ActionResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link LivingEntity} activates a totem of undying.
+ * Called when a {@link LivingEntity} activates an item that provides death protection,
+ * such as a totem of undying.
  *
  * <p>Upon return:
  * <ul>
@@ -17,12 +18,12 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * </ul>
  * </p>
  */
-public interface EntityActivateTotemEvent {
+public interface EntityActivateDeathProtectionEvent {
 
-    StimulusEvent<EntityActivateTotemEvent> EVENT = StimulusEvent.create(EntityActivateTotemEvent.class, ctx -> (entity, source, itemStack) -> {
+    StimulusEvent<EntityActivateDeathProtectionEvent> EVENT = StimulusEvent.create(EntityActivateDeathProtectionEvent.class, ctx -> (entity, source, itemStack) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onTotemActivate(entity, source, itemStack);
+                var result = listener.onDeathProtectionActivate(entity, source, itemStack);
                 if (result != ActionResult.PASS) {
                     return result;
                 }
@@ -33,5 +34,5 @@ public interface EntityActivateTotemEvent {
         return ActionResult.PASS;
     });
 
-    ActionResult onTotemActivate(LivingEntity entity, DamageSource source, ItemStack itemStack);
+    ActionResult onDeathProtectionActivate(LivingEntity entity, DamageSource source, ItemStack itemStack);
 }
