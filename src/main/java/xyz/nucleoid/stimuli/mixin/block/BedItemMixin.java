@@ -3,7 +3,6 @@ package xyz.nucleoid.stimuli.mixin.block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BedItem;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -31,8 +30,7 @@ public class BedItemMixin {
             if (result == ActionResult.FAIL) {
                 // notify the client that this action did not go through
                 int slot = context.getHand() == Hand.MAIN_HAND ? player.getInventory().selectedSlot : 40;
-                var stack = context.getStack();
-                player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(ScreenHandlerSlotUpdateS2CPacket.UPDATE_PLAYER_INVENTORY_SYNC_ID, 0, slot, stack));
+                player.networkHandler.sendPacket(player.getInventory().createSlotSetPacket(slot));
 
                 ci.setReturnValue(false);
             }

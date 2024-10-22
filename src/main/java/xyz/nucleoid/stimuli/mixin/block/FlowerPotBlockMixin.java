@@ -4,11 +4,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.FlowerPotBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,7 +20,7 @@ import xyz.nucleoid.stimuli.event.block.FlowerPotModifyEvent;
 @Mixin(FlowerPotBlock.class)
 public class FlowerPotBlockMixin {
     @Inject(method = "onUseWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z"), cancellable = true)
-    private void onModifyFlowerPot0(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ItemActionResult> ci) {
+    private void onModifyFlowerPot0(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> ci) {
         if (!(player instanceof ServerPlayerEntity serverPlayer)) {
             return;
         }
@@ -33,9 +31,9 @@ public class FlowerPotBlockMixin {
             if (result == ActionResult.FAIL) {
                 // notify the client that this action did not go through
                 int slot = hand == Hand.MAIN_HAND ? serverPlayer.getInventory().selectedSlot : 40;
-                serverPlayer.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(ScreenHandlerSlotUpdateS2CPacket.UPDATE_PLAYER_INVENTORY_SYNC_ID, 0, slot, stack));
+                serverPlayer.networkHandler.sendPacket(serverPlayer.getInventory().createSlotSetPacket(slot));
 
-                ci.setReturnValue(ItemActionResult.CONSUME);
+                ci.setReturnValue(ActionResult.CONSUME);
             }
         }
     }

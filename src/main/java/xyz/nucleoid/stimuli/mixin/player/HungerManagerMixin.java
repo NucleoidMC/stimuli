@@ -2,7 +2,6 @@ package xyz.nucleoid.stimuli.mixin.player;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.player.HungerManager;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.world.Difficulty;
@@ -22,11 +21,7 @@ public class HungerManagerMixin {
     @Shadow private float saturationLevel;
 
     @Inject(method = "update", at = @At("HEAD"))
-    private void update(PlayerEntity player, CallbackInfo ci) {
-        if (!(player instanceof ServerPlayerEntity)) {
-            return;
-        }
-
+    private void update(ServerPlayerEntity player, CallbackInfo ci) {
         if (this.exhaustion > 4.0F) {
             try (var invokers = Stimuli.select().forEntity(player)) {
                 var result = invokers.get(PlayerConsumeHungerEvent.EVENT)
@@ -39,15 +34,11 @@ public class HungerManagerMixin {
         }
     }
 
-    @Inject(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;heal(F)V", shift = At.Shift.BEFORE, ordinal = 0), cancellable = true)
-    private void attemptRegeneration(PlayerEntity player, CallbackInfo ci, @Local Difficulty difficulty, @Local boolean naturalRegeneration, @Local float amount) {
-        if (!(player instanceof ServerPlayerEntity)) {
-            return;
-        }
-
+    @Inject(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;heal(F)V", shift = At.Shift.BEFORE, ordinal = 0), cancellable = true)
+    private void attemptRegeneration(ServerPlayerEntity player, CallbackInfo ci, @Local Difficulty difficulty, @Local boolean naturalRegeneration, @Local float amount) {
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerRegenerateEvent.EVENT)
-                    .onRegenerate((ServerPlayerEntity) player, amount);
+                    .onRegenerate(player, amount);
 
             if (result == ActionResult.FAIL) {
                 ci.cancel();
@@ -55,15 +46,11 @@ public class HungerManagerMixin {
         }
     }
 
-    @Inject(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;heal(F)V", shift = At.Shift.BEFORE, ordinal = 1), cancellable = true)
-    private void attemptSecondaryRegeneration(PlayerEntity player, CallbackInfo ci) {
-        if (!(player instanceof ServerPlayerEntity)) {
-            return;
-        }
-
+    @Inject(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;heal(F)V", shift = At.Shift.BEFORE, ordinal = 1), cancellable = true)
+    private void attemptSecondaryRegeneration(ServerPlayerEntity player, CallbackInfo ci) {
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerRegenerateEvent.EVENT)
-                    .onRegenerate((ServerPlayerEntity) player, 1);
+                    .onRegenerate(player, 1);
 
             if (result == ActionResult.FAIL) {
                 ci.cancel();

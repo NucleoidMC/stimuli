@@ -14,10 +14,19 @@ import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
 import xyz.nucleoid.stimuli.event.projectile.ArrowFireEvent;
 import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
 
+import java.util.Map;
+
 import static net.minecraft.server.command.CommandManager.literal;
 
 public final class StimuliInitializer implements ModInitializer {
     private static final Logger LOGGER = LogUtils.getLogger();
+
+    private static final Map<String, ActionResult> ACTION_RESULTS = Map.of(
+        "success", ActionResult.SUCCESS,
+        "fail", ActionResult.FAIL,
+        "pass", ActionResult.PASS
+    );
+
     private static ActionResult result = ActionResult.PASS;
     private static MinecraftServer server;
 
@@ -25,9 +34,9 @@ public final class StimuliInitializer implements ModInitializer {
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             var command = literal("stimuli_result");
-            for (ActionResult value : ActionResult.values()) {
-                command.then(literal(value.name()).executes(context -> {
-                    result = value;
+            for (var entry : ACTION_RESULTS.entrySet()) {
+                command.then(literal(entry.getKey()).executes(context -> {
+                    result = entry.getValue();
                     return 0;
                 }));
             }
@@ -57,6 +66,7 @@ public final class StimuliInitializer implements ModInitializer {
         });
         Stimuli.global().listen(ExplosionDetonatedEvent.EVENT, (explosion, particles) -> {
             server.sendMessage(Text.literal("ExplosionDetonatedEvent: " + explosion.getDestructionType().name()));
+            return result;
         });
     }
 }
