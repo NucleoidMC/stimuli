@@ -66,10 +66,8 @@ public class BlockMixin {
             var result = invokers.get(BlockDropItemsEvent.EVENT)
                     .onDropItems(entity, (ServerWorld) world, pos, state, stacks);
 
-            if (result.result() != EventResult.DENY) {
-                var newStacks = result.dropStacks();
-                newStacks.forEach(action);
-            }
+            var newStacks = result.dropStacks();
+            newStacks.forEach(action);
         }
     }
 }

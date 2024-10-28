@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Called when a block is broken and it tries to drop its items from a loot table.
  * <p>
- * Listeners can cancel item drops by returning a deny event result such as {@link DroppedItemsResult#deny(List)},
+ * Listeners can cancel item drops by returning a deny event result such as {@link DroppedItemsResult#deny()},
  * and can additionally modify the items dropped by modifying the returned {@link ItemStack} list.
  */
 public interface BlockDropItemsEvent {

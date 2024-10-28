@@ -38,11 +38,7 @@ public class AbstractBlockMixin {
             var result = invokers.get(BlockDropItemsEvent.EVENT)
                     .onDropItems(entity, (ServerWorld) world, pos, state, operation.call(state, builder));
 
-            if (result.result() != EventResult.DENY) {
-                return result.dropStacks();
-            } else {
-                return Collections.emptyList();
-            }
+            return result.dropStacks();
         }
     }
 }

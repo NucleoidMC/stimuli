@@ -75,9 +75,7 @@ public abstract class LivingEntityMixin extends Entity {
             var result = invokers.get(EntityDropItemsEvent.EVENT)
                     .onDropItems((LivingEntity) (Object) this, droppedStacks);
 
-            if (result.result() != EventResult.DENY) {
-                result.dropStacks().forEach(lootConsumer);
-            }
+            result.dropStacks().forEach(lootConsumer);
         }
     }
 
