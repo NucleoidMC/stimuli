@@ -3,7 +3,7 @@ package xyz.nucleoid.stimuli.event.entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
@@ -12,9 +12,9 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  *
  * <p>Upon return:
  * <ul>
- * <li>{@link ActionResult#SUCCESS} cancels further processing and activates the totem.
- * <li>{@link ActionResult#FAIL} cancels further processing and does not activate the totem.
- * <li>{@link ActionResult#PASS} moves on to the next listener.
+ * <li>{@link EventResult#ALLOW} cancels further processing and activates the totem.
+ * <li>{@link EventResult#DENY} cancels further processing and does not activate the totem.
+ * <li>{@link EventResult#PASS} moves on to the next listener.
  * </ul>
  * </p>
  */
@@ -24,15 +24,15 @@ public interface EntityActivateDeathProtectionEvent {
         try {
             for (var listener : ctx.getListeners()) {
                 var result = listener.onDeathProtectionActivate(entity, source, itemStack);
-                if (result != ActionResult.PASS) {
+                if (result != EventResult.PASS) {
                     return result;
                 }
             }
         } catch (Throwable t) {
             ctx.handleException(t);
         }
-        return ActionResult.PASS;
+        return EventResult.PASS;
     });
 
-    ActionResult onDeathProtectionActivate(LivingEntity entity, DamageSource source, ItemStack itemStack);
+    EventResult onDeathProtectionActivate(LivingEntity entity, DamageSource source, ItemStack itemStack);
 }

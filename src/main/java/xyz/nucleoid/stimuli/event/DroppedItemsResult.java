@@ -1,20 +1,19 @@
 package xyz.nucleoid.stimuli.event;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
 
 import java.util.List;
 
-public record DroppedItemsResult(ActionResult result, List<ItemStack> dropStacks) {
-    public static DroppedItemsResult success(List<ItemStack> dropStacks) {
-        return new DroppedItemsResult(ActionResult.SUCCESS, dropStacks);
-    }
-
-    public static DroppedItemsResult fail(List<ItemStack> dropStacks) {
-        return new DroppedItemsResult(ActionResult.FAIL, dropStacks);
-    }
-
+public record DroppedItemsResult(EventResult result, List<ItemStack> dropStacks) {
     public static DroppedItemsResult pass(List<ItemStack> dropStacks) {
-        return new DroppedItemsResult(ActionResult.PASS, dropStacks);
+        return new DroppedItemsResult(EventResult.PASS, dropStacks);
+    }
+
+    public static DroppedItemsResult allow(List<ItemStack> dropStacks) {
+        return new DroppedItemsResult(EventResult.ALLOW, dropStacks);
+    }
+
+    public static DroppedItemsResult deny(List<ItemStack> dropStacks) {
+        return new DroppedItemsResult(EventResult.DENY, dropStacks);
     }
 }

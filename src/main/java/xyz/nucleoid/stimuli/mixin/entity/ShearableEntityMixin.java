@@ -13,12 +13,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerChunkManager;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
 import xyz.nucleoid.stimuli.mixin.BoggedEntityAccessor;
 
@@ -66,7 +66,7 @@ public class ShearableEntityMixin {
 
             try (var invokers = events.forEntity(entity)) {
                 var result = invokers.get(EntityShearEvent.EVENT).onShearEntity(entity, serverPlayer, hand, null);
-                if (result == ActionResult.FAIL) {
+                if (result == EventResult.DENY) {
                     if ((Object) this instanceof BoggedEntity) {
                         DataTracker.SerializedEntry<Boolean> shearedEntry = DataTracker.SerializedEntry.of(BoggedEntityAccessor.getSHEARED(), false);
                         var packet = new EntityTrackerUpdateS2CPacket(entity.getId(), List.of(shearedEntry));

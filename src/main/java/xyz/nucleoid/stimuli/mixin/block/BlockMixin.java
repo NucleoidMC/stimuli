@@ -6,7 +6,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
@@ -15,6 +14,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.BlockDropItemsEvent;
 
 import java.util.List;
@@ -66,7 +66,7 @@ public class BlockMixin {
             var result = invokers.get(BlockDropItemsEvent.EVENT)
                     .onDropItems(entity, (ServerWorld) world, pos, state, stacks);
 
-            if (result.result() != ActionResult.FAIL) {
+            if (result.result() != EventResult.DENY) {
                 var newStacks = result.dropStacks();
                 newStacks.forEach(action);
             }

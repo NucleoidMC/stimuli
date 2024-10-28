@@ -3,7 +3,6 @@ package xyz.nucleoid.stimuli.mixin.world;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionImpl;
@@ -16,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.duck.ExplosionCancellable;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public abstract class ExplosionImplMixin implements Explosion, ExplosionCancella
 
             var result = invokers.get(ExplosionDetonatedEvent.EVENT).onExplosionDetonated((Explosion) (Object) this, this.blocksToDestroy);
 
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 this.cancelled = true;
                 ci.cancel();
             }

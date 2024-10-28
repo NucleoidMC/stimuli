@@ -8,12 +8,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootWorldContext;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.explosion.Explosion;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.BlockDropItemsEvent;
 
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class AbstractBlockMixin {
             var result = invokers.get(BlockDropItemsEvent.EVENT)
                     .onDropItems(entity, (ServerWorld) world, pos, state, operation.call(state, builder));
 
-            if (result.result() != ActionResult.FAIL) {
+            if (result.result() != EventResult.DENY) {
                 return result.dropStacks();
             } else {
                 return Collections.emptyList();

@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.FlowerPotModifyEvent;
 
 @Mixin(FlowerPotBlock.class)
@@ -28,7 +29,7 @@ public class FlowerPotBlockMixin {
         try (var invokers = Stimuli.select().forEntityAt(serverPlayer, pos)) {
             var result = invokers.get(FlowerPotModifyEvent.EVENT).onModifyFlowerPot(serverPlayer, hand, hitResult);
 
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 // notify the client that this action did not go through
                 int slot = hand == Hand.MAIN_HAND ? serverPlayer.getInventory().selectedSlot : 40;
                 serverPlayer.networkHandler.sendPacket(serverPlayer.getInventory().createSlotSetPacket(slot));
@@ -47,7 +48,7 @@ public class FlowerPotBlockMixin {
         try (var invokers = Stimuli.select().forEntityAt(serverPlayer, pos)) {
             var result = invokers.get(FlowerPotModifyEvent.EVENT).onModifyFlowerPot(serverPlayer, Hand.MAIN_HAND, hitResult);
             //Maybe try to update the slot the item shows at and update it to fix desync
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 ci.setReturnValue(ActionResult.CONSUME);
             }
         }

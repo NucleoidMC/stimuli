@@ -5,13 +5,13 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.item.ItemPickupEvent;
 
 @Mixin(ItemEntity.class)
@@ -39,7 +39,7 @@ public abstract class ItemEntityMixin extends Entity {
             var result = invokers.get(ItemPickupEvent.EVENT)
                     .onPickupItem((ServerPlayerEntity) player, itemEntity, itemEntity.getStack());
 
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 ci.cancel();
             }
         }

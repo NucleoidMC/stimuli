@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.duck.PassBowUseTicks;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.projectile.ArrowFireEvent;
 
 import java.util.List;
@@ -68,7 +68,7 @@ public abstract class RangedWeaponItemMixin implements PassBowUseTicks {
             var result = invokers.get(ArrowFireEvent.EVENT)
               .onFireArrow(player, tool, item, this.stimuli$getLastRemainingUseTicks(), persistentProjectile);
 
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 ci.cancel();
             }
         }

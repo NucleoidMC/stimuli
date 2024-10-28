@@ -6,13 +6,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.item.ItemThrowEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
@@ -27,7 +27,7 @@ public class ServerPlayerEntityMixin {
 
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerDeathEvent.EVENT).onDeath(player, source);
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 if (player.getHealth() <= 0.0F) {
                     player.setHealth(player.getMaxHealth());
                 }
@@ -42,7 +42,7 @@ public class ServerPlayerEntityMixin {
 
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerDamageEvent.EVENT).onDamage(player, source, amount);
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 ci.cancel();
             }
         }
@@ -56,7 +56,7 @@ public class ServerPlayerEntityMixin {
 
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(ItemThrowEvent.EVENT).onThrowItem(player, slot, stack);
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 player.networkHandler.sendPacket(player.getInventory().createSlotSetPacket(slot));
                 ci.setReturnValue(false);
             }
@@ -68,7 +68,7 @@ public class ServerPlayerEntityMixin {
         var player = (ServerPlayerEntity) (Object) this;
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerSpectateEntityEvent.EVENT).onSpectateEntity(player, target);
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 ci.cancel();
             }
         }
@@ -80,7 +80,7 @@ public class ServerPlayerEntityMixin {
             var result = invokers.get(PlayerRegenerateEvent.EVENT)
                     .onRegenerate((ServerPlayerEntity) player, amount);
 
-            if (result != ActionResult.FAIL) {
+            if (result != EventResult.DENY) {
                 original.call(player, amount);
             }
         }

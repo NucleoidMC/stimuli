@@ -3,7 +3,6 @@ package xyz.nucleoid.stimuli.mixin.projectile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -13,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.projectile.ProjectileHitEvent;
 
 @Mixin(ProjectileEntity.class)
@@ -31,12 +31,12 @@ public abstract class ProjectileEntityMixin extends Entity {
             var self = (ProjectileEntity) (Object) this;
             if (hitResult.getType() == HitResult.Type.ENTITY) {
                 var result = invokers.get(ProjectileHitEvent.ENTITY).onHitEntity(self, (EntityHitResult) hitResult);
-                if (result == ActionResult.FAIL) {
+                if (result == EventResult.DENY) {
                     ci.cancel();
                 }
             } else if (hitResult.getType() == HitResult.Type.BLOCK) {
                 var result = invokers.get(ProjectileHitEvent.BLOCK).onHitBlock(self, (BlockHitResult) hitResult);
-                if (result == ActionResult.FAIL) {
+                if (result == EventResult.DENY) {
                     ci.cancel();
                 }
             }

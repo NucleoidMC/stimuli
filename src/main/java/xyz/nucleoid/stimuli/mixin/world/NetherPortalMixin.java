@@ -2,7 +2,6 @@ package xyz.nucleoid.stimuli.mixin.world;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.ChunkRegion;
@@ -13,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.world.NetherPortalOpenEvent;
 
 import java.util.Optional;
@@ -34,7 +34,7 @@ public class NetherPortalMixin {
             try (var invokers = Stimuli.select().at(world, lowerCorner)) {
                 var result = invokers.get(NetherPortalOpenEvent.EVENT).onOpenNetherPortal(world, lowerCorner);
 
-                if (result == ActionResult.FAIL) {
+                if (result == EventResult.DENY) {
                     return false;
                 }
             }

@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.BlockPlaceEvent;
 
 @Mixin(BlockItem.class)
@@ -46,7 +47,7 @@ public class BlockItemMixin {
         try (var invokers = Stimuli.select().forEntityAt(player, blockPos)) {
             var result = invokers.get(BlockPlaceEvent.BEFORE).onPlace(player, player.getServerWorld(), blockPos, state, context);
 
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 // notify the client that this action did not go through
                 int slot = context.getHand() == Hand.MAIN_HAND ? player.getInventory().selectedSlot : 40;
                 player.networkHandler.sendPacket(player.getInventory().createSlotSetPacket(slot));

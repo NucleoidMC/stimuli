@@ -5,7 +5,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.biome.Biome;
@@ -17,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.duck.ExplosionCancellable;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.entity.EntitySpawnEvent;
 import xyz.nucleoid.stimuli.event.world.SnowFallEvent;
 
@@ -27,7 +27,7 @@ public class ServerWorldMixin {
     private void applyEntitySpawnEvent(Entity entity, CallbackInfoReturnable<Boolean> cir) {
         try (var invokers = Stimuli.select().at((ServerWorld) (Object) this, entity.getBlockPos())) {
             var result = invokers.get(EntitySpawnEvent.EVENT).onSpawn(entity);
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 cir.setReturnValue(false);
             }
         }
@@ -43,7 +43,7 @@ public class ServerWorldMixin {
 
         try (var invokers = Stimuli.select().at(serverWorld, pos)) {
             var result = invokers.get(SnowFallEvent.EVENT).onSnowFall(serverWorld, pos);
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 return false;
             }
         }

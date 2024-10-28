@@ -2,8 +2,8 @@ package xyz.nucleoid.stimuli.event.entity;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
 import xyz.nucleoid.stimuli.event.DroppedItemsResult;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 import java.util.List;
@@ -13,12 +13,12 @@ import java.util.List;
  *
  * <p>Upon return:
  * <ul>
- * <li>{@link ActionResult#SUCCESS} cancels further processing and drops the current loot.
- * <li>{@link ActionResult#FAIL} cancels further processing and drops no loot.
- * <li>{@link ActionResult#PASS} moves on to the next listener.</ul>
+ * <li>{@link EventResult#ALLOW} cancels further processing and drops the current loot.
+ * <li>{@link EventResult#DENY} cancels further processing and drops no loot.
+ * <li>{@link EventResult#PASS} moves on to the next listener.</ul>
  * <p>
  * Listeners can modify the list of {@link ItemStack}s returned to them, regardless of what their result is.
- * If all listeners return {@link ActionResult#PASS}, the current loot is dropped.
+ * If all listeners return {@link EventResult#PASS}, the current loot is dropped.
  */
 public interface EntityDropItemsEvent {
     StimulusEvent<EntityDropItemsEvent> EVENT = StimulusEvent.create(EntityDropItemsEvent.class, ctx -> (dropper, items) -> {
@@ -29,8 +29,8 @@ public interface EntityDropItemsEvent {
                 // modify items from listener (some may want to pass while still modifying items)
                 items = result.dropStacks();
 
-                // cancel early if success or fail was returned by the listener
-                if (result.result() != ActionResult.PASS) {
+                // cancel early if allow or deny was returned by the listener
+                if (result.result() != EventResult.PASS) {
                     return result;
                 }
             }
