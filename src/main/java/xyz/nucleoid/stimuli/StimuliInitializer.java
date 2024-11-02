@@ -39,7 +39,7 @@ public final class StimuliInitializer implements ModInitializer {
         UseItemCallback.EVENT.register((player, world, hand) -> {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 try (var invokers = Stimuli.select().forEntity(player)) {
-                    return invokers.get(ItemUseEvent.EVENT).onUse(serverPlayer, hand).asActionResult();
+                    return invokers.get(ItemUseEvent.EVENT).onUse(serverPlayer, hand);
                 }
             }
             return ActionResult.PASS;
@@ -48,7 +48,7 @@ public final class StimuliInitializer implements ModInitializer {
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 try (var invokers = Stimuli.select().forEntityAt(player, hitResult.getBlockPos())) {
-                    return invokers.get(BlockUseEvent.EVENT).onUse(serverPlayer, hand, hitResult).asActionResult();
+                    return invokers.get(BlockUseEvent.EVENT).onUse(serverPlayer, hand, hitResult);
                 }
             }
             return ActionResult.PASS;
