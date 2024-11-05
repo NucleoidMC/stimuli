@@ -1,19 +1,22 @@
 package xyz.nucleoid.stimuli.mixin.player;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
+import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.item.ItemThrowEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
+import xyz.nucleoid.stimuli.event.player.PlayerRegenerateEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerSpectateEntityEvent;
 
 @Mixin(ServerPlayerEntity.class)
@@ -24,7 +27,7 @@ public class ServerPlayerEntityMixin {
 
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerDeathEvent.EVENT).onDeath(player, source);
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 if (player.getHealth() <= 0.0F) {
                     player.setHealth(player.getMaxHealth());
                 }
@@ -34,12 +37,12 @@ public class ServerPlayerEntityMixin {
     }
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
-    private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
+    private void onDamage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
         var player = (ServerPlayerEntity) (Object) this;
 
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerDamageEvent.EVENT).onDamage(player, source, amount);
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 ci.cancel();
             }
         }
@@ -53,8 +56,8 @@ public class ServerPlayerEntityMixin {
 
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(ItemThrowEvent.EVENT).onThrowItem(player, slot, stack);
-            if (result == ActionResult.FAIL) {
-                player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(ScreenHandlerSlotUpdateS2CPacket.UPDATE_PLAYER_INVENTORY_SYNC_ID, 0, slot, stack));
+            if (result == EventResult.DENY) {
+                player.networkHandler.sendPacket(player.getInventory().createSlotSetPacket(slot));
                 ci.setReturnValue(false);
             }
         }
@@ -65,8 +68,20 @@ public class ServerPlayerEntityMixin {
         var player = (ServerPlayerEntity) (Object) this;
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerSpectateEntityEvent.EVENT).onSpectateEntity(player, target);
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 ci.cancel();
+            }
+        }
+    }
+
+    @WrapOperation(method = "tickHunger", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;heal(F)V"))
+    private void attemptPeacefulRegeneration(ServerPlayerEntity player, float amount, Operation<Boolean> original) {
+        try (var invokers = Stimuli.select().forEntity(player)) {
+            var result = invokers.get(PlayerRegenerateEvent.EVENT)
+                    .onRegenerate((ServerPlayerEntity) player, amount);
+
+            if (result != EventResult.DENY) {
+                original.call(player, amount);
             }
         }
     }

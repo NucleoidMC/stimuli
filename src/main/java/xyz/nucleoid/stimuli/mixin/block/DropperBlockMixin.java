@@ -6,7 +6,6 @@ import net.minecraft.block.DropperBlock;
 import net.minecraft.block.entity.DispenserBlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.DispenserActivateEvent;
 
 @Mixin(DropperBlock.class)
@@ -34,7 +34,7 @@ public class DropperBlockMixin {
 
         try (var invokers = events.at(world, pos)) {
             var result = invokers.get(DispenserActivateEvent.EVENT).onActivate(world, pos, dispenserBlockEntity, slot, itemStack);
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 ci.cancel();
             }
         }

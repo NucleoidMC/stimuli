@@ -1,33 +1,50 @@
 package xyz.nucleoid.stimuli.test;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import org.slf4j.Logger;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.DroppedItemsResult;
+import xyz.nucleoid.stimuli.event.EventResult;
+import xyz.nucleoid.stimuli.event.block.BlockDropItemsEvent;
 import xyz.nucleoid.stimuli.event.block.FlowerPotModifyEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
 import xyz.nucleoid.stimuli.event.projectile.ArrowFireEvent;
 import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import static net.minecraft.server.command.CommandManager.literal;
 
 public final class StimuliInitializer implements ModInitializer {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static ActionResult result = ActionResult.PASS;
+
+    private static final Map<String, EventResult> EVENT_RESULTS = Map.of(
+        "pass", EventResult.PASS,
+        "allow", EventResult.ALLOW,
+        "deny", EventResult.DENY
+    );
+
+    private static EventResult result = EventResult.PASS;
     private static MinecraftServer server;
 
     @Override
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             var command = literal("stimuli_result");
-            for (ActionResult value : ActionResult.values()) {
-                command.then(literal(value.name()).executes(context -> {
-                    result = value;
+            for (var entry : EVENT_RESULTS.entrySet()) {
+                command.then(literal(entry.getKey()).executes(context -> {
+                    result = entry.getValue();
                     return 0;
                 }));
             }
@@ -57,6 +74,31 @@ public final class StimuliInitializer implements ModInitializer {
         });
         Stimuli.global().listen(ExplosionDetonatedEvent.EVENT, (explosion, particles) -> {
             server.sendMessage(Text.literal("ExplosionDetonatedEvent: " + explosion.getDestructionType().name()));
+            return result;
+        });
+
+        Stimuli.global().listen(BlockDropItemsEvent.EVENT, (breaker, world, pos, state, dropStacks) -> {
+            return DroppedItemsResult.pass(dropStacks);
+        });
+
+        Stimuli.global().listen(BlockDropItemsEvent.EVENT, (breaker, world, pos, state, dropStacks) -> {
+            if (state.isOf(Blocks.POTATOES)) {
+                dropStacks = new ArrayList<>(dropStacks);
+                dropStacks.add(new ItemStack(Items.ORANGE_TERRACOTTA));
+            }
+
+            return DroppedItemsResult.pass(dropStacks);
+        });
+
+        Stimuli.global().listen(BlockDropItemsEvent.EVENT, (breaker, world, pos, state, dropStacks) -> {
+            if (state.isOf(Blocks.POTATOES)) {
+                dropStacks = ImmutableList.<ItemStack>builder()
+                    .addAll(dropStacks)
+                    .add(new ItemStack(Items.ORANGE_WOOL))
+                    .build();
+            }
+
+            return DroppedItemsResult.pass(dropStacks);
         });
     }
 }

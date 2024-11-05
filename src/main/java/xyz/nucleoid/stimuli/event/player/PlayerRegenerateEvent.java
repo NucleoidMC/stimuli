@@ -1,7 +1,7 @@
 package xyz.nucleoid.stimuli.event.player;
 
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
@@ -9,26 +9,26 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  *
  * <p>Upon return:
  * <ul>
- * <li>{@link ActionResult#SUCCESS} cancels further processing and allows the regeneration.
- * <li>{@link ActionResult#FAIL} cancels further processing and cancels the regeneration.
- * <li>{@link ActionResult#PASS} moves on to the next listener.</ul>
+ * <li>{@link EventResult#ALLOW} cancels further processing and allows the regeneration.
+ * <li>{@link EventResult#DENY} cancels further processing and cancels the regeneration.
+ * <li>{@link EventResult#PASS} moves on to the next listener.</ul>
  * <p>
- * If all listeners return {@link ActionResult#PASS}, the player successfully regenerates health.
+ * If all listeners return {@link EventResult#PASS}, the player successfully regenerates health.
  */
 public interface PlayerRegenerateEvent {
     StimulusEvent<PlayerRegenerateEvent> EVENT = StimulusEvent.create(PlayerRegenerateEvent.class, ctx -> (player, amount) -> {
         try {
             for (var listener : ctx.getListeners()) {
                 var result = listener.onRegenerate(player, amount);
-                if (result != ActionResult.PASS) {
+                if (result != EventResult.PASS) {
                     return result;
                 }
             }
         } catch (Throwable t) {
             ctx.handleException(t);
         }
-        return ActionResult.PASS;
+        return EventResult.PASS;
     });
 
-    ActionResult onRegenerate(ServerPlayerEntity player, float amount);
+    EventResult onRegenerate(ServerPlayerEntity player, float amount);
 }

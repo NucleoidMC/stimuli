@@ -3,7 +3,7 @@ package xyz.nucleoid.stimuli.event.player;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
@@ -11,9 +11,9 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  *
  * <p>Upon return:
  * <ul>
- * <li>{@link ActionResult#SUCCESS} cancels further processing and allows the message to be sent.
- * <li>{@link ActionResult#FAIL} cancels further processing and the message being sent.
- * <li>{@link ActionResult#PASS} moves on to the next listener.
+ * <li>{@link EventResult#ALLOW} cancels further processing and allows the message to be sent.
+ * <li>{@link EventResult#DENY} cancels further processing and the message being sent.
+ * <li>{@link EventResult#PASS} moves on to the next listener.
  * </ul>
  *
  * @see ReplacePlayerChatEvent to cancel and modify a chat message
@@ -23,15 +23,15 @@ public interface PlayerChatEvent {
         try {
             for (var listener : ctx.getListeners()) {
                 var result = listener.onSendChatMessage(player, message, messageType);
-                if (result != ActionResult.PASS) {
+                if (result != EventResult.PASS) {
                     return result;
                 }
             }
         } catch (Throwable t) {
             ctx.handleException(t);
         }
-        return ActionResult.PASS;
+        return EventResult.PASS;
     });
 
-    ActionResult onSendChatMessage(ServerPlayerEntity player, SignedMessage message, MessageType.Parameters messageType);
+    EventResult onSendChatMessage(ServerPlayerEntity player, SignedMessage message, MessageType.Parameters messageType);
 }

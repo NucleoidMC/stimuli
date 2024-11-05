@@ -2,8 +2,8 @@ package xyz.nucleoid.stimuli.event.entity;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.TypedActionResult;
+import xyz.nucleoid.stimuli.event.DroppedItemsResult;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 import java.util.List;
@@ -13,12 +13,13 @@ import java.util.List;
  *
  * <p>Upon return:
  * <ul>
- * <li>{@link ActionResult#SUCCESS} cancels further processing and drops the current loot.
- * <li>{@link ActionResult#FAIL} cancels further processing and drops no loot.
- * <li>{@link ActionResult#PASS} moves on to the next listener.</ul>
- * <p>
- * Listeners can modify the list of {@link ItemStack}s returned to them, regardless of what their result is.
- * If all listeners return {@link ActionResult#PASS}, the current loot is dropped.
+ * <li>{@link DroppedItemsResult#allow(List)} cancels further processing and drops the specified loot.
+ * <li>{@link DroppedItemsResult#deny()} cancels further processing and drops no loot.
+ * <li>{@link DroppedItemsResult#pass(List)} moves on to the next listener with the specified loot.</ul>
+ *
+ * The drop stacks list is not guaranteed to be mutable, so listeners modifying loot should first copy
+ * the list before returning it in the result. If the drop stacks list is not modified, it can be passed
+ * directly to the result.
  */
 public interface EntityDropItemsEvent {
     StimulusEvent<EntityDropItemsEvent> EVENT = StimulusEvent.create(EntityDropItemsEvent.class, ctx -> (dropper, items) -> {
@@ -27,18 +28,21 @@ public interface EntityDropItemsEvent {
                 var result = listener.onDropItems(dropper, items);
 
                 // modify items from listener (some may want to pass while still modifying items)
-                items = result.getValue();
+                items = result.dropStacks();
 
-                // cancel early if success or fail was returned by the listener
-                if (result.getResult() != ActionResult.PASS) {
+                // cancel early if allow or deny was returned by the listener
+                if (result.result() != EventResult.PASS) {
                     return result;
                 }
             }
         } catch (Throwable t) {
             ctx.handleException(t);
         }
-        return TypedActionResult.pass(items);
+        return DroppedItemsResult.pass(items);
     });
 
-    TypedActionResult<List<ItemStack>> onDropItems(LivingEntity dropper, List<ItemStack> items);
+    /**
+     * @param items a list of dropped item stacks, which should be treated as immutable
+     */
+    DroppedItemsResult onDropItems(LivingEntity dropper, List<ItemStack> items);
 }

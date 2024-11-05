@@ -3,15 +3,14 @@ package xyz.nucleoid.stimuli.mixin.block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BedItem;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.BlockPlaceEvent;
 
 @Mixin(BedItem.class)
@@ -28,11 +27,10 @@ public class BedItemMixin {
         try (var invokers = Stimuli.select().forEntityAt(player, blockPos)) {
             var result = invokers.get(BlockPlaceEvent.BEFORE).onPlace(player, player.getServerWorld(), blockPos, state, context);
 
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 // notify the client that this action did not go through
                 int slot = context.getHand() == Hand.MAIN_HAND ? player.getInventory().selectedSlot : 40;
-                var stack = context.getStack();
-                player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(ScreenHandlerSlotUpdateS2CPacket.UPDATE_PLAYER_INVENTORY_SYNC_ID, 0, slot, stack));
+                player.networkHandler.sendPacket(player.getInventory().createSlotSetPacket(slot));
 
                 ci.setReturnValue(false);
             }

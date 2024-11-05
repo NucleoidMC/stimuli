@@ -9,7 +9,6 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.world.FireworkExplodeEvent;
 
 import java.util.Collections;
@@ -32,7 +32,7 @@ public class FireworkRocketEntityMixin {
         if (!firework.getWorld().isClient) {
             try (var invokers = Stimuli.select().forEntity(firework)) {
                 var result = invokers.get(FireworkExplodeEvent.EVENT).onFireworkExplode(firework);
-                if (result == ActionResult.FAIL) {
+                if (result == EventResult.DENY) {
                     // Make a copy so the data tracker entry is marked dirty
                     ItemStack stack = firework.getDataTracker().get(ITEM).copy();
 

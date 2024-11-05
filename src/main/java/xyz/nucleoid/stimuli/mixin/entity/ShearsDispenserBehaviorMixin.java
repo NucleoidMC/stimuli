@@ -6,11 +6,11 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.dispenser.ShearsDispenserBehavior;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Shearable;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
 
 @Mixin(ShearsDispenserBehavior.class)
@@ -34,7 +34,7 @@ public class ShearsDispenserBehaviorMixin {
 
         try (var invokers = events.forEntityAt(entity, pos)) {
             var result = invokers.get(EntityShearEvent.EVENT).onShearEntity(entity, null, null, pos);
-            if (result == ActionResult.FAIL) {
+            if (result == EventResult.DENY) {
                 return false;
             }
         }

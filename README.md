@@ -25,13 +25,13 @@ The simplest usage of the mod involves registering global events without a filte
 registered through `Stimuli.global()`. 
 
 ```java
-Stimuli.global().listen(PlayerChatEvent.EVENT, (sender, message) -> {
-    sender.sendMessage(new LiteralText("You shall not speak!"), false);
-    return ActionResult.FAIL;
+Stimuli.global().listen(PlayerChatEvent.EVENT, (sender, message, messageType) -> {
+    sender.sendMessage(Text.literal("You shall not speak!"), false);
+    return EventResult.DENY;
 });
 ```
 
-This example registers a listener to the `PlayerChatEvent` event and returns `ActionResult.FAIL` in order to cancel
+This example registers a listener to the `PlayerChatEvent` event and returns `EventResult.DENY` in order to cancel
 further processing of the chat event.
 
 If an event you need is not currently implemented, please consider [submitting a Pull Request](https://github.com/NucleoidMC/stimuli/compare)!
@@ -49,7 +49,7 @@ EventFilter filter = EventFilter.box(World.OVERWORLD, new BlockPos(0, 0, 0), new
 
 // create a map of event type to listener & deny block breaking
 EventListenerMap listeners = new EventListenerMap();
-listeners.listen(BlockBreakEvent.EVENT, (player, pos) -> ActionResult.FAIL);
+listeners.listen(BlockBreakEvent.EVENT, (player, world, pos) -> EventResult.DENY);
 
 // register our event listener selector so that our events get called
 Stimuli.registerSelector(new SimpleListenerSelector(filter, listeners));

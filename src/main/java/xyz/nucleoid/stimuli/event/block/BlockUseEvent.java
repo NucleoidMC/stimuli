@@ -11,11 +11,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  *
  * <p>Upon return:
  * <ul>
- * <li>{@link ActionResult#SUCCESS} cancels further processing and allows the use.
- * <li>{@link ActionResult#FAIL} cancels further processing and cancels the use.
- * <li>{@link ActionResult#PASS} moves on to the next listener.</ul>
+ * <li>{@link ActionResult#PASS} moves on to the next listener.
+ * <li>Other results terminate the block use attempt with their normal side effects.</ul>
  * <p>
- * If all listeners return {@link ActionResult#PASS}, the use succeeds and proceeds with normal logic.
+ * If all listeners return {@link ActionResult#PASS}, the use attempt proceeds with normal logic.
  */
 public interface BlockUseEvent {
     StimulusEvent<BlockUseEvent> EVENT = StimulusEvent.create(BlockUseEvent.class, ctx -> (player, hand, hitResult) -> {

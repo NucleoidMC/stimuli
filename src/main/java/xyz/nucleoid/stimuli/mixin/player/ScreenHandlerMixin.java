@@ -6,7 +6,6 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.item.ItemThrowEvent;
 
 @Mixin(ScreenHandler.class)
@@ -62,7 +62,7 @@ public class ScreenHandlerMixin {
         if (player instanceof ServerPlayerEntity serverPlayer) {
             try (var invokers = Stimuli.select().forEntity(player)) {
                 return invokers.get(ItemThrowEvent.EVENT)
-                        .onThrowItem(serverPlayer, slot, stack) == ActionResult.FAIL;
+                        .onThrowItem(serverPlayer, slot, stack) == EventResult.DENY;
             }
         }
 

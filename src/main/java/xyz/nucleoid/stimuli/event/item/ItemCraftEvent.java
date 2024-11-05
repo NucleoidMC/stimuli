@@ -2,7 +2,7 @@ package xyz.nucleoid.stimuli.event.item;
 
 import net.minecraft.recipe.Recipe;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
@@ -10,11 +10,11 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  *
  * <p>Upon return:
  * <ul>
- * <li>{@link ActionResult#SUCCESS} cancels further processing and allows the item to be crafted.
- * <li>{@link ActionResult#FAIL} cancels further processing and prevents the player from crafting.
- * <li>{@link ActionResult#PASS} moves on to the next listener.</ul>
+ * <li>{@link EventResult#ALLOW} cancels further processing and allows the item to be crafted.
+ * <li>{@link EventResult#DENY} cancels further processing and prevents the player from crafting.
+ * <li>{@link EventResult#PASS} moves on to the next listener.</ul>
  * <p>
- * If all listeners return {@link ActionResult#PASS}, the item can be crafted normally.
+ * If all listeners return {@link EventResult#PASS}, the item can be crafted normally.
  */
 public interface ItemCraftEvent {
     StimulusEvent<ItemCraftEvent> EVENT = StimulusEvent.create(ItemCraftEvent.class, ctx -> {
@@ -22,16 +22,16 @@ public interface ItemCraftEvent {
             try {
                 for (var listener : ctx.getListeners()) {
                     var result = listener.onCraft(player, recipe);
-                    if (result != ActionResult.PASS) {
+                    if (result != EventResult.PASS) {
                         return result;
                     }
                 }
             } catch (Throwable t) {
                 ctx.handleException(t);
             }
-            return ActionResult.PASS;
+            return EventResult.PASS;
         };
     });
 
-    ActionResult onCraft(ServerPlayerEntity player, Recipe<?> recipe);
+    EventResult onCraft(ServerPlayerEntity player, Recipe<?> recipe);
 }

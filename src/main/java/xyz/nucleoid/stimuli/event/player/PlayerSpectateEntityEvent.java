@@ -2,7 +2,7 @@ package xyz.nucleoid.stimuli.event.player;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 public interface PlayerSpectateEntityEvent {
@@ -10,15 +10,15 @@ public interface PlayerSpectateEntityEvent {
                 try {
                     for (var listener : ctx.getListeners()) {
                         var result = listener.onSpectateEntity(player, target);
-                        if (result != ActionResult.PASS) {
+                        if (result != EventResult.PASS) {
                             return result;
                         }
                     }
                 } catch (Throwable t) {
                     ctx.handleException(t);
                 }
-                return ActionResult.PASS;
+                return EventResult.PASS;
             });
 
-    ActionResult onSpectateEntity(ServerPlayerEntity player, Entity target);
+    EventResult onSpectateEntity(ServerPlayerEntity player, Entity target);
 }

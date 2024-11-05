@@ -4,7 +4,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.TntBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.world.TntIgniteEvent;
 
 @Mixin(TntBlock.class)
@@ -21,7 +21,7 @@ public class TntBlockMixin {
         if (!world.isClient) {
             try (var invokers = Stimuli.select().at(world, pos)) {
                 var result = invokers.get(TntIgniteEvent.EVENT).onIgniteTnt((ServerWorld) world, pos, igniter);
-                if (result == ActionResult.FAIL) {
+                if (result == EventResult.DENY) {
                     world.setBlockState(pos, Blocks.TNT.getDefaultState());
                     ci.cancel();
                 }

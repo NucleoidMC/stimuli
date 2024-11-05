@@ -8,10 +8,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BowItem.class)
-public class BowItemMixin extends RangedWeaponItemMixin {
+public abstract class BowItemMixin extends RangedWeaponItemMixin {
     @Unique private int lastRemainingUseTicks;
 
     @Override
@@ -20,7 +20,7 @@ public class BowItemMixin extends RangedWeaponItemMixin {
     }
 
     @Inject(method = "onStoppedUsing", at = @At("HEAD"))
-    private void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo ci) {
+    private void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks, CallbackInfoReturnable<Boolean> ci) {
         lastRemainingUseTicks = remainingUseTicks;
     }
 }
