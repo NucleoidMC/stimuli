@@ -14,9 +14,16 @@ import java.util.List;
 
 /**
  * Called when a block is broken and it tries to drop its items from a loot table.
- * <p>
- * Listeners can cancel item drops by returning a deny event result such as {@link DroppedItemsResult#deny()},
- * and can additionally modify the items dropped by modifying the returned {@link ItemStack} list.
+ *
+ * <p>Upon return:
+ * <ul>
+ * <li>{@link DroppedItemsResult#allow(List)} cancels further processing and drops the specified loot.
+ * <li>{@link DroppedItemsResult#deny()} cancels further processing and drops no loot.
+ * <li>{@link DroppedItemsResult#pass(List)} moves on to the next listener with the specified loot.</ul>
+ *
+ * The drop stacks list is not guaranteed to be mutable, so listeners modifying loot should first copy
+ * the list before returning it in the result. If the drop stacks list is not modified, it can be passed
+ * directly to the result.
  */
 public interface BlockDropItemsEvent {
     StimulusEvent<BlockDropItemsEvent> EVENT = StimulusEvent.create(BlockDropItemsEvent.class, ctx -> (breaker, world, pos, state, dropStacks) -> {
@@ -34,5 +41,8 @@ public interface BlockDropItemsEvent {
         return DroppedItemsResult.pass(dropStacks);
     });
 
+    /**
+     * @param dropStacks a list of dropped item stacks, which should be treated as immutable
+     */
     DroppedItemsResult onDropItems(@Nullable Entity breaker, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> dropStacks);
 }

@@ -13,12 +13,13 @@ import java.util.List;
  *
  * <p>Upon return:
  * <ul>
- * <li>{@link EventResult#ALLOW} cancels further processing and drops the current loot.
- * <li>{@link EventResult#DENY} cancels further processing and drops no loot.
- * <li>{@link EventResult#PASS} moves on to the next listener.</ul>
- * <p>
- * Listeners can modify the list of {@link ItemStack}s returned to them, regardless of what their result is.
- * If all listeners return {@link EventResult#PASS}, the current loot is dropped.
+ * <li>{@link DroppedItemsResult#allow(List)} cancels further processing and drops the specified loot.
+ * <li>{@link DroppedItemsResult#deny()} cancels further processing and drops no loot.
+ * <li>{@link DroppedItemsResult#pass(List)} moves on to the next listener with the specified loot.</ul>
+ *
+ * The drop stacks list is not guaranteed to be mutable, so listeners modifying loot should first copy
+ * the list before returning it in the result. If the drop stacks list is not modified, it can be passed
+ * directly to the result.
  */
 public interface EntityDropItemsEvent {
     StimulusEvent<EntityDropItemsEvent> EVENT = StimulusEvent.create(EntityDropItemsEvent.class, ctx -> (dropper, items) -> {
@@ -40,5 +41,8 @@ public interface EntityDropItemsEvent {
         return DroppedItemsResult.pass(items);
     });
 
+    /**
+     * @param items a list of dropped item stacks, which should be treated as immutable
+     */
     DroppedItemsResult onDropItems(LivingEntity dropper, List<ItemStack> items);
 }
