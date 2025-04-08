@@ -31,7 +31,7 @@ public class FlowerPotBlockMixin {
 
             if (result == EventResult.DENY) {
                 // notify the client that this action did not go through
-                int slot = hand == Hand.MAIN_HAND ? serverPlayer.getInventory().selectedSlot : 40;
+                int slot = hand == Hand.MAIN_HAND ? serverPlayer.getInventory().getSelectedSlot() : 40;
                 serverPlayer.networkHandler.sendPacket(serverPlayer.getInventory().createSlotSetPacket(slot));
 
                 ci.setReturnValue(ActionResult.CONSUME);

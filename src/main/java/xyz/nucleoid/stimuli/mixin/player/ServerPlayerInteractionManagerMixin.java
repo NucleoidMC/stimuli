@@ -28,7 +28,7 @@ public class ServerPlayerInteractionManagerMixin {
             at = @At(
                     value = "INVOKE",
                     shift = Shift.BEFORE,
-                    target = "Lnet/minecraft/server/world/ServerWorld;canPlayerModifyAt(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;)Z"
+                    target = "Lnet/minecraft/server/world/ServerWorld;canEntityModifyAt(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/BlockPos;)Z"
             ),
             cancellable = true
     )

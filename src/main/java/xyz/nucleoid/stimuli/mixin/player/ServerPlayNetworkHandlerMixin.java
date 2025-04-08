@@ -31,10 +31,10 @@ public class ServerPlayNetworkHandlerMixin {
         }
     }
 
-    @Inject(method = "onClickSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/c2s/play/ClickSlotC2SPacket;getRevision()I"), cancellable = true)
+    @Inject(method = "onClickSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/c2s/play/ClickSlotC2SPacket;revision()I"), cancellable = true)
     private void onInventoryAction(ClickSlotC2SPacket packet, CallbackInfo ci) {
         try (var invokers = Stimuli.select().forEntity(this.player)) {
-            var result = invokers.get(PlayerInventoryActionEvent.EVENT).onInventoryAction(this.player, packet.getSlot(), packet.getActionType(), packet.getButton());
+            var result = invokers.get(PlayerInventoryActionEvent.EVENT).onInventoryAction(this.player, packet.slot(), packet.actionType(), packet.button());
             if (result == EventResult.DENY) {
                 ci.cancel();
             }

@@ -51,7 +51,7 @@ public class ServerPlayerEntityMixin {
     @Inject(method = "dropSelectedItem", at = @At("HEAD"), cancellable = true)
     private void dropSelectedItem(boolean dropEntireStack, CallbackInfoReturnable<Boolean> ci) {
         var player = (ServerPlayerEntity) (Object) this;
-        int slot = player.getInventory().selectedSlot;
+        int slot = player.getInventory().getSelectedSlot();
         var stack = player.getInventory().getStack(slot);
 
         try (var invokers = Stimuli.select().forEntity(player)) {
