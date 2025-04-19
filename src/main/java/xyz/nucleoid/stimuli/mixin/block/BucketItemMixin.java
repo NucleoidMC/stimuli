@@ -2,6 +2,7 @@ package xyz.nucleoid.stimuli.mixin.block;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.item.BucketItem;
@@ -29,12 +30,12 @@ public class BucketItemMixin {
             ),
             cancellable = true
     )
-    private void onPlace(PlayerEntity player, World world, BlockPos pos, BlockHitResult hitResult, CallbackInfoReturnable<Boolean> cir, @Local FlowableFluid fluid, @Local BlockState state) {
+    private void onPlace(LivingEntity user, World world, BlockPos pos, BlockHitResult hitResult, CallbackInfoReturnable<Boolean> cir, @Local FlowableFluid fluid, @Local BlockState state) {
         if (world instanceof ServerWorld serverWorld) {
-            var serverPlayer = player instanceof ServerPlayerEntity sp ? sp : null;
+            var serverPlayer = user instanceof ServerPlayerEntity sp ? sp : null;
             var events = Stimuli.select();
 
-            try (var invokers = player != null ? events.forEntityAt(player, pos) : events.at(world, pos)) {
+            try (var invokers = user != null ? events.forEntityAt(user, pos) : events.at(world, pos)) {
                 var result = invokers.get(FluidPlaceEvent.EVENT).onFluidPlace(serverWorld, pos, serverPlayer, hitResult);
                 if (result == EventResult.DENY) {
                     if (serverPlayer != null) {

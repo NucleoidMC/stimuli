@@ -29,7 +29,7 @@ public class BedItemMixin {
 
             if (result == EventResult.DENY) {
                 // notify the client that this action did not go through
-                int slot = context.getHand() == Hand.MAIN_HAND ? player.getInventory().selectedSlot : 40;
+                int slot = context.getHand() == Hand.MAIN_HAND ? player.getInventory().getSelectedSlot() : 40;
                 player.networkHandler.sendPacket(player.getInventory().createSlotSetPacket(slot));
 
                 ci.setReturnValue(false);
