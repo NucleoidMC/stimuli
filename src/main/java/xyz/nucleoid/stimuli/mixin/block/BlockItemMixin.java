@@ -32,7 +32,7 @@ public class BlockItemMixin {
 
         try (var invokers = Stimuli.select().forEntityAt(player, blockPos)) {
             var state = context.getWorld().getBlockState(blockPos);
-            invokers.get(BlockPlaceEvent.AFTER).onPlace(player, player.getServerWorld(), blockPos, state);
+            invokers.get(BlockPlaceEvent.AFTER).onPlace(player, player.getWorld(), blockPos, state);
         }
     }
 
@@ -45,7 +45,7 @@ public class BlockItemMixin {
         var blockPos = context.getBlockPos();
 
         try (var invokers = Stimuli.select().forEntityAt(player, blockPos)) {
-            var result = invokers.get(BlockPlaceEvent.BEFORE).onPlace(player, player.getServerWorld(), blockPos, state, context);
+            var result = invokers.get(BlockPlaceEvent.BEFORE).onPlace(player, player.getWorld(), blockPos, state, context);
 
             if (result == EventResult.DENY) {
                 // notify the client that this action did not go through
