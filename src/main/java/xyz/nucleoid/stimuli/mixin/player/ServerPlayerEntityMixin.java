@@ -18,6 +18,7 @@ import xyz.nucleoid.stimuli.event.player.PlayerDamageEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerRegenerateEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerSpectateEntityEvent;
+import xyz.nucleoid.stimuli.util.SlotHelper;
 
 @Mixin(ServerPlayerEntity.class)
 public class ServerPlayerEntityMixin {
@@ -57,7 +58,7 @@ public class ServerPlayerEntityMixin {
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(ItemThrowEvent.EVENT).onThrowItem(player, slot, stack);
             if (result == EventResult.DENY) {
-                player.networkHandler.sendPacket(player.getInventory().createSlotSetPacket(slot));
+                SlotHelper.updateSlot(player, slot);
                 ci.setReturnValue(false);
             }
         }
