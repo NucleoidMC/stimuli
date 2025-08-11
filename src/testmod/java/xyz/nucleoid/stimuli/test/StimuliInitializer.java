@@ -9,6 +9,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import xyz.nucleoid.stimuli.Stimuli;
@@ -16,6 +17,7 @@ import xyz.nucleoid.stimuli.event.DroppedItemsResult;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.block.BlockDropItemsEvent;
 import xyz.nucleoid.stimuli.event.block.FlowerPotModifyEvent;
+import xyz.nucleoid.stimuli.event.block.PowderSnowMeltEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
 import xyz.nucleoid.stimuli.event.projectile.ArrowFireEvent;
 import xyz.nucleoid.stimuli.event.world.ExplosionDetonatedEvent;
@@ -99,6 +101,18 @@ public final class StimuliInitializer implements ModInitializer {
             }
 
             return DroppedItemsResult.pass(dropStacks);
+        });
+
+        Stimuli.global().listen(PowderSnowMeltEvent.EVENT, (entity, world, pos) -> {
+            var message = Text.literal("PowderSnowMeltEvent: " + pos.toShortString() + " by ").append(entity.getDisplayName());
+
+            if (entity instanceof ServerPlayerEntity player) {
+                player.sendMessage(message);
+            } else {
+                server.getPlayerManager().broadcast(message, false);
+            }
+
+            return result;
         });
     }
 }
