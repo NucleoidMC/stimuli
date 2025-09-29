@@ -18,7 +18,7 @@ import xyz.nucleoid.stimuli.event.world.TntIgniteEvent;
 public class TntBlockMixin {
     @Inject(method = "primeTnt(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/LivingEntity;)Z", at = @At("HEAD"), cancellable = true)
     private static void primeTnt(World world, BlockPos pos, LivingEntity igniter, CallbackInfoReturnable<Boolean> ci) {
-        if (!world.isClient) {
+        if (!world.isClient()) {
             try (var invokers = Stimuli.select().at(world, pos)) {
                 var result = invokers.get(TntIgniteEvent.EVENT).onIgniteTnt((ServerWorld) world, pos, igniter);
                 if (result == EventResult.DENY) {

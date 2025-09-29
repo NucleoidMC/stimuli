@@ -17,7 +17,7 @@ import xyz.nucleoid.stimuli.event.world.IceMeltEvent;
 public class FrostedIceBlockMixin {
     @Inject(method = "increaseAge", at = @At("HEAD"), cancellable = true)
     private void applyIceMeltEvent(BlockState state, World world, BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
-        if (!world.isClient) {
+        if (!world.isClient()) {
             try (var invokers = Stimuli.select().at(world, pos)) {
                 var result = invokers.get(IceMeltEvent.EVENT).onIceMelt((ServerWorld) world, pos);
                 if (result == EventResult.DENY) {

@@ -12,7 +12,6 @@ import net.minecraft.entity.passive.SnowGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -57,7 +56,7 @@ public class ShearableEntityMixin {
             return false;
         }
 
-        if (!player.getWorld().isClient()) {
+        if (!player.getEntityWorld().isClient()) {
             // Entities are all subclasses of LivingEntity
             var entity = (LivingEntity) shearable;
             var serverPlayer = (ServerPlayerEntity) player;

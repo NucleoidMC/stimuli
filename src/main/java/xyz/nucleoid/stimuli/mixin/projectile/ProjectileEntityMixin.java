@@ -23,7 +23,7 @@ public abstract class ProjectileEntityMixin extends Entity {
 
     @Inject(method = "onCollision", at = @At("HEAD"), cancellable = true)
     private void onCollision(HitResult hitResult, CallbackInfo ci) {
-        if (this.getWorld().isClient) {
+        if (this.getEntityWorld().isClient()) {
             return;
         }
 

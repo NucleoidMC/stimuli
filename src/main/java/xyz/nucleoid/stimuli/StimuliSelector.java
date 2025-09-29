@@ -25,11 +25,11 @@ public final class StimuliSelector {
     }
 
     public EventInvokers forEntity(Entity entity) {
-        return this.acquireInvokers(entity.getServer(), EventSource.forEntity(entity));
+        return this.acquireInvokers(entity.getEntityWorld().getServer(), EventSource.forEntity(entity));
     }
 
     public EventInvokers forEntityAt(Entity entity, BlockPos pos) {
-        return this.acquireInvokers(entity.getServer(), EventSource.forEntityAt(entity, pos));
+        return this.acquireInvokers(entity.getEntityWorld().getServer(), EventSource.forEntityAt(entity, pos));
     }
 
     public EventInvokers forCommandSource(ServerCommandSource source) {

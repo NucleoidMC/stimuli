@@ -17,7 +17,7 @@ import xyz.nucleoid.stimuli.event.world.IceMeltEvent;
 public class IceBlockMixin {
     @Inject(method = "melt", at = @At("HEAD"), cancellable = true)
     private void applyIceMeltEvent(BlockState state, World world, BlockPos pos, CallbackInfo ci) {
-        if (!world.isClient) {
+        if (!world.isClient()) {
             try (var invokers = Stimuli.select().at(world, pos)) {
                 var result = invokers.get(IceMeltEvent.EVENT).onIceMelt((ServerWorld) world, pos);
                 if (result == EventResult.DENY) {
