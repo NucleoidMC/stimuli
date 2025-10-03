@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.duck.ExplosionCancellable;
 import xyz.nucleoid.stimuli.event.EventResult;
@@ -38,7 +39,7 @@ public abstract class ExplosionImplMixin implements Explosion, ExplosionCancella
     }
 
     @Inject(method = "explode", at = @At("HEAD"), cancellable = true)
-    private void onExplode(CallbackInfo ci) {
+    private void onExplode(CallbackInfoReturnable<Integer> cir) {
         var pos = BlockPos.ofFloored(this.getPosition());
 
         try (var invokers = Stimuli.select().at(this.world, pos)) {
@@ -48,7 +49,7 @@ public abstract class ExplosionImplMixin implements Explosion, ExplosionCancella
 
             if (result == EventResult.DENY) {
                 this.cancelled = true;
-                ci.cancel();
+				cir.cancel();
             }
         }
     }
