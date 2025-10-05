@@ -46,7 +46,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
     private void callDeathListener(DamageSource source, CallbackInfo ci) {
-        if (this.getWorld().isClient) {
+        if (this.getEntityWorld().isClient()) {
             return;
         }
 
@@ -62,9 +62,9 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @WrapOperation(method = "dropLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootTable;generateLoot(Lnet/minecraft/loot/context/LootWorldContext;JLjava/util/function/Consumer;)V"))
+    @WrapOperation(method = "generateLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootTable;generateLoot(Lnet/minecraft/loot/context/LootWorldContext;JLjava/util/function/Consumer;)V"))
     private void modifyDroppedLoot(LootTable instance, LootWorldContext parameters, long seed, Consumer<ItemStack> lootConsumer, Operation<Void> original) {
-        if (this.getWorld().isClient) {
+        if (this.getEntityWorld().isClient()) {
             original.call(instance, parameters, seed, lootConsumer);
             return;
         }
@@ -81,7 +81,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "tryUseDeathProtector", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"), cancellable = true)
     private void tryUseDeathProtector(DamageSource source, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 1) ItemStack itemStack) {
-        if (this.getWorld().isClient) {
+        if (this.getEntityWorld().isClient()) {
             return;
         }
 

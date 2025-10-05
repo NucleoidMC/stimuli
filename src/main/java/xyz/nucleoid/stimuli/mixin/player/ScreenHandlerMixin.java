@@ -23,7 +23,7 @@ public class ScreenHandlerMixin {
 
     @Inject(method = "internalOnSlotClick", at = @At("HEAD"), cancellable = true)
     private void onSlotAction(int slot, int button, SlotActionType type, PlayerEntity player, CallbackInfo ci) {
-        if (player.getWorld().isClient) {
+        if (player.getEntityWorld().isClient()) {
             return;
         }
 

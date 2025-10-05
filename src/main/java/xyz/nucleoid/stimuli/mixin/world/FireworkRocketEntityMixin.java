@@ -5,7 +5,6 @@ import net.minecraft.component.type.FireworksComponent;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
@@ -29,7 +28,7 @@ public class FireworkRocketEntityMixin {
     private void explodeAndRemove(CallbackInfo ci) {
         var firework = (FireworkRocketEntity) (Object) this;
 
-        if (!firework.getWorld().isClient) {
+        if (!firework.getEntityWorld().isClient()) {
             try (var invokers = Stimuli.select().forEntity(firework)) {
                 var result = invokers.get(FireworkExplodeEvent.EVENT).onFireworkExplode(firework);
                 if (result == EventResult.DENY) {
@@ -46,12 +45,12 @@ public class FireworkRocketEntityMixin {
                     firework.getDataTracker().set(ITEM, stack);
 
                     // Send data tracker update to observing players
-                    ServerWorld world = (ServerWorld) firework.getWorld();
+                    ServerWorld world = (ServerWorld) firework.getEntityWorld();
 
                     var dirty = firework.getDataTracker().getDirtyEntries();
 
                     if (dirty != null) {
-                        Packet<?> packet = new EntityTrackerUpdateS2CPacket(firework.getId(), dirty);
+                        var packet = new EntityTrackerUpdateS2CPacket(firework.getId(), dirty);
                         ServerChunkManager chunkManager = world.getChunkManager();
                         chunkManager.sendToOtherNearbyPlayers(firework, packet);
                     }

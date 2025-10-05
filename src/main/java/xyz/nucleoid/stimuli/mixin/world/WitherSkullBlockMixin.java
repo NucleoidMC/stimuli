@@ -17,7 +17,7 @@ import xyz.nucleoid.stimuli.event.world.WitherSummonEvent;
 public class WitherSkullBlockMixin {
     @Inject(method = "onPlaced(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/SkullBlockEntity;)V", at = @At("HEAD"), cancellable = true)
     private static void onPlaced(World world, BlockPos pos, SkullBlockEntity blockEntity, CallbackInfo ci) {
-        if (!world.isClient) {
+        if (!world.isClient()) {
             try (var invokers = Stimuli.select().at(world, pos)) {
                 var result = invokers.get(WitherSummonEvent.EVENT).onSummonWither((ServerWorld) world, pos);
                 if (result == EventResult.DENY) {

@@ -52,8 +52,8 @@ public class ServerWorldMixin {
     }
 
     @Inject(
-            method = "createExplosion(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/damage/DamageSource;Lnet/minecraft/world/explosion/ExplosionBehavior;DDDFZLnet/minecraft/world/World$ExplosionSourceType;Lnet/minecraft/particle/ParticleEffect;Lnet/minecraft/particle/ParticleEffect;Lnet/minecraft/registry/entry/RegistryEntry;)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/explosion/ExplosionImpl;explode()V", shift = At.Shift.AFTER),
+            method = "createExplosion",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/explosion/ExplosionImpl;explode()I", shift = At.Shift.AFTER),
             cancellable = true
     )
     private void cancelExplosion(CallbackInfo ci, @Local ExplosionImpl explosion) {
