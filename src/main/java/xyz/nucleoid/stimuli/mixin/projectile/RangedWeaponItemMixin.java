@@ -42,7 +42,7 @@ public abstract class RangedWeaponItemMixin implements PassBowUseTicks {
             @Local(argsOnly = true, ordinal = 0) LivingEntity shooter, @Local(argsOnly = true) ItemStack tool, @Share("damage") LocalBooleanRef damage
     ) {
         if (!(shooter instanceof ServerPlayerEntity player)) {
-            return null;
+            return original.call(projectile, world, projectileStack, beforeSpawn);
         }
 
         Item projectileItem = projectileStack.getItem();
