@@ -1,5 +1,6 @@
 package xyz.nucleoid.stimuli.mixin.world;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -18,6 +19,7 @@ import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.duck.ExplosionCancellable;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.entity.EntitySpawnEvent;
+import xyz.nucleoid.stimuli.event.world.FireTickEvent;
 import xyz.nucleoid.stimuli.event.world.SnowFallEvent;
 
 @Mixin(ServerWorld.class)
@@ -60,5 +62,19 @@ public class ServerWorldMixin {
         if (explosion instanceof ExplosionCancellable cancellable && cancellable.stimuli$isCancelled()) {
             ci.cancel();
         }
+    }
+
+    @WrapMethod(method = "canFireSpread")
+    public boolean canFireSpread(BlockPos pos, Operation<Boolean> original) {
+        var world = (ServerWorld) (Object) this;
+        try (var invokers = Stimuli.select().at(world, pos)) {
+            var result = invokers.get(FireTickEvent.EVENT).onFireTick(world, pos);
+            if (result == EventResult.ALLOW) {
+                return true;
+            } else if (result == EventResult.DENY) {
+                return false;
+            }
+        }
+        return original.call(pos);
     }
 }

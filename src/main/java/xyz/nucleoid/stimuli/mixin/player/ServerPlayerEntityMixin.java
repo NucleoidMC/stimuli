@@ -50,7 +50,7 @@ public class ServerPlayerEntityMixin {
     }
 
     @Inject(method = "dropSelectedItem", at = @At("HEAD"), cancellable = true)
-    private void dropSelectedItem(boolean dropEntireStack, CallbackInfoReturnable<Boolean> ci) {
+    private void dropSelectedItem(boolean entireStack, CallbackInfo ci) {
         var player = (ServerPlayerEntity) (Object) this;
         int slot = player.getInventory().getSelectedSlot();
         var stack = player.getInventory().getStack(slot);
@@ -59,7 +59,7 @@ public class ServerPlayerEntityMixin {
             var result = invokers.get(ItemThrowEvent.EVENT).onThrowItem(player, slot, stack);
             if (result == EventResult.DENY) {
                 SlotHelper.updateSlot(player, slot);
-                ci.setReturnValue(false);
+                ci.cancel();
             }
         }
     }
