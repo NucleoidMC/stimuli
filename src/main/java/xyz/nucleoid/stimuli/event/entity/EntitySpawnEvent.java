@@ -14,7 +14,7 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * <li>{@link EventResult#DENY} cancels further processing and does doesn't spawn the entity.
  * <li>{@link EventResult#PASS} moves on to the next listener.</ul>
  * <p>
- * If all listeners return {@link EventResult#PASS}, the entity is killed.
+ * If all listeners return {@link EventResult#PASS}, the entity is spawned.
  */
 public interface EntitySpawnEvent {
     StimulusEvent<EntitySpawnEvent> EVENT = StimulusEvent.create(EntitySpawnEvent.class, ctx -> (entity) -> {
