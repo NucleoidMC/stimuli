@@ -2,10 +2,10 @@ package xyz.nucleoid.stimuli.mixin.player;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,11 +20,11 @@ import xyz.nucleoid.stimuli.event.player.PlayerRegenerateEvent;
 import xyz.nucleoid.stimuli.event.player.PlayerSpectateEntityEvent;
 import xyz.nucleoid.stimuli.util.SlotHelper;
 
-@Mixin(ServerPlayerEntity.class)
-public class ServerPlayerEntityMixin {
-    @Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
+@Mixin(ServerPlayer.class)
+public class ServerPlayerMixin {
+    @Inject(method = "die", at = @At("HEAD"), cancellable = true)
     private void onDeath(DamageSource source, CallbackInfo ci) {
-        var player = (ServerPlayerEntity) (Object) this;
+        var player = (ServerPlayer) (Object) this;
 
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerDeathEvent.EVENT).onDeath(player, source);
@@ -37,9 +37,9 @@ public class ServerPlayerEntityMixin {
         }
     }
 
-    @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
-    private void onDamage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
-        var player = (ServerPlayerEntity) (Object) this;
+    @Inject(method = "hurtServer", at = @At("HEAD"), cancellable = true)
+    private void onDamage(ServerLevel level, DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
+        var player = (ServerPlayer) (Object) this;
 
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerDamageEvent.EVENT).onDamage(player, source, amount);
@@ -49,11 +49,11 @@ public class ServerPlayerEntityMixin {
         }
     }
 
-    @Inject(method = "dropSelectedItem", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "drop(Z)V", at = @At("HEAD"), cancellable = true)
     private void dropSelectedItem(boolean entireStack, CallbackInfo ci) {
-        var player = (ServerPlayerEntity) (Object) this;
+        var player = (ServerPlayer) (Object) this;
         int slot = player.getInventory().getSelectedSlot();
-        var stack = player.getInventory().getStack(slot);
+        var stack = player.getInventory().getItem(slot);
 
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(ItemThrowEvent.EVENT).onThrowItem(player, slot, stack);
@@ -64,22 +64,11 @@ public class ServerPlayerEntityMixin {
         }
     }
 
-    @Inject(method = "attack", at = @At(value = "INVOKE", target = "net/minecraft/server/network/ServerPlayerEntity.setCameraEntity(Lnet/minecraft/entity/Entity;)V", shift = At.Shift.BEFORE), cancellable = true)
-    private void onSpectateEntity(Entity target, CallbackInfo ci){
-        var player = (ServerPlayerEntity) (Object) this;
-        try (var invokers = Stimuli.select().forEntity(player)) {
-            var result = invokers.get(PlayerSpectateEntityEvent.EVENT).onSpectateEntity(player, target);
-            if (result == EventResult.DENY) {
-                ci.cancel();
-            }
-        }
-    }
-
-    @WrapOperation(method = "tickHunger", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;heal(F)V"))
-    private void attemptPeacefulRegeneration(ServerPlayerEntity player, float amount, Operation<Boolean> original) {
+    @WrapOperation(method = "tickRegeneration", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;heal(F)V"))
+    private void attemptPeacefulRegeneration(ServerPlayer player, float amount, Operation<Boolean> original) {
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerRegenerateEvent.EVENT)
-                    .onRegenerate((ServerPlayerEntity) player, amount);
+                    .onRegenerate((ServerPlayer) player, amount);
 
             if (result != EventResult.DENY) {
                 original.call(player, amount);

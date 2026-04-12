@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.ContainerInput;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when any {@link ServerPlayerEntity} attempts to clicks in inventory.
+ * Called when any {@link ServerPlayer} attempts to clicks in inventory.
  *
  * <p>Upon return:
  * <ul>
@@ -31,5 +31,5 @@ public interface PlayerInventoryActionEvent {
         return EventResult.PASS;
     });
 
-    EventResult onInventoryAction(ServerPlayerEntity player, int slot, SlotActionType actionType, int button);
+    EventResult onInventoryAction(ServerPlayer player, int slot, ContainerInput actionType, int button);
 }

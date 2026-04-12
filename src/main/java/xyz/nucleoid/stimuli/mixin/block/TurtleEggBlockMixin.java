@@ -1,13 +1,13 @@
 package xyz.nucleoid.stimuli.mixin.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.TurtleEggBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.TurtleEggBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,14 +18,14 @@ import xyz.nucleoid.stimuli.event.block.BlockTrampleEvent;
 
 @Mixin(TurtleEggBlock.class)
 public class TurtleEggBlockMixin {
-    @Inject(method = "tryBreakEgg", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/TurtleEggBlock;breakEgg(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V", shift = At.Shift.BEFORE), cancellable = true)
-    private void trampleTurtleEgg(World world, BlockState from, BlockPos pos, Entity entity, int inverseChance, CallbackInfo ci) {
-        if (world instanceof ServerWorld serverWorld && entity instanceof LivingEntity livingEntity) {
-            BlockState to = Blocks.AIR.getDefaultState();
-            if (from.contains(TurtleEggBlock.EGGS)) {
-                int eggs = from.get(TurtleEggBlock.EGGS);
+    @Inject(method = "destroyEgg", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/TurtleEggBlock;decreaseEggs(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V", shift = At.Shift.BEFORE), cancellable = true)
+    private void trampleTurtleEgg(Level level, BlockState from, BlockPos pos, Entity entity, int inverseChance, CallbackInfo ci) {
+        if (level instanceof ServerLevel serverWorld && entity instanceof LivingEntity livingEntity) {
+            BlockState to = Blocks.AIR.defaultBlockState();
+            if (from.hasProperty(TurtleEggBlock.EGGS)) {
+                int eggs = from.getValue(TurtleEggBlock.EGGS);
                 if (eggs > 1) {
-                    to = from.with(TurtleEggBlock.EGGS, eggs - 1);
+                    to = from.setValue(TurtleEggBlock.EGGS, eggs - 1);
                 }
             }
 

@@ -1,16 +1,16 @@
 package xyz.nucleoid.stimuli.event.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.stimuli.event.DroppedItemsResult;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Called when a block is broken and it tries to drop its items from a loot table.
@@ -26,10 +26,10 @@ import java.util.List;
  * directly to the result.
  */
 public interface BlockDropItemsEvent {
-    StimulusEvent<BlockDropItemsEvent> EVENT = StimulusEvent.create(BlockDropItemsEvent.class, ctx -> (breaker, world, pos, state, dropStacks) -> {
+    StimulusEvent<BlockDropItemsEvent> EVENT = StimulusEvent.create(BlockDropItemsEvent.class, ctx -> (breaker, level, pos, state, dropStacks) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onDropItems(breaker, world, pos, state, dropStacks);
+                var result = listener.onDropItems(breaker, level, pos, state, dropStacks);
                 dropStacks = result.dropStacks();
                 if (result.result() != EventResult.PASS) {
                     return result;
@@ -44,5 +44,5 @@ public interface BlockDropItemsEvent {
     /**
      * @param dropStacks a list of dropped item stacks, which should be treated as immutable
      */
-    DroppedItemsResult onDropItems(@Nullable Entity breaker, ServerWorld world, BlockPos pos, BlockState state, List<ItemStack> dropStacks);
+    DroppedItemsResult onDropItems(@Nullable Entity breaker, ServerLevel level, BlockPos pos, BlockState state, List<ItemStack> dropStacks);
 }

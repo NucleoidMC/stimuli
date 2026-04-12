@@ -1,13 +1,13 @@
 package xyz.nucleoid.stimuli.event.block;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when any {@link ServerPlayerEntity} attempts to break a block.
+ * Called when any {@link ServerPlayer} attempts to break a block.
  *
  * <p>Upon return:
  * <ul>
@@ -18,10 +18,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * If all listeners return {@link EventResult#PASS}, the break succeeds.
  */
 public interface BlockBreakEvent {
-    StimulusEvent<BlockBreakEvent> EVENT = StimulusEvent.create(BlockBreakEvent.class, ctx -> (player, world, pos) -> {
+    StimulusEvent<BlockBreakEvent> EVENT = StimulusEvent.create(BlockBreakEvent.class, ctx -> (player, level, pos) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onBreak(player, world, pos);
+                var result = listener.onBreak(player, level, pos);
                 if (result != EventResult.PASS) {
                     return result;
                 }
@@ -32,5 +32,5 @@ public interface BlockBreakEvent {
         return EventResult.PASS;
     });
 
-    EventResult onBreak(ServerPlayerEntity player, ServerWorld world, BlockPos pos);
+    EventResult onBreak(ServerPlayer player, ServerLevel level, BlockPos pos);
 }

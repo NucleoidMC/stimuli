@@ -1,14 +1,14 @@
 package xyz.nucleoid.stimuli.event.projectile;
 
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 public final class ProjectileHitEvent {
     /**
-     * Called when a {@link net.minecraft.block.Block} is hit by a {@link ProjectileEntity}.
+     * Called when a {@link net.minecraft.world.level.block.Block} is hit by a {@link Projectile}.
      *
      * <p>Upon return:
      * <ul>
@@ -31,7 +31,7 @@ public final class ProjectileHitEvent {
     });
 
     /**
-     * Called when an {@link net.minecraft.entity.Entity} is hit by a {@link ProjectileEntity}.
+     * Called when an {@link net.minecraft.world.entity.Entity} is hit by a {@link Projectile}.
      *
      * <p>Upon return:
      * <ul>
@@ -54,10 +54,10 @@ public final class ProjectileHitEvent {
     });
 
     public interface Block {
-        EventResult onHitBlock(ProjectileEntity entity, BlockHitResult hitResult);
+        EventResult onHitBlock(Projectile entity, BlockHitResult hitResult);
     }
 
     public interface Entity {
-        EventResult onHitEntity(ProjectileEntity entity, EntityHitResult hitResult);
+        EventResult onHitEntity(Projectile entity, EntityHitResult hitResult);
     }
 }

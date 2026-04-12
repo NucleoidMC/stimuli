@@ -1,14 +1,14 @@
 package xyz.nucleoid.stimuli.event.world;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when TNT is ignited within the world.
+ * Called when TNT is ignited within the level.
  *
  * <p>Upon return:
  * <ul>
@@ -17,10 +17,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * <li>{@link EventResult#PASS} moves on to the next listener.</ul>
  */
 public interface TntIgniteEvent {
-    StimulusEvent<TntIgniteEvent> EVENT = StimulusEvent.create(TntIgniteEvent.class, ctx -> (world, pos, igniter) -> {
+    StimulusEvent<TntIgniteEvent> EVENT = StimulusEvent.create(TntIgniteEvent.class, ctx -> (level, pos, igniter) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onIgniteTnt(world, pos, igniter);
+                var result = listener.onIgniteTnt(level, pos, igniter);
                 if (result != EventResult.PASS) {
                     return result;
                 }
@@ -31,5 +31,5 @@ public interface TntIgniteEvent {
         return EventResult.PASS;
     });
 
-    EventResult onIgniteTnt(ServerWorld world, BlockPos pos, @Nullable LivingEntity igniter);
+    EventResult onIgniteTnt(ServerLevel level, BlockPos pos, @Nullable LivingEntity igniter);
 }

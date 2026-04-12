@@ -3,15 +3,6 @@ package xyz.nucleoid.stimuli.mixin.entity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.context.LootWorldContext;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,15 +16,24 @@ import xyz.nucleoid.stimuli.event.entity.EntityDeathEvent;
 import xyz.nucleoid.stimuli.event.entity.EntityDropItemsEvent;
 
 import java.util.function.Consumer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
-    private LivingEntityMixin(EntityType<?> type, World world) {
-        super(type, world);
+    private LivingEntityMixin(EntityType<?> type, Level level) {
+        super(type, level);
     }
 
-    @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
-    private void onDamage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
+    @Inject(method = "hurtServer", at = @At("HEAD"), cancellable = true)
+    private void onDamage(ServerLevel level, DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
         var entity = (LivingEntity) (Object) this;
 
         try (var invokers = Stimuli.select().forEntity(entity)) {
@@ -44,9 +44,9 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "die", at = @At("HEAD"), cancellable = true)
     private void callDeathListener(DamageSource source, CallbackInfo ci) {
-        if (this.getEntityWorld().isClient()) {
+        if (this.level().isClientSide()) {
             return;
         }
 
@@ -62,15 +62,15 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @WrapOperation(method = "generateLoot", at = @At(value = "INVOKE", target = "Lnet/minecraft/loot/LootTable;generateLoot(Lnet/minecraft/loot/context/LootWorldContext;JLjava/util/function/Consumer;)V"))
-    private void modifyDroppedLoot(LootTable instance, LootWorldContext parameters, long seed, Consumer<ItemStack> lootConsumer, Operation<Void> original) {
-        if (this.getEntityWorld().isClient()) {
+    @WrapOperation(method = "dropFromLootTable(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;ZLnet/minecraft/resources/ResourceKey;Ljava/util/function/Consumer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems(Lnet/minecraft/world/level/storage/loot/LootParams;JLjava/util/function/Consumer;)V"))
+    private void modifyDroppedLoot(LootTable instance, LootParams parameters, long seed, Consumer<ItemStack> lootConsumer, Operation<Void> original) {
+        if (this.level().isClientSide()) {
             original.call(instance, parameters, seed, lootConsumer);
             return;
         }
 
         try (var invokers = Stimuli.select().forEntity(this)) {
-            var droppedStacks = instance.generateLoot(parameters, seed);
+            var droppedStacks = instance.getRandomItems(parameters, seed);
 
             var result = invokers.get(EntityDropItemsEvent.EVENT)
                     .onDropItems((LivingEntity) (Object) this, droppedStacks);
@@ -79,9 +79,9 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @Inject(method = "tryUseDeathProtector", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrement(I)V"), cancellable = true)
+    @Inject(method = "checkTotemDeathProtection", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V"), cancellable = true)
     private void tryUseDeathProtector(DamageSource source, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 1) ItemStack itemStack) {
-        if (this.getEntityWorld().isClient()) {
+        if (this.level().isClientSide()) {
             return;
         }
 

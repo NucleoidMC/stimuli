@@ -1,10 +1,10 @@
 package xyz.nucleoid.stimuli.mixin.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,35 +17,35 @@ import xyz.nucleoid.stimuli.util.SlotHelper;
 @Mixin(BlockItem.class)
 public class BlockItemMixin {
     @Inject(
-            method = "place(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/util/ActionResult;",
+            method = "place(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/InteractionResult;",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/block/Block;onPlaced(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;)V"
+                    target = "Lnet/minecraft/world/level/block/Block;setPlacedBy(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V"
             )
     )
-    private void onPlace(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> ci) {
-        if (!(context.getPlayer() instanceof ServerPlayerEntity player)) {
+    private void onPlace(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> ci) {
+        if (!(context.getPlayer() instanceof ServerPlayer player)) {
             return;
         }
 
-        var blockPos = context.getBlockPos();
+        var blockPos = context.getClickedPos();
 
         try (var invokers = Stimuli.select().forEntityAt(player, blockPos)) {
-            var state = context.getWorld().getBlockState(blockPos);
-            invokers.get(BlockPlaceEvent.AFTER).onPlace(player, player.getEntityWorld(), blockPos, state);
+            var state = context.getLevel().getBlockState(blockPos);
+            invokers.get(BlockPlaceEvent.AFTER).onPlace(player, player.level(), blockPos, state);
         }
     }
 
-    @Inject(method = "place(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/block/BlockState;)Z", at = @At("HEAD"), cancellable = true)
-    private void onPlace(ItemPlacementContext context, BlockState state, CallbackInfoReturnable<Boolean> ci) {
-        if (!(context.getPlayer() instanceof ServerPlayerEntity player)) {
+    @Inject(method = "placeBlock(Lnet/minecraft/world/item/context/BlockPlaceContext;Lnet/minecraft/world/level/block/state/BlockState;)Z", at = @At("HEAD"), cancellable = true)
+    private void onPlace(BlockPlaceContext context, BlockState state, CallbackInfoReturnable<Boolean> ci) {
+        if (!(context.getPlayer() instanceof ServerPlayer player)) {
             return;
         }
 
-        var blockPos = context.getBlockPos();
+        var blockPos = context.getClickedPos();
 
         try (var invokers = Stimuli.select().forEntityAt(player, blockPos)) {
-            var result = invokers.get(BlockPlaceEvent.BEFORE).onPlace(player, player.getEntityWorld(), blockPos, state, context);
+            var result = invokers.get(BlockPlaceEvent.BEFORE).onPlace(player, player.level(), blockPos, state, context);
 
             if (result == EventResult.DENY) {
                 // notify the client that this action did not go through

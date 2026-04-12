@@ -1,14 +1,14 @@
 package xyz.nucleoid.stimuli.event.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.EntityHitResult;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} attempts to use an entity by interacting.
+ * Called when a {@link ServerPlayer} attempts to use an entity by interacting.
  *
  * <p>Upon return:
  * <ul>
@@ -35,5 +35,5 @@ public interface EntityUseEvent {
         };
     });
 
-    EventResult onUse(ServerPlayerEntity player, Entity entity, Hand hand, EntityHitResult hitResult);
+    EventResult onUse(ServerPlayer player, Entity entity, InteractionHand hand, EntityHitResult hitResult);
 }

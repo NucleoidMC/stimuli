@@ -1,13 +1,13 @@
 package xyz.nucleoid.stimuli.event.block;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} attempts to punch a block.
+ * Called when a {@link ServerPlayer} attempts to punch a block.
  *
  * <p>Upon return:
  * <ul>
@@ -32,5 +32,5 @@ public interface BlockPunchEvent {
         return EventResult.PASS;
     });
 
-    EventResult onPunchBlock(ServerPlayerEntity puncher, Direction direction, BlockPos pos);
+    EventResult onPunchBlock(ServerPlayer puncher, Direction direction, BlockPos pos);
 }

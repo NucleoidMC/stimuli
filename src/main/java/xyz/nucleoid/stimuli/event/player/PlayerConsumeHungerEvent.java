@@ -1,11 +1,11 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} loses hunger.
+ * Called when a {@link ServerPlayer} loses hunger.
  *
  * <p>Upon return:
  * <ul>
@@ -28,5 +28,5 @@ public interface PlayerConsumeHungerEvent {
         return EventResult.PASS;
     });
 
-    EventResult onConsumeHunger(ServerPlayerEntity player, int foodLevel, float saturation, float exhaustion);
+    EventResult onConsumeHunger(ServerPlayer player, int foodLevel, float saturation, float exhaustion);
 }

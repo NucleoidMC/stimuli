@@ -1,8 +1,8 @@
 package xyz.nucleoid.stimuli.filter;
 
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import xyz.nucleoid.stimuli.EventSource;
 
 /**
@@ -27,7 +27,7 @@ public interface EventFilter {
      * @param dimension the dimension to filter for
      * @return the result event filter
      */
-    static EventFilter dimension(RegistryKey<World> dimension) {
+    static EventFilter dimension(ResourceKey<Level> dimension) {
         return new DimensionFilter(dimension);
     }
 
@@ -39,7 +39,7 @@ public interface EventFilter {
      * @param max the maximum block coordinate to accept
      * @return the result event filter
      */
-    static EventFilter box(RegistryKey<World> dimension, BlockPos min, BlockPos max) {
+    static EventFilter box(ResourceKey<Level> dimension, BlockPos min, BlockPos max) {
         return new BoxFilter(dimension, min, max);
     }
 
@@ -52,7 +52,7 @@ public interface EventFilter {
      * @param height the height of the cylinder
      * @return the result event filter
      */
-    static EventFilter cylinder(RegistryKey<World> dimension, BlockPos center, int radius, int height) {
+    static EventFilter cylinder(ResourceKey<Level> dimension, BlockPos center, int radius, int height) {
         return new CylinderFilter(dimension, center, radius, height);
     }
 

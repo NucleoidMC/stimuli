@@ -1,14 +1,14 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.EntityHitResult;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when any {@link ServerPlayerEntity} attempts to attack another {@link Entity}.
+ * Called when any {@link ServerPlayer} attempts to attack another {@link Entity}.
  *
  * <p>Upon return:
  * <ul>
@@ -33,5 +33,5 @@ public interface PlayerAttackEntityEvent {
         return EventResult.PASS;
     });
 
-    EventResult onAttackEntity(ServerPlayerEntity attacker, Hand hand, Entity attacked, EntityHitResult hitResult);
+    EventResult onAttackEntity(ServerPlayer attacker, InteractionHand hand, Entity attacked, EntityHitResult hitResult);
 }

@@ -1,14 +1,14 @@
 package xyz.nucleoid.stimuli.event.world;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.explosion.Explosion;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Explosion;
 
 /**
- * Called when an {@link Explosion} is detonated in the world.
+ * Called when an {@link Explosion} is detonated in the level.
  * <p>
  * This event can be used to modify the blocks affected by the explosion, for example,
  * by modifying the passed list of block positions to destroy.

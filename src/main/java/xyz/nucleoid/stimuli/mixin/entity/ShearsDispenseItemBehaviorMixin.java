@@ -3,23 +3,23 @@ package xyz.nucleoid.stimuli.mixin.entity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.block.dispenser.ShearsDispenserBehavior;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Shearable;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Shearable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.entity.EntityShearEvent;
 
-@Mixin(ShearsDispenserBehavior.class)
-public class ShearsDispenserBehaviorMixin {
+@Mixin(ShearsDispenseItemBehavior.class)
+public class ShearsDispenseItemBehaviorMixin {
     @WrapOperation(
             method = "tryShearEntity",
             at = @At(
                 value = "INVOKE",
-                target = "Lnet/minecraft/entity/Shearable;isShearable()Z"
+                target = "Lnet/minecraft/world/entity/Shearable;readyForShearing()Z"
             )
     )
     private static boolean onEntityShear(Shearable shearable, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
@@ -27,7 +27,7 @@ public class ShearsDispenserBehaviorMixin {
             return false;
         }
 
-        // Entities are selected from the world by the LivingEntity class
+        // Entities are selected from the level by the LivingEntity class
         var entity = (LivingEntity) shearable;
 
         var events = Stimuli.select();

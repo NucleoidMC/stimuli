@@ -5,13 +5,14 @@ import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import org.slf4j.Logger;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.DroppedItemsResult;
 import xyz.nucleoid.stimuli.event.EventResult;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static net.minecraft.server.command.CommandManager.literal;
+import static net.minecraft.commands.Commands.literal;
 
 public final class StimuliInitializer implements ModInitializer {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -42,6 +43,8 @@ public final class StimuliInitializer implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        MixinEnvironment.getCurrentEnvironment().audit();
+
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             var command = literal("stimuli_result");
             for (var entry : EVENT_RESULTS.entrySet()) {
@@ -59,23 +62,23 @@ public final class StimuliInitializer implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPED.register(server1 -> server = null);
 
         Stimuli.global().listen(FlowerPotModifyEvent.EVENT, (player, hand, hitResult) -> {
-            player.sendMessage(Text.literal("FlowerPotModifyEvent"));
+            player.sendSystemMessage(Component.literal("FlowerPotModifyEvent"));
             return result;
         });
         Stimuli.global().listen(ArrowFireEvent.EVENT, (player, tool, arrowItem, remainingUseTicks, projectile) -> {
-            player.sendMessage(Text.literal("ArrowFireEvent: " + remainingUseTicks));
+            player.sendSystemMessage(Component.literal("ArrowFireEvent: " + remainingUseTicks));
             return result;
         });
         Stimuli.global().listen(EntityShearEvent.EVENT, (entity, player, hand, pos) -> {
             if (player == null) {
-                server.sendMessage(Text.literal("EntityShearEvent: " + entity.getName().getString()));
+                server.sendSystemMessage(Component.literal("EntityShearEvent: " + entity.getName().getString()));
             } else {
-                player.sendMessage(Text.literal("EntityShearEvent: " + entity.getName().getString()));
+                player.sendSystemMessage(Component.literal("EntityShearEvent: " + entity.getName().getString()));
             }
             return result;
         });
         Stimuli.global().listen(ExplosionDetonatedEvent.EVENT, (explosion, particles) -> {
-            server.sendMessage(Text.literal("ExplosionDetonatedEvent: " + explosion.getDestructionType().name()));
+            server.sendSystemMessage(Component.literal("ExplosionDetonatedEvent: " + explosion.getBlockInteraction().name()));
             return result;
         });
 
@@ -84,7 +87,7 @@ public final class StimuliInitializer implements ModInitializer {
         });
 
         Stimuli.global().listen(BlockDropItemsEvent.EVENT, (breaker, world, pos, state, dropStacks) -> {
-            if (state.isOf(Blocks.POTATOES)) {
+            if (state.is(Blocks.POTATOES)) {
                 dropStacks = new ArrayList<>(dropStacks);
                 dropStacks.add(new ItemStack(Items.ORANGE_TERRACOTTA));
             }
@@ -93,7 +96,7 @@ public final class StimuliInitializer implements ModInitializer {
         });
 
         Stimuli.global().listen(BlockDropItemsEvent.EVENT, (breaker, world, pos, state, dropStacks) -> {
-            if (state.isOf(Blocks.POTATOES)) {
+            if (state.is(Blocks.POTATOES)) {
                 dropStacks = ImmutableList.<ItemStack>builder()
                     .addAll(dropStacks)
                     .add(new ItemStack(Items.ORANGE_WOOL))
@@ -104,12 +107,12 @@ public final class StimuliInitializer implements ModInitializer {
         });
 
         Stimuli.global().listen(PowderSnowMeltEvent.EVENT, (entity, world, pos) -> {
-            var message = Text.literal("PowderSnowMeltEvent: " + pos.toShortString() + " by ").append(entity.getDisplayName());
+            var message = Component.literal("PowderSnowMeltEvent: " + pos.toShortString() + " by ").append(entity.getDisplayName());
 
-            if (entity instanceof ServerPlayerEntity player) {
-                player.sendMessage(message);
+            if (entity instanceof ServerPlayer player) {
+                player.sendSystemMessage(message);
             } else {
-                server.getPlayerManager().broadcast(message, false);
+                server.getPlayerList().broadcastSystemMessage(message, false);
             }
 
             return result;

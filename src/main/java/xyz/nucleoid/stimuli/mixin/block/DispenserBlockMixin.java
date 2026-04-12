@@ -1,13 +1,13 @@
 package xyz.nucleoid.stimuli.mixin.block;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DispenserBlock;
-import net.minecraft.block.entity.DispenserBlockEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPointer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,19 +20,19 @@ import xyz.nucleoid.stimuli.event.block.DispenserActivateEvent;
 public class DispenserBlockMixin {
 
     @Inject(
-            method = "dispense",
+            method = "dispenseFrom",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/block/DispenserBlock;getBehaviorForItem(Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/block/dispenser/DispenserBehavior;",
+                    target = "Lnet/minecraft/world/level/block/DispenserBlock;getDispenseMethod(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/core/dispenser/DispenseItemBehavior;",
                     shift = At.Shift.BEFORE
             ),
             cancellable = true
     )
-    private void useDispenser(ServerWorld world, BlockState state, BlockPos pos, CallbackInfo ci, @Local DispenserBlockEntity dispenserBlockEntity, @Local BlockPointer blockPointer, @Local int slot, @Local ItemStack itemStack) {
+    private void useDispenser(ServerLevel level, BlockState state, BlockPos pos, CallbackInfo ci, @Local DispenserBlockEntity dispenserBlockEntity, @Local BlockSource blockPointer, @Local int slot, @Local ItemStack itemStack) {
         var events = Stimuli.select();
 
-        try (var invokers = events.at(world, pos)) {
-            var result = invokers.get(DispenserActivateEvent.EVENT).onActivate(world, pos, dispenserBlockEntity, slot, itemStack);
+        try (var invokers = events.at(level, pos)) {
+            var result = invokers.get(DispenserActivateEvent.EVENT).onActivate(level, pos, dispenserBlockEntity, slot, itemStack);
             if (result == EventResult.DENY) {
                 ci.cancel();
             }

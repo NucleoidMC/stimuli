@@ -1,11 +1,11 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} attempts to regenerate health naturally.
+ * Called when a {@link ServerPlayer} attempts to regenerate health naturally.
  *
  * <p>Upon return:
  * <ul>
@@ -30,5 +30,5 @@ public interface PlayerRegenerateEvent {
         return EventResult.PASS;
     });
 
-    EventResult onRegenerate(ServerPlayerEntity player, float amount);
+    EventResult onRegenerate(ServerPlayer player, float amount);
 }

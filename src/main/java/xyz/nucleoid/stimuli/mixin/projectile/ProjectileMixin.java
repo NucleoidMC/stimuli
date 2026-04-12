@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.mixin.projectile;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,20 +15,20 @@ import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.projectile.ProjectileHitEvent;
 
-@Mixin(ProjectileEntity.class)
-public abstract class ProjectileEntityMixin extends Entity {
-    public ProjectileEntityMixin(EntityType<?> type, World world) {
-        super(type, world);
+@Mixin(Projectile.class)
+public abstract class ProjectileMixin extends Entity {
+    public ProjectileMixin(EntityType<?> type, Level level) {
+        super(type, level);
     }
 
-    @Inject(method = "onCollision", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "onHit", at = @At("HEAD"), cancellable = true)
     private void onCollision(HitResult hitResult, CallbackInfo ci) {
-        if (this.getEntityWorld().isClient()) {
+        if (this.level().isClientSide()) {
             return;
         }
 
         try (var invokers = Stimuli.select().forEntity(this)) {
-            var self = (ProjectileEntity) (Object) this;
+            var self = (Projectile) (Object) this;
             if (hitResult.getType() == HitResult.Type.ENTITY) {
                 var result = invokers.get(ProjectileHitEvent.ENTITY).onHitEntity(self, (EntityHitResult) hitResult);
                 if (result == EventResult.DENY) {

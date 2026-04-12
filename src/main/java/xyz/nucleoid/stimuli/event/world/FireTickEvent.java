@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.world;
 
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when fire attempts to tick in the world.
+ * Called when fire attempts to tick in the level.
  *
  * <p>Upon return:
  * <ul>
@@ -15,10 +15,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * <li>{@link EventResult#PASS} moves on to the next listener.</ul>
  */
 public interface FireTickEvent {
-    StimulusEvent<FireTickEvent> EVENT = StimulusEvent.create(FireTickEvent.class, ctx -> (world, pos) -> {
+    StimulusEvent<FireTickEvent> EVENT = StimulusEvent.create(FireTickEvent.class, ctx -> (level, pos) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onFireTick(world, pos);
+                var result = listener.onFireTick(level, pos);
                 if (result != EventResult.PASS) {
                     return result;
                 }
@@ -29,5 +29,5 @@ public interface FireTickEvent {
         return EventResult.PASS;
     });
 
-    EventResult onFireTick(ServerWorld world, BlockPos pos);
+    EventResult onFireTick(ServerLevel level, BlockPos pos);
 }

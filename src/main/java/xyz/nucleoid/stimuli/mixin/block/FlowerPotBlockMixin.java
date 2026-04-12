@@ -1,16 +1,16 @@
 package xyz.nucleoid.stimuli.mixin.block;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FlowerPotBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.FlowerPotBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,9 +22,9 @@ import xyz.nucleoid.stimuli.util.SlotHelper;
 
 @Mixin(FlowerPotBlock.class)
 public class FlowerPotBlockMixin {
-    @Inject(method = "onUseWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z"), cancellable = true)
-    private void onModifyFlowerPot0(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> ci) {
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) {
+    @Inject(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"), cancellable = true)
+    private void onModifyFlowerPot0(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> ci) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
             return;
         }
 
@@ -36,26 +36,26 @@ public class FlowerPotBlockMixin {
                 int slot = SlotHelper.getHandSlot(serverPlayer, hand);
                 SlotHelper.updateSlot(serverPlayer, slot);
 
-                ci.setReturnValue(ActionResult.CONSUME);
+                ci.setReturnValue(InteractionResult.CONSUME);
             }
         }
     }
 
-    @Inject(method = "onUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;giveItemStack(Lnet/minecraft/item/ItemStack;)Z", shift = At.Shift.BEFORE), cancellable = true)
-    private void onModifyFlowerPot1(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> ci, @Local ItemStack stack) {
-        if (!(player instanceof ServerPlayerEntity serverPlayer)) {
+    @Inject(method = "useWithoutItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;addItem(Lnet/minecraft/world/item/ItemStack;)Z", shift = At.Shift.BEFORE), cancellable = true)
+    private void onModifyFlowerPot1(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> ci, @Local ItemStack stack) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
             return;
         }
 
         try (var invokers = Stimuli.select().forEntityAt(serverPlayer, pos)) {
-            var result = invokers.get(FlowerPotModifyEvent.EVENT).onModifyFlowerPot(serverPlayer, Hand.MAIN_HAND, hitResult);
+            var result = invokers.get(FlowerPotModifyEvent.EVENT).onModifyFlowerPot(serverPlayer, InteractionHand.MAIN_HAND, hitResult);
 
             if (result == EventResult.DENY) {
                 // notify the client that this action did not go through
                 int slot = SlotHelper.getFirstModifiedSlot(serverPlayer, stack);
                 SlotHelper.updateSlot(serverPlayer, slot);
 
-                ci.setReturnValue(ActionResult.CONSUME);
+                ci.setReturnValue(InteractionResult.CONSUME);
             }
         }
     }

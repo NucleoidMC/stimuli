@@ -1,13 +1,13 @@
 package xyz.nucleoid.stimuli.event.item;
 
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} attempts to pick up an item entity from the world.
+ * Called when a {@link ServerPlayer} attempts to pick up an item entity from the level.
  *
  * <p>Upon return:
  * <ul>
@@ -34,5 +34,5 @@ public interface ItemPickupEvent {
         };
     });
 
-    EventResult onPickupItem(ServerPlayerEntity player, ItemEntity entity, ItemStack stack);
+    EventResult onPickupItem(ServerPlayer player, ItemEntity entity, ItemStack stack);
 }

@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.world;
 
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a wither is attempted to be summoned by building its structure in the world.
+ * Called when a wither is attempted to be summoned by building its structure in the level.
  *
  * <p>Upon return:
  * <ul>
@@ -15,10 +15,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * <li>{@link EventResult#PASS} moves on to the next listener.</ul>
  */
 public interface WitherSummonEvent {
-    StimulusEvent<WitherSummonEvent> EVENT = StimulusEvent.create(WitherSummonEvent.class, ctx -> (world, pos) -> {
+    StimulusEvent<WitherSummonEvent> EVENT = StimulusEvent.create(WitherSummonEvent.class, ctx -> (level, pos) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onSummonWither(world, pos);
+                var result = listener.onSummonWither(level, pos);
                 if (result != EventResult.PASS) {
                     return result;
                 }
@@ -29,5 +29,5 @@ public interface WitherSummonEvent {
         return EventResult.PASS;
     });
 
-    EventResult onSummonWither(ServerWorld world, BlockPos pos);
+    EventResult onSummonWither(ServerLevel level, BlockPos pos);
 }

@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} dies.
+ * Called when a {@link ServerPlayer} dies.
  *
  * <p>Upon return:
  * <ul>
@@ -31,5 +31,5 @@ public interface PlayerDeathEvent {
         return EventResult.PASS;
     });
 
-    EventResult onDeath(ServerPlayerEntity player, DamageSource source);
+    EventResult onDeath(ServerPlayer player, DamageSource source);
 }

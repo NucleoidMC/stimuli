@@ -1,10 +1,10 @@
 package xyz.nucleoid.stimuli;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.stimuli.filter.EventFilter;
 import xyz.nucleoid.stimuli.util.ObjectPool;
@@ -24,7 +24,7 @@ public final class EventSource extends PooledObject<EventSource> {
 
     private static final EventSource GLOBAL = new EventSource(null);
 
-    private RegistryKey<World> dimension;
+    private ResourceKey<Level> dimension;
     private BlockPos pos;
     private Entity entity;
 
@@ -32,7 +32,7 @@ public final class EventSource extends PooledObject<EventSource> {
         super(pool);
     }
 
-    void set(RegistryKey<World> dimension, BlockPos pos, Entity entity) {
+    void set(ResourceKey<Level> dimension, BlockPos pos, Entity entity) {
         this.dimension = dimension;
         this.pos = pos;
         this.entity = entity;
@@ -42,42 +42,42 @@ public final class EventSource extends PooledObject<EventSource> {
         return GLOBAL;
     }
 
-    public static EventSource at(World world, BlockPos pos) {
-        return acquire(world.getRegistryKey(), pos, null);
+    public static EventSource at(Level level, BlockPos pos) {
+        return acquire(level.dimension(), pos, null);
     }
 
-    public static EventSource at(RegistryKey<World> dimension, BlockPos pos) {
+    public static EventSource at(ResourceKey<Level> dimension, BlockPos pos) {
         return acquire(dimension, pos, null);
     }
 
-    public static EventSource allOf(World world) {
-        return acquire(world.getRegistryKey(), null, null);
+    public static EventSource allOf(Level level) {
+        return acquire(level.dimension(), null, null);
     }
 
-    public static EventSource allOf(RegistryKey<World> dimension) {
+    public static EventSource allOf(ResourceKey<Level> dimension) {
         return acquire(dimension, null, null);
     }
 
     public static EventSource forEntity(Entity entity) {
-        return acquire(entity.getEntityWorld().getRegistryKey(), entity.getBlockPos(), entity);
+        return acquire(entity.level().dimension(), entity.blockPosition(), entity);
     }
 
     public static EventSource forEntityAt(Entity entity, BlockPos pos) {
-        return acquire(entity.getEntityWorld().getRegistryKey(), pos, entity);
+        return acquire(entity.level().dimension(), pos, entity);
     }
 
-    public static EventSource forCommandSource(ServerCommandSource source) {
-        return acquire(source.getWorld().getRegistryKey(), BlockPos.ofFloored(source.getPosition()), source.getEntity());
+    public static EventSource forCommandSource(CommandSourceStack source) {
+        return acquire(source.getLevel().dimension(), BlockPos.containing(source.getPosition()), source.getEntity());
     }
 
-    static EventSource acquire(RegistryKey<World> dimension, BlockPos pos, @Nullable Entity entity) {
+    static EventSource acquire(ResourceKey<Level> dimension, BlockPos pos, @Nullable Entity entity) {
         var source = POOL.acquire();
         source.set(dimension, pos, entity);
         return source;
     }
 
     @Nullable
-    public RegistryKey<World> getDimension() {
+    public ResourceKey<Level> getDimension() {
         return this.dimension;
     }
 

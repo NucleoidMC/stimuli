@@ -1,9 +1,8 @@
 package xyz.nucleoid.stimuli.event;
 
-import net.minecraft.item.ItemStack;
-
 import java.util.Collections;
 import java.util.List;
+import net.minecraft.world.item.ItemStack;
 
 public final class DroppedItemsResult {
     private static final DroppedItemsResult DENY = new DroppedItemsResult(EventResult.PASS, Collections.emptyList());

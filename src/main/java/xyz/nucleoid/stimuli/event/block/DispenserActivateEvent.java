@@ -1,9 +1,9 @@
 package xyz.nucleoid.stimuli.event.block;
 
-import net.minecraft.block.entity.DispenserBlockEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
@@ -19,10 +19,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * If all listeners return {@link EventResult#PASS}, the use succeeds and proceeds with normal logic.
  */
 public interface DispenserActivateEvent {
-    StimulusEvent<DispenserActivateEvent> EVENT = StimulusEvent.create(DispenserActivateEvent.class, ctx -> (world, pos, dispenserBlockEntity, slot, stackToDispense) -> {
+    StimulusEvent<DispenserActivateEvent> EVENT = StimulusEvent.create(DispenserActivateEvent.class, ctx -> (level, pos, dispenserBlockEntity, slot, stackToDispense) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onActivate(world, pos, dispenserBlockEntity, slot, stackToDispense);
+                var result = listener.onActivate(level, pos, dispenserBlockEntity, slot, stackToDispense);
                 if (result != EventResult.PASS) {
                     return result;
                 }
@@ -33,5 +33,5 @@ public interface DispenserActivateEvent {
         return EventResult.PASS;
     });
 
-    EventResult onActivate(ServerWorld world, BlockPos pos, DispenserBlockEntity dispenserBlockEntity, int slot, ItemStack stackToDispense);
+    EventResult onActivate(ServerLevel level, BlockPos pos, DispenserBlockEntity dispenserBlockEntity, int slot, ItemStack stackToDispense);
 }

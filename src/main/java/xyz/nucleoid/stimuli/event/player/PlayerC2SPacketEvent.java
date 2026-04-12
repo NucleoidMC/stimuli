@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.network.packet.Packet;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} sends a packets to server
+ * Called when a {@link ServerPlayer} sends a packets to server
  *
  * <p>Upon return:
  * <ul>
@@ -30,5 +30,5 @@ public interface PlayerC2SPacketEvent {
         return EventResult.PASS;
     });
 
-    EventResult onPacket(ServerPlayerEntity player, Packet<?> packet);
+    EventResult onPacket(ServerPlayer player, Packet<?> packet);
 }

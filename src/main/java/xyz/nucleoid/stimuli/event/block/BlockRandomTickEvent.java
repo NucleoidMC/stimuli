@@ -1,13 +1,13 @@
 package xyz.nucleoid.stimuli.event.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a block attempts to randomly tick in the world.
+ * Called when a block attempts to randomly tick in the level.
  *
  * <p>Upon return:
  * <ul>
@@ -16,10 +16,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * <li>{@link EventResult#PASS} moves on to the next listener.</ul>
  */
 public interface BlockRandomTickEvent {
-    StimulusEvent<BlockRandomTickEvent> EVENT = StimulusEvent.create(BlockRandomTickEvent.class, ctx -> (world, pos, state) -> {
+    StimulusEvent<BlockRandomTickEvent> EVENT = StimulusEvent.create(BlockRandomTickEvent.class, ctx -> (level, pos, state) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onBlockRandomTick(world, pos, state);
+                var result = listener.onBlockRandomTick(level, pos, state);
                 if (result != EventResult.PASS) {
                     return result;
                 }
@@ -30,5 +30,5 @@ public interface BlockRandomTickEvent {
         return EventResult.PASS;
     });
 
-    EventResult onBlockRandomTick(ServerWorld world, BlockPos pos, BlockState state);
+    EventResult onBlockRandomTick(ServerLevel level, BlockPos pos, BlockState state);
 }

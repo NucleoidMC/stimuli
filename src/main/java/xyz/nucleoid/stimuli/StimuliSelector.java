@@ -1,11 +1,11 @@
 package xyz.nucleoid.stimuli;
 
 import com.google.common.collect.AbstractIterator;
-import net.minecraft.entity.Entity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 import xyz.nucleoid.stimuli.selector.EventListenerSelector;
@@ -20,19 +20,19 @@ public final class StimuliSelector {
         this.selectors = selectors;
     }
 
-    public EventInvokers at(World world, BlockPos pos) {
-        return this.acquireInvokers(world.getServer(), EventSource.at(world, pos));
+    public EventInvokers at(Level level, BlockPos pos) {
+        return this.acquireInvokers(level.getServer(), EventSource.at(level, pos));
     }
 
     public EventInvokers forEntity(Entity entity) {
-        return this.acquireInvokers(entity.getEntityWorld().getServer(), EventSource.forEntity(entity));
+        return this.acquireInvokers(entity.level().getServer(), EventSource.forEntity(entity));
     }
 
     public EventInvokers forEntityAt(Entity entity, BlockPos pos) {
-        return this.acquireInvokers(entity.getEntityWorld().getServer(), EventSource.forEntityAt(entity, pos));
+        return this.acquireInvokers(entity.level().getServer(), EventSource.forEntityAt(entity, pos));
     }
 
-    public EventInvokers forCommandSource(ServerCommandSource source) {
+    public EventInvokers forCommandSource(CommandSourceStack source) {
         return this.acquireInvokers(source.getServer(), EventSource.forCommandSource(source));
     }
 

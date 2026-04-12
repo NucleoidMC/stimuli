@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.world;
 
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a nether portal is attempted to be opened within the world.
+ * Called when a nether portal is attempted to be opened within the level.
  *
  * <p>Upon return:
  * <ul>
@@ -15,10 +15,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * <li>{@link EventResult#PASS} moves on to the next listener.</ul>
  */
 public interface NetherPortalOpenEvent {
-    StimulusEvent<NetherPortalOpenEvent> EVENT = StimulusEvent.create(NetherPortalOpenEvent.class, ctx -> (world, lowerCorner) -> {
+    StimulusEvent<NetherPortalOpenEvent> EVENT = StimulusEvent.create(NetherPortalOpenEvent.class, ctx -> (level, lowerCorner) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onOpenNetherPortal(world, lowerCorner);
+                var result = listener.onOpenNetherPortal(level, lowerCorner);
                 if (result != EventResult.PASS) {
                     return result;
                 }
@@ -29,5 +29,5 @@ public interface NetherPortalOpenEvent {
         return EventResult.PASS;
     });
 
-    EventResult onOpenNetherPortal(ServerWorld world, BlockPos lowerCorner);
+    EventResult onOpenNetherPortal(ServerLevel level, BlockPos lowerCorner);
 }

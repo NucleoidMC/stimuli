@@ -1,6 +1,6 @@
 package xyz.nucleoid.stimuli.event;
 
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResult;
 
 /**
  * Represents the change in control flow that should occur in response to an event listener.
@@ -19,11 +19,11 @@ public enum EventResult {
      */
     DENY;
 
-    public ActionResult asActionResult() {
+    public InteractionResult asActionResult() {
         return switch (this) {
-            case ALLOW -> ActionResult.SUCCESS;
-            case DENY -> ActionResult.FAIL;
-            default -> ActionResult.PASS;
+            case ALLOW -> InteractionResult.SUCCESS;
+            case DENY -> InteractionResult.FAIL;
+            default -> InteractionResult.PASS;
         };
     }
 }

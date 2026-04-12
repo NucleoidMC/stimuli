@@ -4,12 +4,12 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldView;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.explosion.ExplosionImpl;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ServerExplosion;
+import net.minecraft.world.level.biome.Biome;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,12 +22,12 @@ import xyz.nucleoid.stimuli.event.entity.EntitySpawnEvent;
 import xyz.nucleoid.stimuli.event.world.FireTickEvent;
 import xyz.nucleoid.stimuli.event.world.SnowFallEvent;
 
-@Mixin(ServerWorld.class)
-public class ServerWorldMixin {
+@Mixin(ServerLevel.class)
+public class ServerLevelMixin {
 
-    @Inject(method = "spawnEntity", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "addFreshEntity", at = @At("HEAD"), cancellable = true)
     private void applyEntitySpawnEvent(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        try (var invokers = Stimuli.select().at((ServerWorld) (Object) this, entity.getBlockPos())) {
+        try (var invokers = Stimuli.select().at((ServerLevel) (Object) this, entity.blockPosition())) {
             var result = invokers.get(EntitySpawnEvent.EVENT).onSpawn(entity);
             if (result == EventResult.DENY) {
                 cir.setReturnValue(false);
@@ -35,13 +35,13 @@ public class ServerWorldMixin {
         }
     }
 
-    @WrapOperation(method = "tickIceAndSnow", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/Biome;canSetSnow(Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Z"))
-    private boolean applySnowFallEvent(Biome instance, WorldView world, BlockPos pos, Operation<Boolean> original) {
-        if (!original.call(instance, world, pos)) {
+    @WrapOperation(method = "tickPrecipitation", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;shouldSnow(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z"))
+    private boolean applySnowFallEvent(Biome instance, LevelReader level, BlockPos pos, Operation<Boolean> original) {
+        if (!original.call(instance, level, pos)) {
             return false;
         }
 
-        ServerWorld serverWorld = (ServerWorld) world;
+        ServerLevel serverWorld = (ServerLevel) level;
 
         try (var invokers = Stimuli.select().at(serverWorld, pos)) {
             var result = invokers.get(SnowFallEvent.EVENT).onSnowFall(serverWorld, pos);
@@ -54,21 +54,21 @@ public class ServerWorldMixin {
     }
 
     @Inject(
-            method = "createExplosion",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/explosion/ExplosionImpl;explode()I", shift = At.Shift.AFTER),
+            method = "explode",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/ServerExplosion;explode()I", shift = At.Shift.AFTER),
             cancellable = true
     )
-    private void cancelExplosion(CallbackInfo ci, @Local ExplosionImpl explosion) {
+    private void cancelExplosion(CallbackInfo ci, @Local ServerExplosion explosion) {
         if (explosion instanceof ExplosionCancellable cancellable && cancellable.stimuli$isCancelled()) {
             ci.cancel();
         }
     }
 
-    @WrapMethod(method = "canFireSpread")
+    @WrapMethod(method = "canSpreadFireAround")
     public boolean canFireSpread(BlockPos pos, Operation<Boolean> original) {
-        var world = (ServerWorld) (Object) this;
-        try (var invokers = Stimuli.select().at(world, pos)) {
-            var result = invokers.get(FireTickEvent.EVENT).onFireTick(world, pos);
+        var level = (ServerLevel) (Object) this;
+        try (var invokers = Stimuli.select().at(level, pos)) {
+            var result = invokers.get(FireTickEvent.EVENT).onFireTick(level, pos);
             if (result == EventResult.ALLOW) {
                 return true;
             } else if (result == EventResult.DENY) {

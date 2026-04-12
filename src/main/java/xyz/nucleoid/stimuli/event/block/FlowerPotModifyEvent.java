@@ -1,9 +1,9 @@
 package xyz.nucleoid.stimuli.event.block;
 
-import net.minecraft.block.FlowerPotBlock;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.FlowerPotBlock;
+import net.minecraft.world.phys.BlockHitResult;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
@@ -34,5 +34,5 @@ public interface FlowerPotModifyEvent {
         return EventResult.PASS;
     });
 
-    EventResult onModifyFlowerPot(ServerPlayerEntity player, Hand hand, BlockHitResult hitResult);
+    EventResult onModifyFlowerPot(ServerPlayer player, InteractionHand hand, BlockHitResult hitResult);
 }

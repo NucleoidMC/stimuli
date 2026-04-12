@@ -1,9 +1,9 @@
 package xyz.nucleoid.stimuli.event.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
@@ -19,10 +19,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * If all listeners return {@link EventResult#PASS}, the trample succeeds.
  */
 public interface BlockTrampleEvent {
-    StimulusEvent<BlockTrampleEvent> EVENT = StimulusEvent.create(BlockTrampleEvent.class, ctx -> (entity, world, pos, from, to) -> {
+    StimulusEvent<BlockTrampleEvent> EVENT = StimulusEvent.create(BlockTrampleEvent.class, ctx -> (entity, level, pos, from, to) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onTrample(entity, world, pos, from, to);
+                var result = listener.onTrample(entity, level, pos, from, to);
                 if (result != EventResult.PASS) {
                     return result;
                 }
@@ -33,5 +33,5 @@ public interface BlockTrampleEvent {
         return EventResult.PASS;
     });
 
-    EventResult onTrample(LivingEntity entity, ServerWorld world, BlockPos pos, BlockState from, BlockState to);
+    EventResult onTrample(LivingEntity entity, ServerLevel level, BlockPos pos, BlockState from, BlockState to);
 }

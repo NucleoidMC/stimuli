@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.world;
 
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when snow attempts to fall in the world.
+ * Called when snow attempts to fall in the level.
  *
  * <p>Upon return:
  * <ul>
@@ -15,10 +15,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * <li>{@link EventResult#PASS} moves on to the next listener.</ul>
  */
 public interface SnowFallEvent {
-    StimulusEvent<SnowFallEvent> EVENT = StimulusEvent.create(SnowFallEvent.class, ctx -> (world, pos) -> {
+    StimulusEvent<SnowFallEvent> EVENT = StimulusEvent.create(SnowFallEvent.class, ctx -> (level, pos) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onSnowFall(world, pos);
+                var result = listener.onSnowFall(level, pos);
                 if (result != EventResult.PASS) {
                     return result;
                 }
@@ -29,5 +29,5 @@ public interface SnowFallEvent {
         return EventResult.PASS;
     });
 
-    EventResult onSnowFall(ServerWorld world, BlockPos pos);
+    EventResult onSnowFall(ServerLevel level, BlockPos pos);
 }

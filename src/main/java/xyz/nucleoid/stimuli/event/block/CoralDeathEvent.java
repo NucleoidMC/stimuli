@@ -1,8 +1,8 @@
 package xyz.nucleoid.stimuli.event.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
@@ -18,10 +18,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  * If all listeners return {@link EventResult#PASS}, the coral dies.
  */
 public interface CoralDeathEvent {
-    StimulusEvent<CoralDeathEvent> EVENT = StimulusEvent.create(CoralDeathEvent.class, ctx -> (world, pos, from, to) -> {
+    StimulusEvent<CoralDeathEvent> EVENT = StimulusEvent.create(CoralDeathEvent.class, ctx -> (level, pos, from, to) -> {
         try {
             for (var listener : ctx.getListeners()) {
-                var result = listener.onCoralDeath(world, pos, from, to);
+                var result = listener.onCoralDeath(level, pos, from, to);
                 if (result != EventResult.PASS) {
                     return result;
                 }
@@ -32,5 +32,5 @@ public interface CoralDeathEvent {
         return EventResult.PASS;
     });
 
-    EventResult onCoralDeath(ServerWorld world, BlockPos pos, BlockState from, BlockState to);
+    EventResult onCoralDeath(ServerLevel level, BlockPos pos, BlockState from, BlockState to);
 }

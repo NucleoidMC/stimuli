@@ -1,11 +1,11 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} executes a command through chat.
+ * Called when a {@link ServerPlayer} executes a command through chat.
  *
  * <p>Upon return:
  * <ul>
@@ -29,5 +29,5 @@ public interface PlayerCommandEvent {
         return EventResult.PASS;
     });
 
-    EventResult onPlayerCommand(ServerPlayerEntity player, String command);
+    EventResult onPlayerCommand(ServerPlayer player, String command);
 }

@@ -1,11 +1,11 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Hand;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} swings their hand.
+ * Called when a {@link ServerPlayer} swings their hand.
  */
 public interface PlayerSwingHandEvent {
     StimulusEvent<PlayerSwingHandEvent> EVENT = StimulusEvent.create(PlayerSwingHandEvent.class, ctx -> (player, hand) -> {
@@ -18,5 +18,5 @@ public interface PlayerSwingHandEvent {
         }
     });
 
-    void onSwingHand(ServerPlayerEntity player, Hand hand);
+    void onSwingHand(ServerPlayer player, InteractionHand hand);
 }

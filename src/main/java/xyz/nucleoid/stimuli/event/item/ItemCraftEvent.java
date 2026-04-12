@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.item;
 
-import net.minecraft.recipe.Recipe;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.crafting.Recipe;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} attempts to craft an item either in a crafting table or in their inventory.
+ * Called when a {@link ServerPlayer} attempts to craft an item either in a crafting table or in their inventory.
  *
  * <p>Upon return:
  * <ul>
@@ -33,5 +33,5 @@ public interface ItemCraftEvent {
         };
     });
 
-    EventResult onCraft(ServerPlayerEntity player, Recipe<?> recipe);
+    EventResult onCraft(ServerPlayer player, Recipe<?> recipe);
 }

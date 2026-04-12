@@ -1,13 +1,5 @@
 package xyz.nucleoid.stimuli.mixin.world;
 
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.FireworksComponent;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
-import net.minecraft.server.world.ServerChunkManager;
-import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,40 +11,48 @@ import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.world.FireworkExplodeEvent;
 
 import java.util.Collections;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.Fireworks;
 
 @Mixin(FireworkRocketEntity.class)
 public class FireworkRocketEntityMixin {
-    @Final @Shadow private static TrackedData<ItemStack> ITEM;
+    @Final @Shadow private static EntityDataAccessor<ItemStack> DATA_ID_FIREWORKS_ITEM;
 
-    @Inject(method = "explodeAndRemove", at = @At("HEAD"))
+    @Inject(method = "explode", at = @At("HEAD"))
     private void explodeAndRemove(CallbackInfo ci) {
         var firework = (FireworkRocketEntity) (Object) this;
 
-        if (!firework.getEntityWorld().isClient()) {
+        if (!firework.level().isClientSide()) {
             try (var invokers = Stimuli.select().forEntity(firework)) {
                 var result = invokers.get(FireworkExplodeEvent.EVENT).onFireworkExplode(firework);
                 if (result == EventResult.DENY) {
                     // Make a copy so the data tracker entry is marked dirty
-                    ItemStack stack = firework.getDataTracker().get(ITEM).copy();
+                    ItemStack stack = firework.getEntityData().get(DATA_ID_FIREWORKS_ITEM).copy();
 
                     // Remove explosion data from new stack
-                    FireworksComponent fireworksComponent = stack.get(DataComponentTypes.FIREWORKS);
+                    Fireworks fireworksComponent = stack.get(DataComponents.FIREWORKS);
                     if (fireworksComponent != null) {
-                        stack.set(DataComponentTypes.FIREWORKS, new FireworksComponent(fireworksComponent.flightDuration(), Collections.emptyList()));
+                        stack.set(DataComponents.FIREWORKS, new Fireworks(fireworksComponent.flightDuration(), Collections.emptyList()));
                     }
 
                     // Update data tracker with new stack
-                    firework.getDataTracker().set(ITEM, stack);
+                    firework.getEntityData().set(DATA_ID_FIREWORKS_ITEM, stack);
 
                     // Send data tracker update to observing players
-                    ServerWorld world = (ServerWorld) firework.getEntityWorld();
+                    ServerLevel level = (ServerLevel) firework.level();
 
-                    var dirty = firework.getDataTracker().getDirtyEntries();
+                    var dirty = firework.getEntityData().packDirty();
 
                     if (dirty != null) {
-                        var packet = new EntityTrackerUpdateS2CPacket(firework.getId(), dirty);
-                        ServerChunkManager chunkManager = world.getChunkManager();
-                        chunkManager.sendToOtherNearbyPlayers(firework, packet);
+                        var packet = new ClientboundSetEntityDataPacket(firework.getId(), dirty);
+                        ServerChunkCache chunkManager = level.getChunkSource();
+                        chunkManager.sendToTrackingPlayers(firework, packet);
                     }
                 }
             }

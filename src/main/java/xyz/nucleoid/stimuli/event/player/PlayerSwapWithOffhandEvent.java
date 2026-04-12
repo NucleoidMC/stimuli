@@ -1,11 +1,11 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when any {@link ServerPlayerEntity} attempts to switch items in offhand
+ * Called when any {@link ServerPlayer} attempts to switch items in offhand
  *
  * <p>Upon return:
  * <ul>
@@ -32,5 +32,5 @@ public interface PlayerSwapWithOffhandEvent {
         return EventResult.PASS;
     });
 
-    EventResult onSwapWithOffhand(ServerPlayerEntity player);
+    EventResult onSwapWithOffhand(ServerPlayer player);
 }

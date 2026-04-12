@@ -1,14 +1,14 @@
 package xyz.nucleoid.stimuli.event.world;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when fluid attempts to flow in the world.
+ * Called when fluid attempts to flow in the level.
  *
  * <p>Upon return:
  * <ul>
@@ -18,10 +18,10 @@ import xyz.nucleoid.stimuli.event.StimulusEvent;
  */
 public interface FluidFlowEvent {
     StimulusEvent<FluidFlowEvent> EVENT = StimulusEvent.create(FluidFlowEvent.class, ctx -> {
-        return (world, fluidPos, fluidBlock, flowDirection, flowTo, flowToBlock) -> {
+        return (level, fluidPos, fluidBlock, flowDirection, flowTo, flowToBlock) -> {
             try {
                 for (var listener : ctx.getListeners()) {
-                    var result = listener.onFluidFlow(world, fluidPos, fluidBlock, flowDirection, flowTo, flowToBlock);
+                    var result = listener.onFluidFlow(level, fluidPos, fluidBlock, flowDirection, flowTo, flowToBlock);
                     if (result != EventResult.PASS) {
                         return result;
                     }
@@ -33,5 +33,5 @@ public interface FluidFlowEvent {
         };
     });
 
-    EventResult onFluidFlow(ServerWorld world, BlockPos fluidPos, BlockState fluidBlock, Direction flowDirection, BlockPos flowTo, BlockState flowToBlock);
+    EventResult onFluidFlow(ServerLevel level, BlockPos fluidPos, BlockState fluidBlock, Direction flowDirection, BlockPos flowTo, BlockState flowToBlock);
 }

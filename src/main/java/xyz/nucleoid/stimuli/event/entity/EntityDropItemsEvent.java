@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.entity;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
 import xyz.nucleoid.stimuli.event.DroppedItemsResult;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 import java.util.List;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Called when a {@link LivingEntity} drops its items on death.

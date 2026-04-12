@@ -1,15 +1,15 @@
 package xyz.nucleoid.stimuli.event.entity;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called before a {@linkplain net.minecraft.entity.Shearable shearable} entity is sheared by a player or dispenser.
+ * Called before a {@linkplain net.minecraft.world.entity.Shearable shearable} entity is sheared by a player or dispenser.
  *
  * <p>Upon return:
  * <ul>
@@ -37,5 +37,5 @@ public interface EntityShearEvent {
         return EventResult.PASS;
     });
 
-    EventResult onShearEntity(LivingEntity entity, @Nullable ServerPlayerEntity player, @Nullable Hand hand, @Nullable BlockPos pos);
+    EventResult onShearEntity(LivingEntity entity, @Nullable ServerPlayer player, @Nullable InteractionHand hand, @Nullable BlockPos pos);
 }

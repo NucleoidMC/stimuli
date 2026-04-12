@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.item;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} attempts to drop an item, from the hotbar or from the inventory.
+ * Called when a {@link ServerPlayer} attempts to drop an item, from the hotbar or from the inventory.
  * Do note that the provided slot may be negative on certain circumstances, so proceed with caution.
  *
  * <p>Upon return:
@@ -30,5 +30,5 @@ public interface ItemThrowEvent {
         return EventResult.PASS;
     });
 
-    EventResult onThrowItem(ServerPlayerEntity player, int slot, ItemStack stack);
+    EventResult onThrowItem(ServerPlayer player, int slot, ItemStack stack);
 }

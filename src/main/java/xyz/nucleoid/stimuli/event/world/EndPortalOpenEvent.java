@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.world;
 
-import net.minecraft.block.pattern.BlockPattern;
-import net.minecraft.item.ItemUsageContext;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when an end portal is attempted to be opened within the world.
+ * Called when an end portal is attempted to be opened within the level.
  *
  * <p>Upon return:
  * <ul>
@@ -29,5 +29,5 @@ public interface EndPortalOpenEvent {
         return EventResult.PASS;
     });
 
-    EventResult onOpenEndPortal(ItemUsageContext context, BlockPattern.Result patternResult);
+    EventResult onOpenEndPortal(UseOnContext context, BlockPattern.BlockPatternMatch patternResult);
 }

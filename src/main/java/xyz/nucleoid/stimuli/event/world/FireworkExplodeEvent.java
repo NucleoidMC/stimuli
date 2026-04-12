@@ -1,11 +1,11 @@
 package xyz.nucleoid.stimuli.event.world;
 
-import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a firework attempts to explode in the world.
+ * Called when a firework attempts to explode in the level.
  *
  * <p>Upon return:
  * <ul>

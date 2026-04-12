@@ -1,12 +1,12 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} is damaged.
+ * Called when a {@link ServerPlayer} is damaged.
  *
  * <p>Upon return:
  * <ul>
@@ -31,5 +31,5 @@ public interface PlayerDamageEvent {
         return EventResult.PASS;
     });
 
-    EventResult onDamage(ServerPlayerEntity player, DamageSource source, float amount);
+    EventResult onDamage(ServerPlayer player, DamageSource source, float amount);
 }

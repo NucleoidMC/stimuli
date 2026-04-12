@@ -1,13 +1,13 @@
 package xyz.nucleoid.stimuli.event.player;
 
-import net.minecraft.network.message.MessageType;
-import net.minecraft.network.message.SignedMessage;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.PlayerChatMessage;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.nucleoid.stimuli.event.EventResult;
 import xyz.nucleoid.stimuli.event.StimulusEvent;
 
 /**
- * Called when a {@link ServerPlayerEntity} sends a message in chat. Message uses its final formatting
+ * Called when a {@link ServerPlayer} sends a message in chat. Message uses its final formatting
  *
  * <p>Upon return:
  * <ul>
@@ -33,5 +33,5 @@ public interface PlayerChatEvent {
         return EventResult.PASS;
     });
 
-    EventResult onSendChatMessage(ServerPlayerEntity player, SignedMessage message, MessageType.Parameters messageType);
+    EventResult onSendChatMessage(ServerPlayer player, PlayerChatMessage message, ChatType.Bound messageType);
 }

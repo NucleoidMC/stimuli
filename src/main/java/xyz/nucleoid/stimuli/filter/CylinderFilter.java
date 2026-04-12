@@ -1,11 +1,11 @@
 package xyz.nucleoid.stimuli.filter;
 
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import xyz.nucleoid.stimuli.EventSource;
 
-public record CylinderFilter(RegistryKey<World> dimension, BlockPos center, int radius, int height) implements EventFilter {
+public record CylinderFilter(ResourceKey<Level> dimension, BlockPos center, int radius, int height) implements EventFilter {
     @Override
     public boolean accepts(EventSource source) {
         var pos = source.getPos();
