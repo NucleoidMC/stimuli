@@ -89,7 +89,7 @@ public final class StimuliInitializer implements ModInitializer {
         Stimuli.global().listen(BlockDropItemsEvent.EVENT, (breaker, world, pos, state, dropStacks) -> {
             if (state.is(Blocks.POTATOES)) {
                 dropStacks = new ArrayList<>(dropStacks);
-                dropStacks.add(new ItemStack(Items.ORANGE_TERRACOTTA));
+                dropStacks.add(new ItemStack(Items.DYED_TERRACOTTA.orange()));
             }
 
             return DroppedItemsResult.pass(dropStacks);
@@ -99,7 +99,7 @@ public final class StimuliInitializer implements ModInitializer {
             if (state.is(Blocks.POTATOES)) {
                 dropStacks = ImmutableList.<ItemStack>builder()
                     .addAll(dropStacks)
-                    .add(new ItemStack(Items.ORANGE_WOOL))
+                    .add(new ItemStack(Items.WOOL.orange()))
                     .build();
             }
 

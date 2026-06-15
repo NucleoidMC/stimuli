@@ -58,7 +58,7 @@ public class ServerGamePacketListenerImplMixin {
         }
     }
 
-    @WrapWithCondition(method = "handleSpectateEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;setCamera(Lnet/minecraft/world/entity/Entity;)V"))
+    @WrapWithCondition(method = "handleSpectatorAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;setCamera(Lnet/minecraft/world/entity/Entity;)V"))
     private boolean onSpectateEntity(ServerPlayer player, Entity newCamera) {
         try (var invokers = Stimuli.select().forEntity(player)) {
             var result = invokers.get(PlayerSpectateEntityEvent.EVENT).onSpectateEntity(this.player, newCamera);
