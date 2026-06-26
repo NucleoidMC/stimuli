@@ -34,6 +34,7 @@ public class ServerGamePacketListenerImplMixin {
             var result = invokers.get(PlayerInventoryActionEvent.EVENT).onInventoryAction(this.player, packet.slotNum(), packet.containerInput(), packet.buttonNum());
             if (result == EventResult.DENY) {
                 ci.cancel();
+                this.player.containerMenu.sendAllDataToRemote();
             }
         }
     }
