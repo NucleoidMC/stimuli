@@ -1,11 +1,13 @@
 package xyz.nucleoid.stimuli.util;
 
+import net.minecraft.network.HashedStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 public final class SlotHelper {
+    public static final HashedStack INVALID_HASHED_STACK = (stack, hasher) -> false;
     private SlotHelper() {
     }
 

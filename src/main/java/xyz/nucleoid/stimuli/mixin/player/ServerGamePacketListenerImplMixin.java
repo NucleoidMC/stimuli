@@ -1,8 +1,11 @@
 package xyz.nucleoid.stimuli.mixin.player;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.network.protocol.game.*;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
+import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+import net.minecraft.network.protocol.game.ServerboundSwingPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.Entity;
@@ -33,6 +36,13 @@ public class ServerGamePacketListenerImplMixin {
         try (var invokers = Stimuli.select().forEntity(this.player)) {
             var result = invokers.get(PlayerInventoryActionEvent.EVENT).onInventoryAction(this.player, packet.slotNum(), packet.containerInput(), packet.buttonNum());
             if (result == EventResult.DENY) {
+                for (var e : Int2ObjectMaps.fastIterable(packet.changedSlots())) {
+                    this.player.containerMenu.setRemoteSlotUnsafe(e.getIntKey(), e.getValue());
+                }
+
+                this.player.containerMenu.setRemoteCarried(packet.carriedItem());
+
+                this.player.containerMenu.broadcastChanges();
                 ci.cancel();
             }
         }
