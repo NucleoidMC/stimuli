@@ -6,7 +6,6 @@
     "mixins": [
       "BoggedAccessor",
         "FluidAccessor",
-        "block.BedItemMixin",
         "block.BlockItemMixin",
         "block.BlockMixin",
         "block.BucketItemMixin",
