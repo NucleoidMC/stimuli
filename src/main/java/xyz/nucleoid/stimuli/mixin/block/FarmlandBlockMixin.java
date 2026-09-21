@@ -20,13 +20,13 @@ import xyz.nucleoid.stimuli.event.block.BlockTrampleEvent;
 
 @Mixin(FarmlandBlock.class)
 public class FarmlandBlockMixin {
-    @Inject(method = "fallOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/FarmlandBlock;turnToDirt(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V", shift = At.Shift.BEFORE), cancellable = true)
+    @Inject(method = "fallOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/FarmlandBlock;turnToBaseBlock(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V", shift = At.Shift.BEFORE), cancellable = true)
     private void breakFarmland(Level level, BlockState state, BlockPos pos, Entity entity, double fallDistance, CallbackInfo ci) {
         if (level instanceof ServerLevel serverWorld && entity instanceof LivingEntity livingEntity) {
             try (var invokers = Stimuli.select().forEntityAt(entity, pos)) {
                 var trampleResult = invokers.get(BlockTrampleEvent.EVENT).onTrample(livingEntity, serverWorld, pos, state, Blocks.DIRT.defaultBlockState());
                 if (trampleResult == EventResult.DENY) {
-                    ci.cancel();
+                    ci.cancel(); // Note, cancelling these events will also prevent fall damage. Intentional?
                     return;
                 }
 
