@@ -5,9 +5,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
-import net.minecraft.network.protocol.game.ServerboundSwingPacket;
+import net.minecraft.network.protocol.game.ServerboundPunchPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,11 +24,10 @@ public class ServerGamePacketListenerImplMixin {
     @Shadow
     public ServerPlayer player;
 
-    @Inject(method = "handleAnimate", at = @At("HEAD"))
-    private void onHandSwing(ServerboundSwingPacket packet, CallbackInfo ci) {
-        var hand = packet.getHand();
+    @Inject(method = "handlePunch", at = @At("HEAD"))
+    private void onHandSwing(ServerboundPunchPacket packet, CallbackInfo ci) {
         try (var invokers = Stimuli.select().forEntity(this.player)) {
-            invokers.get(PlayerSwingHandEvent.EVENT).onSwingHand(this.player, hand);
+            invokers.get(PlayerSwingHandEvent.EVENT).onSwingHand(this.player, InteractionHand.MAIN_HAND);
         }
     }
 
