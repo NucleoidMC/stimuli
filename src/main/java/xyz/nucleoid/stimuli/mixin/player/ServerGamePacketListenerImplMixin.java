@@ -24,7 +24,7 @@ public class ServerGamePacketListenerImplMixin {
     @Shadow
     public ServerPlayer player;
 
-    @Inject(method = "handlePunch", at = @At("HEAD"))
+    @Inject(method = "handlePunch", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;resetLastActionTime()V", shift = At.Shift.BEFORE))
     private void onHandSwing(ServerboundPunchPacket packet, CallbackInfo ci) {
         try (var invokers = Stimuli.select().forEntity(this.player)) {
             invokers.get(PlayerSwingHandEvent.EVENT).onSwingHand(this.player, InteractionHand.MAIN_HAND);
